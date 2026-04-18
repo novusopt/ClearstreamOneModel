@@ -1,0 +1,362 @@
+[
+  {
+    "id": "tesla-model-y-2023-01",
+    "make": "Tesla",
+    "model": "Model Y Long Range",
+    "year": 2023,
+    "price": 38900,
+    "mileage": 18240,
+    "fuelType": "Electric",
+    "transmission": "Automatic",
+    "bodyType": "EV",
+    "color": "Pearl White",
+    "images": [
+      "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1617704548623-340376564e68?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "location": "Austin, TX",
+    "description": "One-owner Model Y Long Range with AWD, premium interior, and the latest autopilot hardware. Clean Carfax, recent tire rotation, and software up to date. Charges at home on a standard 240V outlet.",
+    "features": [
+      "Dual-motor AWD",
+      "Autopilot",
+      "Heated seats (front + rear)",
+      "Glass roof",
+      "14-speaker audio",
+      "Over-the-air updates"
+    ],
+    "sellerName": "Lone Star EV",
+    "sellerType": "Dealer",
+    "listedAt": "2026-03-21T10:00:00Z"
+  },
+  {
+    "id": "bmw-m340i-2022-02",
+    "make": "BMW",
+    "model": "M340i xDrive",
+    "year": 2022,
+    "price": 49750,
+    "mileage": 24110,
+    "fuelType": "Gasoline",
+    "transmission": "Automatic",
+    "bodyType": "Sedan",
+    "color": "Portimao Blue",
+    "images": [
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1556189250-72ba954cfc2b?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "location": "Miami, FL",
+    "description": "Immaculate M340i with the M Sport package, executive pack, and cold weather options. The inline-six sounds incredible and pulls hard through every gear.",
+    "features": [
+      "M Sport differential",
+      "Adaptive suspension",
+      "Harman Kardon audio",
+      "Head-up display",
+      "Wireless CarPlay",
+      "Ventilated seats"
+    ],
+    "sellerName": "Coastline Motors",
+    "sellerType": "Dealer",
+    "listedAt": "2026-04-02T10:00:00Z"
+  },
+  {
+    "id": "toyota-rav4-hybrid-2023-03",
+    "make": "Toyota",
+    "model": "RAV4 Hybrid XLE",
+    "year": 2023,
+    "price": 31450,
+    "mileage": 12980,
+    "fuelType": "Hybrid",
+    "transmission": "Automatic",
+    "bodyType": "SUV",
+    "color": "Magnetic Gray",
+    "images": [
+      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "location": "Denver, CO",
+    "description": "Hybrid efficiency meets real-world capability. All-wheel drive, roof rails, and Toyota Safety Sense 2.5. Averages 39 MPG combined.",
+    "features": [
+      "AWD",
+      "Toyota Safety Sense 2.5",
+      "Heated steering wheel",
+      "Power liftgate",
+      "Apple CarPlay",
+      "Roof rails"
+    ],
+    "sellerName": "Rocky Mountain Auto",
+    "sellerType": "Dealer",
+    "listedAt": "2026-03-30T10:00:00Z"
+  },
+  {
+    "id": "porsche-911-carrera-2021-04",
+    "make": "Porsche",
+    "model": "911 Carrera",
+    "year": 2021,
+    "price": 98500,
+    "mileage": 15620,
+    "fuelType": "Gasoline",
+    "transmission": "Automatic",
+    "bodyType": "Coupe",
+    "color": "GT Silver Metallic",
+    "images": [
+      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1611859266238-4b98091d9d9b?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "location": "Los Angeles, CA",
+    "description": "Meticulously maintained 992 Carrera with Sport Chrono, PASM, and the full leather interior. Garage-kept and service records available.",
+    "features": [
+      "Sport Chrono Package",
+      "PASM adaptive dampers",
+      "BOSE Surround Sound",
+      "14-way Sport Seats Plus",
+      "Lane Change Assist",
+      "Park Assist with cameras"
+    ],
+    "sellerName": "Andrew K.",
+    "sellerType": "Private",
+    "listedAt": "2026-03-10T10:00:00Z"
+  },
+  {
+    "id": "ford-f150-lightning-2023-05",
+    "make": "Ford",
+    "model": "F-150 Lightning Lariat",
+    "year": 2023,
+    "price": 62990,
+    "mileage": 9840,
+    "fuelType": "Electric",
+    "transmission": "Automatic",
+    "bodyType": "Truck",
+    "color": "Antimatter Blue",
+    "images": [
+      "https://images.unsplash.com/photo-1571607388263-1044f9ea01dd?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "location": "Seattle, WA",
+    "description": "Extended range Lightning with 320 miles of range and Pro Power Onboard. Great for jobsites, road trips, and weekend camping.",
+    "features": [
+      "Extended Range battery",
+      "Pro Power Onboard (9.6 kW)",
+      "BlueCruise hands-free driving",
+      "Max Trailer Tow package",
+      "Panoramic moonroof",
+      "B&O 18-speaker audio"
+    ],
+    "sellerName": "Pacific Ford",
+    "sellerType": "Dealer",
+    "listedAt": "2026-04-06T10:00:00Z"
+  },
+  {
+    "id": "honda-civic-si-2022-06",
+    "make": "Honda",
+    "model": "Civic Si",
+    "year": 2022,
+    "price": 26400,
+    "mileage": 21500,
+    "fuelType": "Gasoline",
+    "transmission": "Manual",
+    "bodyType": "Sedan",
+    "color": "Blazing Orange Pearl",
+    "images": [
+      "https://images.unsplash.com/photo-1606611013016-969c19ba27bc?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1614026480209-ad0c1c4b4a8a?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "location": "Portland, OR",
+    "description": "A rare 6-speed Civic Si in factory orange. Stock, unmodified, and enthusiast-owned. Perfect daily with real driver engagement.",
+    "features": [
+      "6-speed manual",
+      "Limited-slip differential",
+      "Adaptive dampers",
+      "Bose premium audio",
+      "Wireless charging",
+      "Honda Sensing"
+    ],
+    "sellerName": "Marta V.",
+    "sellerType": "Private",
+    "listedAt": "2026-04-12T10:00:00Z"
+  },
+  {
+    "id": "audi-q5-2023-07",
+    "make": "Audi",
+    "model": "Q5 Premium Plus",
+    "year": 2023,
+    "price": 44200,
+    "mileage": 17330,
+    "fuelType": "Gasoline",
+    "transmission": "Automatic",
+    "bodyType": "SUV",
+    "color": "Mythos Black",
+    "images": [
+      "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "location": "Chicago, IL",
+    "description": "Q5 with quattro AWD, virtual cockpit, and Bang & Olufsen audio. CPO eligible with clean Carfax and balance of factory warranty.",
+    "features": [
+      "Quattro AWD",
+      "Virtual Cockpit Plus",
+      "Bang & Olufsen audio",
+      "Heated & ventilated seats",
+      "Panoramic sunroof",
+      "Adaptive cruise"
+    ],
+    "sellerName": "Lakeshore Audi",
+    "sellerType": "Dealer",
+    "listedAt": "2026-04-08T10:00:00Z"
+  },
+  {
+    "id": "mini-cooper-s-2021-08",
+    "make": "MINI",
+    "model": "Cooper S Hardtop",
+    "year": 2021,
+    "price": 21800,
+    "mileage": 28900,
+    "fuelType": "Gasoline",
+    "transmission": "Manual",
+    "bodyType": "Hatchback",
+    "color": "Chili Red",
+    "images": [
+      "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "location": "Brooklyn, NY",
+    "description": "Iconic Chili Red over black with a 6-speed manual. Go-kart handling, punchy turbo four, and an unmistakable grin factor.",
+    "features": [
+      "6-speed manual",
+      "Sport suspension",
+      "JCW steering wheel",
+      "Apple CarPlay",
+      "Panoramic sunroof",
+      "Heated seats"
+    ],
+    "sellerName": "Borough Autos",
+    "sellerType": "Dealer",
+    "listedAt": "2026-02-28T10:00:00Z"
+  },
+  {
+    "id": "mercedes-eqe-2023-09",
+    "make": "Mercedes-Benz",
+    "model": "EQE 350 4MATIC",
+    "year": 2023,
+    "price": 68990,
+    "mileage": 10420,
+    "fuelType": "Electric",
+    "transmission": "Automatic",
+    "bodyType": "EV",
+    "color": "Obsidian Black",
+    "images": [
+      "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "location": "San Francisco, CA",
+    "description": "The EQE glides. Air suspension, MBUX Hyperscreen, and rear-wheel steering make city and highway effortless. 300+ miles of range.",
+    "features": [
+      "AIRMATIC air suspension",
+      "MBUX Hyperscreen",
+      "Rear-axle steering",
+      "Burmester 3D audio",
+      "Digital light",
+      "Augmented video for navigation"
+    ],
+    "sellerName": "Bay Area Mercedes",
+    "sellerType": "Dealer",
+    "listedAt": "2026-04-01T10:00:00Z"
+  },
+  {
+    "id": "subaru-outback-2022-10",
+    "make": "Subaru",
+    "model": "Outback Wilderness",
+    "year": 2022,
+    "price": 33250,
+    "mileage": 34210,
+    "fuelType": "Gasoline",
+    "transmission": "Automatic",
+    "bodyType": "SUV",
+    "color": "Geyser Blue",
+    "images": [
+      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "location": "Boulder, CO",
+    "description": "Adventure-ready Outback Wilderness with upgraded ground clearance, all-terrain tires, and a front skid plate. Trail-tested, family-approved.",
+    "features": [
+      "9.5\" ground clearance",
+      "All-terrain tires",
+      "EyeSight Driver Assist",
+      "Front skid plate",
+      "Heated seats",
+      "Roof rails with 700lb static capacity"
+    ],
+    "sellerName": "Jordan P.",
+    "sellerType": "Private",
+    "listedAt": "2026-03-18T10:00:00Z"
+  },
+  {
+    "id": "mazda-mx5-2020-11",
+    "make": "Mazda",
+    "model": "MX-5 Miata Club",
+    "year": 2020,
+    "price": 24900,
+    "mileage": 19840,
+    "fuelType": "Gasoline",
+    "transmission": "Manual",
+    "bodyType": "Coupe",
+    "color": "Soul Red Crystal",
+    "images": [
+      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "location": "Nashville, TN",
+    "description": "The answer is always Miata. Club trim with Brembo/BBS/Recaro package and a factory 6-speed. Exceptionally well cared for.",
+    "features": [
+      "Brembo brakes",
+      "BBS wheels",
+      "Recaro sport seats",
+      "Bilstein dampers",
+      "Limited-slip differential",
+      "Soft top"
+    ],
+    "sellerName": "Music City Roadsters",
+    "sellerType": "Dealer",
+    "listedAt": "2026-03-05T10:00:00Z"
+  },
+  {
+    "id": "volkswagen-id4-2023-12",
+    "make": "Volkswagen",
+    "model": "ID.4 Pro S",
+    "year": 2023,
+    "price": 36800,
+    "mileage": 14560,
+    "fuelType": "Electric",
+    "transmission": "Automatic",
+    "bodyType": "EV",
+    "color": "Glacier White",
+    "images": [
+      "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1617704548623-340376564e68?auto=format&fit=crop&w=1600&q=80"
+    ],
+    "location": "Phoenix, AZ",
+    "description": "Pro S trim with heat pump, panoramic fixed glass roof, and 82 kWh battery. Includes three years of Electrify America fast charging.",
+    "features": [
+      "82 kWh battery",
+      "Heat pump",
+      "Panoramic glass roof",
+      "Wireless App-Connect",
+      "30-color ambient lighting",
+      "Travel Assist"
+    ],
+    "sellerName": "Desert VW",
+    "sellerType": "Dealer",
+    "listedAt": "2026-04-11T10:00:00Z"
+  }
+]
