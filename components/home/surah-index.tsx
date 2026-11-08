@@ -4,7 +4,10 @@ import { SearchLg } from "@untitledui/icons";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useDeferredValue, useMemo, useState } from "react";
+import { EmptyState } from "@/components/application/empty-state/empty-state";
 import { Tabs } from "@/components/application/tabs/tabs";
+import { Badge } from "@/components/base/badges/badges";
+import { Button } from "@/components/base/buttons/button";
 import { Input } from "@/components/base/input/input";
 import { JUZ_STARTS } from "@/lib/constants";
 import type { Chapter } from "@/lib/types";
@@ -39,8 +42,13 @@ function SurahCard({ chapter, i }: { chapter: Chapter; i: number }) {
           <span lang="ar" dir="rtl" className="block font-quran text-2xl leading-tight text-primary">
             {chapter.nameArabic}
           </span>
-          <span className="block text-xs text-quaternary">
-            {chapter.versesCount} ayat · {chapter.revelation === "meccan" ? "Meccan" : "Medinan"}
+          <span className="mt-1 flex justify-end gap-1">
+            <Badge type="modern" size="sm" color="gray">
+              {chapter.versesCount} ayat
+            </Badge>
+            <Badge type="pill-color" size="sm" color={chapter.revelation === "meccan" ? "warning" : "brand"}>
+              {chapter.revelation === "meccan" ? "Meccan" : "Medinan"}
+            </Badge>
           </span>
         </span>
       </Link>
@@ -110,9 +118,30 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
           </AnimatePresence>
         </ul>
         {results.length === 0 && (
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-16 text-center text-tertiary">
-            No surah matches “{query}”.
-          </motion.p>
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="py-12">
+            <EmptyState size="sm">
+              <EmptyState.Header pattern="circle">
+                <EmptyState.FeaturedIcon icon={SearchLg} color="gray" theme="modern" />
+              </EmptyState.Header>
+              <EmptyState.Content>
+                <EmptyState.Title>No surah found</EmptyState.Title>
+                <EmptyState.Description>
+                  Nothing matches “{query}”. Try a name like Kahf, a meaning like “The Cave”, or a number from 1 to 114.
+                </EmptyState.Description>
+              </EmptyState.Content>
+              <EmptyState.Footer>
+                <Button
+                  color="secondary"
+                  onPress={() => {
+                    setQuery("");
+                    setFilter("all");
+                  }}
+                >
+                  Clear search
+                </Button>
+              </EmptyState.Footer>
+            </EmptyState>
+          </motion.div>
         )}
       </div>
     </section>
@@ -143,7 +172,9 @@ export function JuzIndex({ chapters }: { chapters: Chapter[] }) {
                 )}
               >
                 <span className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-tertiary">Juzʾ {i + 1}</span>
+                  <Badge type="pill-color" size="sm" color="gray">
+                    Juzʾ {i + 1}
+                  </Badge>
                   <span lang="ar" className="font-quran text-lg text-gold-600 dark:text-gold-400">
                     {toArabicNumber(i + 1)}
                   </span>

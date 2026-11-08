@@ -3,6 +3,7 @@
 import { ArrowRight, BookOpen01, Bookmark } from "@untitledui/icons";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
+import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
 import { useLibrary } from "@/lib/library";
 import type { Chapter } from "@/lib/types";
 
@@ -20,9 +21,7 @@ export function ContinueReading({ chapters }: { chapters: Chapter[] }) {
             href={`/surah/${ch.id}#v-${lastRead.ayah}`}
             className="group flex items-center gap-4 rounded-2xl bg-brand-solid p-5 text-white shadow-lg outline-focus-ring transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            <span className="flex size-12 items-center justify-center rounded-xl bg-white/15">
-              <BookOpen01 className="size-6" />
-            </span>
+            <FeaturedIcon icon={BookOpen01} color="gray" theme="dark" size="lg" />
             <span className="flex-1">
               <span className="block text-sm text-white/80">Continue reading</span>
               <span className="block text-lg font-semibold">
@@ -37,9 +36,7 @@ export function ContinueReading({ chapters }: { chapters: Chapter[] }) {
             href="/bookmarks"
             className="group flex items-center gap-4 rounded-2xl border border-secondary bg-primary p-5 outline-focus-ring transition hover:-translate-y-0.5 hover:border-brand focus-visible:outline-2"
           >
-            <span className="flex size-12 items-center justify-center rounded-xl bg-brand-primary text-fg-brand-primary">
-              <Bookmark className="size-6" />
-            </span>
+            <FeaturedIcon icon={Bookmark} color="brand" theme="light" size="lg" />
             <span className="flex-1">
               <span className="block text-sm text-tertiary">Bookmarks</span>
               <span className="block text-lg font-semibold text-primary">

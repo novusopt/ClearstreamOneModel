@@ -30,7 +30,7 @@ export function ReaderSettings() {
       <Button size="sm" color="secondary" iconLeading={Settings04} aria-label="Reader settings">
         <span className="hidden sm:inline">Settings</span>
       </Button>
-      <SlideoutMenu isDismissable>
+      <SlideoutMenu isDismissable className="z-50">
         {({ close }) => (
           <>
             <SlideoutMenu.Header onClose={close}>

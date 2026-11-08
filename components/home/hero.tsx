@@ -4,6 +4,7 @@ import { ArrowRight, BookOpen01, ChevronDown } from "@untitledui/icons";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { Button } from "@/components/base/buttons/button";
+import { ButtonUtility } from "@/components/base/buttons/button-utility";
 
 const HEADLINE = ["A", "lantern", "for", "the", "Qurʾān."];
 
@@ -100,16 +101,14 @@ export function Hero() {
         </motion.div>
       </motion.div>
 
-      <motion.a
-        href="#features"
-        aria-label="Scroll to features"
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1, y: [0, 8, 0] }}
         transition={{ opacity: { delay: 1.4 }, y: { repeat: Infinity, duration: 2, ease: "easeInOut" } }}
-        className="absolute bottom-8 left-1/2 flex size-10 -translate-x-1/2 items-center justify-center rounded-full text-fg-quaternary ring-1 ring-secondary outline-focus-ring focus-visible:outline-2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
       >
-        <ChevronDown className="size-5" />
-      </motion.a>
+        <ButtonUtility href="#features" size="sm" color="secondary" tooltip="Scroll to features" icon={ChevronDown} className="rounded-full" />
+      </motion.div>
     </section>
   );
 }

@@ -1,15 +1,12 @@
 "use client";
 
-import { FastForward, Headphones02, PauseCircle, PlayCircle, Repeat04, SkipBack, SkipForward, XClose } from "@untitledui/icons";
+import { FastForward, PauseCircle, PlayCircle, Repeat04, SkipBack, SkipForward, XClose } from "@untitledui/icons";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
-import {
-  Button as AriaButton,
-  Slider as AriaSlider,
-  SliderThumb as AriaSliderThumb,
-  SliderTrack as AriaSliderTrack,
-} from "react-aria-components";
+import { Avatar } from "@/components/base/avatar/avatar";
+import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
+import { Slider } from "@/components/base/slider/slider";
 import { getReciter } from "@/lib/audio";
 import { player, usePlayer, useTick } from "@/lib/audio-engine";
 import { setSettings, useSettings } from "@/lib/settings";
@@ -17,6 +14,13 @@ import { formatTime } from "@/lib/utils";
 import { cx } from "@/utils/cx";
 
 const RATES = [0.75, 1, 1.25, 1.5];
+const initials = (name: string) =>
+  name
+    .split(" ")
+    .filter((w) => /^[A-Z]/.test(w))
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("");
 const REPEAT_LABEL = { off: "Repeat off", ayah: "Repeat ayah", surah: "Repeat surah" } as const;
 const REPEAT_NEXT = { off: "ayah", ayah: "surah", surah: "off" } as const;
 
@@ -40,28 +44,16 @@ function Progress() {
   return (
     <div className="flex w-full items-center gap-3 text-xs text-tertiary tabular-nums">
       <span className="w-9 text-right">{formatTime(time)}</span>
-      <AriaSlider
-        aria-label="Seek"
-        value={duration ? Math.min(time, duration) : 0}
-        minValue={0}
-        maxValue={duration || 1}
-        step={0.1}
-        onChange={(v) => player.seek(Array.isArray(v) ? v[0] : v)}
-        className="flex-1"
-      >
-        <AriaSliderTrack className="group relative h-4 w-full cursor-pointer">
-          {({ state }) => (
-            <>
-              <span className="absolute top-1/2 h-1 w-full -translate-y-1/2 rounded-full bg-quaternary" />
-              <span
-                className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-brand-solid"
-                style={{ width: `${state.getThumbPercent(0) * 100}%` }}
-              />
-              <AriaSliderThumb className="top-1/2 size-3 rounded-full bg-white shadow-md ring-2 ring-brand outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2" />
-            </>
-          )}
-        </AriaSliderTrack>
-      </AriaSlider>
+      <div className="flex-1">
+        <Slider
+          aria-label="Seek"
+          value={duration ? Math.min(time, duration) : 0}
+          minValue={0}
+          maxValue={duration || 1}
+          step={0.1}
+          onChange={(v) => player.seek(Array.isArray(v) ? v[0] : v)}
+        />
+      </div>
       <span className="w-9">{formatTime(duration)}</span>
     </div>
   );
@@ -93,9 +85,7 @@ export function AudioPlayerBar() {
         >
           <div className="mx-auto flex max-w-4xl flex-col gap-2 rounded-2xl bg-primary/85 p-3 shadow-xl ring-1 ring-secondary_alt backdrop-blur-xl md:flex-row md:items-center md:gap-5 md:px-5">
             <div className="flex min-w-0 items-center gap-3 md:w-60">
-              <span className="relative flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-primary text-fg-brand-primary">
-                <Headphones02 className="size-5" />
-              </span>
+              <Avatar size="md" initials={initials(reciter.name)} alt={reciter.name} />
               <div className="min-w-0 flex-1">
                 <Link href={`/surah/${surah}#v-${ayah}`} className="flex items-center gap-2 truncate text-sm font-semibold text-primary hover:underline">
                   {surahName} <span className="text-tertiary tabular-nums">{surah}:{ayah}</span>
@@ -112,22 +102,25 @@ export function AudioPlayerBar() {
               <div className="flex items-center gap-1">
                 <ButtonUtility size="sm" color="tertiary" tooltip={REPEAT_LABEL[repeat]} icon={Repeat04} className={cx(repeat !== "off" && "text-brand-secondary")} onPress={() => setSettings({ repeat: REPEAT_NEXT[repeat] })} />
                 <ButtonUtility size="sm" color="tertiary" tooltip="Previous ayah" icon={SkipBack} onPress={() => player.prev()} />
-                <AriaButton
+                <Button
                   aria-label={playing ? "Pause" : "Play"}
+                  size="lg"
+                  color="primary"
+                  iconLeading={playing ? PauseCircle : PlayCircle}
                   onPress={() => player.toggle()}
-                  className="flex size-11 cursor-pointer items-center justify-center rounded-full bg-brand-solid text-white shadow-md outline-focus-ring transition hover:scale-105 hover:bg-brand-solid_hover focus-visible:outline-2 focus-visible:outline-offset-2 active:scale-95"
-                >
-                  {playing ? <PauseCircle className="size-6" /> : <PlayCircle className="size-6" />}
-                </AriaButton>
+                  className="rounded-full"
+                />
                 <ButtonUtility size="sm" color="tertiary" tooltip="Next ayah" icon={SkipForward} onPress={() => player.next()} />
-                <AriaButton
+                <Button
                   aria-label={`Playback speed ${rate}x`}
+                  size="xs"
+                  color="tertiary"
+                  iconLeading={FastForward}
                   onPress={() => player.setRate(RATES[(RATES.indexOf(rate) + 1) % RATES.length] ?? 1)}
-                  className="flex h-8 min-w-12 cursor-pointer items-center justify-center gap-1 rounded-md px-2 text-xs font-semibold text-tertiary tabular-nums outline-focus-ring hover:bg-primary_hover focus-visible:outline-2"
+                  className="tabular-nums"
                 >
-                  <FastForward className="size-3.5" />
                   {rate}×
-                </AriaButton>
+                </Button>
               </div>
               <Progress />
             </div>

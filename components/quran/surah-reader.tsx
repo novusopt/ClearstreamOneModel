@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo } from "react";
 import { Button } from "@/components/base/buttons/button";
+import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
 import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
 import { scrollToElement, useLenis } from "@/components/providers/smooth-scroll";
 import { ReaderSettings } from "@/components/quran/reader-settings";
@@ -152,9 +153,7 @@ function SurahNavLink({ chapter, direction }: { chapter: Chapter; direction: "pr
       href={`/surah/${chapter.id}`}
       className={`group flex items-center gap-4 rounded-2xl border border-secondary bg-primary p-5 outline-focus-ring transition hover:-translate-y-0.5 hover:border-brand hover:shadow-lg focus-visible:outline-2 ${direction === "next" ? "flex-row-reverse text-right sm:col-start-2" : ""}`}
     >
-      <span className="flex size-10 items-center justify-center rounded-full bg-brand-primary text-fg-brand-primary transition group-hover:scale-110">
-        <Icon className="size-5" />
-      </span>
+      <FeaturedIcon icon={Icon} color="brand" theme="light" size="md" className="transition group-hover:scale-110" />
       <span className="min-w-0 flex-1">
         <span className="block text-xs font-medium text-tertiary">{direction === "prev" ? "Previous" : "Next"} surah</span>
         <span className="block truncate font-semibold text-primary">

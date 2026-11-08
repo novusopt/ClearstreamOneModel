@@ -3,6 +3,8 @@
 import { BookOpen01, Headphones02, LayersThree01, Palette, Translate01, Type01 } from "@untitledui/icons";
 import { AnimatePresence, motion, useMotionTemplate, useMotionValue, useScroll, useTransform } from "motion/react";
 import { type FC, type MouseEvent, type ReactNode, useEffect, useRef, useState } from "react";
+import { Badge } from "@/components/base/badges/badges";
+import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
 import { TajweedText } from "@/components/quran/tajweed-text";
 import { TAJWEED_RULES } from "@/lib/constants";
 import type { Verse } from "@/lib/types";
@@ -62,9 +64,7 @@ function BentoCard({
     >
       <motion.div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: spotlight }} />
       <div className="relative flex items-center gap-2 text-sm font-semibold text-brand-secondary">
-        <span className="flex size-8 items-center justify-center rounded-lg bg-brand-primary">
-          <Icon className="size-4" />
-        </span>
+        <FeaturedIcon icon={Icon} color="brand" theme="light" size="sm" />
         {eyebrow}
       </div>
       <h3 className="relative mt-4 text-xl font-display font-medium tracking-tight text-primary md:text-display-xs">{title}</h3>
@@ -108,10 +108,10 @@ function TajweedDemo({ verse }: { verse: Verse }) {
       </motion.p>
       <div className="flex flex-wrap gap-1.5">
         {TAJWEED_RULES.slice(0, 7).map((r) => (
-          <span key={r.id} className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary ring-1 ring-secondary">
+          <Badge key={r.id} type="modern" size="sm" color="gray" className="gap-1.5">
             <span className={`tj-${r.classes[0]} size-2 rounded-full bg-current`} />
             {r.name}
-          </span>
+          </Badge>
         ))}
       </div>
     </div>

@@ -80,6 +80,18 @@ Mishkah has its own identity. Do not imitate other Qurʾān apps' branding, layo
 - Type: `font-display` (Fraunces) for headings, Inter for UI, `font-quran` (Amiri Quran) for Arabic.
 - The tajweed colours are Mishkah's own palette (`--tj-*` in `globals.css`), grouped by rule family.
 
+## Untitled UI first
+
+Every control and standard UI pattern uses an Untitled UI component (`components/base`, `components/application`, `components/foundations`):
+Button / ButtonUtility / ButtonGroup, Badge, Input, Select, Toggle, Slider, Tabs, Tooltip, Modal, SlideoutMenu,
+NavItemBase, Avatar, FeaturedIcon, EmptyState, LoadingIndicator. Before hand-building something, check the
+Untitled UI React repo (github.com/untitleduico/react) and vendor the component instead.
+
+The only deliberately custom pieces are Qurʾān-specific: the interlinear `Word` token (a single button whose CSS
+hover card stays light enough for 6,000+ words in Al-Baqarah), ayah markers, tajweed text, and the decorative
+bento-grid demos and scroll story. Vendored components keep Untitled UI conventions (kebab-case files,
+`Aria*` import aliases); fix overlay stacking by passing `className="z-50"` rather than editing them.
+
 ## Code Style
 
 - Follow the Untitled UI conventions in vendored components: kebab-case file names,

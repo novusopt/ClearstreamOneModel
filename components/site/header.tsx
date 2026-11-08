@@ -1,21 +1,54 @@
 "use client";
 
-import { BookOpen01 } from "@untitledui/icons";
+import { BookOpen01, Bookmark, Grid01, LayersThree01, Menu02, Stars02 } from "@untitledui/icons";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import Link from "next/link";
 import { useState } from "react";
+import { NavItemBase } from "@/components/application/app-navigation/base-components/nav-item";
+import { SlideoutMenu } from "@/components/application/slideout-menus/slideout-menu";
 import { Button } from "@/components/base/buttons/button";
+import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { Logo } from "@/components/site/logo";
 import { ThemeToggle } from "@/components/site/theme-toggle";
 import { useLibrary } from "@/lib/library";
 import { cx } from "@/utils/cx";
 
 const NAV = [
-  { href: "/#surahs", label: "Surahs" },
-  { href: "/#juz", label: "Juzʾ" },
-  { href: "/#features", label: "Features" },
-  { href: "/bookmarks", label: "Bookmarks" },
+  { href: "/#surahs", label: "Surahs", icon: Grid01 },
+  { href: "/#juz", label: "Juzʾ", icon: LayersThree01 },
+  { href: "/#features", label: "Features", icon: Stars02 },
+  { href: "/bookmarks", label: "Bookmarks", icon: Bookmark },
 ];
+
+function MobileMenu() {
+  return (
+    <SlideoutMenu.Trigger>
+      <ButtonUtility size="sm" color="tertiary" tooltip="Open menu" tooltipPlacement="bottom" icon={Menu02} className="md:hidden" />
+      <SlideoutMenu isDismissable className="z-50">
+        {({ close }) => (
+          <>
+            <SlideoutMenu.Header onClose={close}>
+              <Logo />
+            </SlideoutMenu.Header>
+            <SlideoutMenu.Content>
+              <nav aria-label="Mobile">
+                <ul className="flex flex-col gap-1">
+                  {NAV.map((n) => (
+                    <li key={n.href}>
+                      <NavItemBase type="link" href={n.href} icon={n.icon} onClick={close}>
+                        {n.label}
+                      </NavItemBase>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </SlideoutMenu.Content>
+          </>
+        )}
+      </SlideoutMenu>
+    </SlideoutMenu.Trigger>
+  );
+}
 
 export function Header() {
   const { scrollY } = useScroll();
@@ -47,22 +80,15 @@ export function Header() {
         </Link>
         <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
           {NAV.map((n) => (
-            <Link
-              key={n.href}
-              href={n.href}
-              className="rounded-lg px-3 py-2 text-sm font-semibold text-tertiary outline-focus-ring transition hover:bg-primary_hover hover:text-secondary focus-visible:outline-2"
-            >
+            <Button key={n.href} href={n.href} size="sm" color="tertiary">
               {n.label}
-            </Link>
+            </Button>
           ))}
         </nav>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           <ThemeToggle />
-          <Button
-            size="sm"
-            href={lastRead ? `/surah/${lastRead.surah}#v-${lastRead.ayah}` : "/surah/1"}
-            iconLeading={BookOpen01}
-          >
+          <MobileMenu />
+          <Button size="sm" href={lastRead ? `/surah/${lastRead.surah}#v-${lastRead.ayah}` : "/surah/1"} iconLeading={BookOpen01}>
             <span className="hidden sm:inline">{lastRead ? "Continue" : "Start reading"}</span>
             <span className="sm:hidden">Read</span>
           </Button>

@@ -8,6 +8,7 @@ import { type ReactNode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-aria-components";
 import { Toaster } from "sonner";
+import { LoadingIndicator } from "@/components/application/loading-indicator/loading-indicator";
 import { BentoFeatures } from "@/components/home/bento-features";
 import { ContinueReading } from "@/components/home/continue-reading";
 import { FatihahStory } from "@/components/home/fatihah-story";
@@ -48,9 +49,8 @@ function useData<T>(file: string): T | null {
 
 function Loading({ label }: { label: string }) {
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 pt-28 text-tertiary">
-      <span className="size-10 animate-spin rounded-full border-2 border-secondary border-t-brand-600" />
-      <p className="text-sm">{label}</p>
+    <div className="flex min-h-[60vh] items-center justify-center pt-28">
+      <LoadingIndicator type="dot-circle" size="md" label={label} />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { Bookmark, BookmarkCheck, Copy01, PauseCircle, PlayCircle, Share07 } fro
 import { motion } from "motion/react";
 import { memo } from "react";
 import { toast } from "sonner";
+import { Badge } from "@/components/base/badges/badges";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { Word } from "@/components/quran/word";
 import { AyahMarker } from "@/components/quran/ayah-marker";
@@ -76,9 +77,9 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
       )}
     >
       <div className="mb-4 flex items-center justify-between gap-2">
-        <span className="inline-flex min-w-14 items-center justify-center rounded-t-full rounded-b-md bg-brand-primary px-3 pt-2.5 pb-1 font-display text-sm font-medium text-brand-secondary tabular-nums ring-1 ring-brand/30">
+        <Badge type="pill-color" color="brand" size="lg" className="min-w-14 justify-center rounded-t-full rounded-b-md pt-2 font-display tabular-nums">
           {key}
-        </span>
+        </Badge>
         <div className="flex items-center gap-0.5 opacity-100 transition-opacity duration-300 md:opacity-60 md:group-hover/verse:opacity-100 md:group-focus-within/verse:opacity-100">
           <ButtonUtility
             size="sm"
