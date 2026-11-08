@@ -66,7 +66,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Footer />
           <AudioPlayerBar />
           <CommandPalette chapters={getChapters()} />
-          <Toaster position="bottom-center" offset={104} richColors closeButton />
+          <Toaster position="bottom-center" offset={112} toastOptions={{ unstyled: true }} />
         </Providers>
       </body>
     </html>

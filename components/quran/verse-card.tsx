@@ -3,7 +3,7 @@
 import { Bookmark, BookmarkCheck, CheckCircle, Copy01, Edit05, Eye, EyeOff, Image01, Link01, PauseCircle, PlayCircle, Share07, Type01 } from "@untitledui/icons";
 import { motion } from "motion/react";
 import { memo, useState } from "react";
-import { toast } from "sonner";
+import { notify } from "@/components/application/notifications/notification";
 import { Badge, BadgeWithIcon } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
@@ -61,9 +61,9 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
   const copy = async (value: string, label: string) => {
     try {
       await navigator.clipboard.writeText(value);
-      toast.success(label);
+      notify.success(label, { id: "clipboard" });
     } catch {
-      toast.error("Couldn't access the clipboard");
+      notify.error("Couldn't copy", { description: "Your browser blocked clipboard access. Select the text and copy it instead." });
     }
   };
 
@@ -85,7 +85,8 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
     if (action === "image") openVerseDialog(target, "image");
     if (action === "memorised") {
       const added = toggleMemorised(surah, verse.n);
-      toast(added ? `Marked ${key} as memorised` : `Unmarked ${key}`);
+      if (added) notify.success(`Ayah ${key} memorised`, { id: `mem-${key}`, description: "Keep going: it's added to your Library." });
+      else notify.neutral(`Removed ${key} from memorised`, { id: `mem-${key}` });
     }
   };
 
@@ -138,7 +139,18 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
             className={cx(bookmarked && "text-fg-brand-primary")}
             onPress={() => {
               const added = toggleBookmark(surah, verse.n);
-              toast(added ? `Bookmarked ${key}` : `Removed bookmark ${key}`);
+              if (added)
+                notify.success(`Bookmarked ${surahName} ${key}`, {
+                  id: `bm-${key}`,
+                  icon: BookmarkCheck,
+                  action: { label: "Undo", onPress: () => toggleBookmark(surah, verse.n) },
+                });
+              else
+                notify.neutral(`Bookmark removed`, {
+                  id: `bm-${key}`,
+                  icon: Bookmark,
+                  action: { label: "Undo", onPress: () => toggleBookmark(surah, verse.n) },
+                });
             }}
           />
           <Dropdown.Root>

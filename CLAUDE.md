@@ -92,7 +92,10 @@ Mishkah has its own identity. Do not imitate other Qurʾān apps' branding, layo
 
 Every control and standard UI pattern uses an Untitled UI component (`components/base`, `components/application`, `components/foundations`):
 Button / ButtonUtility / ButtonGroup, Badge, Input, Select, Toggle, Slider, Tabs, Tooltip, Modal, SlideoutMenu,
-NavItemBase, Avatar, FeaturedIcon, EmptyState, LoadingIndicator. Before hand-building something, check the
+NavItemBase, Avatar, FeaturedIcon, EmptyState, LoadingIndicator, Dropdown, TextArea, ProgressBar.
+Alerts and toasts: the open-source kit has no component for these, so `components/application/alerts/alert.tsx`
+(inline) and `components/application/notifications/notification.tsx` (`notify.success/error/warning/info/neutral`,
+rendered via sonner's headless `toast.custom`) follow the Untitled UI anatomy. Never call sonner's `toast()` directly. Before hand-building something, check the
 Untitled UI React repo (github.com/untitleduico/react) and vendor the component instead.
 
 The only deliberately custom pieces are Qurʾān-specific: the interlinear `Word` token (a single button whose CSS

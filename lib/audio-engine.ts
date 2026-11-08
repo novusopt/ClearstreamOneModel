@@ -1,6 +1,6 @@
 "use client";
 
-import { toast } from "sonner";
+import { notify } from "@/components/application/notifications/notification";
 import { ayahAudioUrls, getReciter, wordAudioUrl } from "@/lib/audio";
 import { createStore, useStore } from "@/lib/create-store";
 import { IS_ARTIFACT } from "@/lib/runtime";
@@ -147,7 +147,7 @@ function onEnded() {
     }
     playerStore.set({ status: "paused", range: null });
     tickStore.set({ word: -1 });
-    toast.success("Repetition complete", { description: `${range.times}× ayat ${verses[range.from].n}–${verses[range.to].n}` });
+    notify.success("Repetition complete", { description: `${range.times}× ayat ${verses[range.from].n}–${verses[range.to].n}. Hide the words and test yourself.` });
     return;
   }
   const { repeat } = settingsStore.get();
@@ -160,9 +160,9 @@ function onEnded() {
 
 function audioBlocked(): boolean {
   if (!IS_ARTIFACT) return false;
-  toast.info("Recitation isn't available on this preview page", {
+  notify.warning("Recitation isn't available here", {
     id: "audio-blocked",
-    description: "Audio streams from external recitation servers, which this hosted page can't reach. It plays in the full app.",
+    description: "This hosted preview can't reach the recitation servers. Audio plays in the full app.",
   });
   return true;
 }

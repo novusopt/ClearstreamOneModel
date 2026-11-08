@@ -1,11 +1,10 @@
 "use client";
 
-import { BookOpen01 } from "@untitledui/icons";
+import { ArrowRight, BookOpen01 } from "@untitledui/icons";
 import { AnimatePresence, motion } from "motion/react";
 import { useState, useSyncExternalStore } from "react";
 import { Button } from "@/components/base/buttons/button";
-import { CloseButton } from "@/components/base/buttons/close-button";
-import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
+import { Alert } from "@/components/application/alerts/alert";
 import { libraryStore } from "@/lib/library";
 
 const noop = () => () => {};
@@ -37,27 +36,33 @@ export function ResumeBanner({ surah, total, onResume }: { surah: number; total:
           exit={{ opacity: 0, y: -8, height: 0 }}
           className="overflow-hidden"
         >
-          <div role="status" className="mb-6 flex flex-col gap-4 rounded-2xl border border-brand bg-brand-primary/50 p-4 sm:flex-row sm:items-center">
-            <FeaturedIcon icon={BookOpen01} color="brand" theme="light" size="md" />
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-primary">Continue where you left off?</p>
-              <p className="text-sm text-tertiary">
-                You were at ayah {entry.ayah} of {total}, {ago(entry.at)}.
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                onPress={() => {
-                  setDismissed(true);
-                  onResume(entry.ayah);
-                }}
-              >
-                Continue from {entry.ayah}
-              </Button>
-              <CloseButton size="sm" label="Start from the beginning" onClick={() => setDismissed(true)} />
-            </div>
-          </div>
+          <Alert
+            color="brand"
+            icon={BookOpen01}
+            className="mb-6"
+            title="Continue where you left off?"
+            description={`You were at ayah ${entry.ayah} of ${total}, ${ago(entry.at)}.`}
+            onClose={() => setDismissed(true)}
+            closeLabel="Start from the beginning"
+            actions={
+              <>
+                <Button size="sm" color="link-gray" onPress={() => setDismissed(true)}>
+                  Start from the beginning
+                </Button>
+                <Button
+                  size="sm"
+                  color="link-color"
+                  iconTrailing={ArrowRight}
+                  onPress={() => {
+                    setDismissed(true);
+                    onResume(entry.ayah);
+                  }}
+                >
+                  Continue from ayah {entry.ayah}
+                </Button>
+              </>
+            }
+          />
         </motion.div>
       )}
     </AnimatePresence>

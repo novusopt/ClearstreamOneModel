@@ -3,7 +3,7 @@
 import { Copy01, Download01, Share07, Trash01 } from "@untitledui/icons";
 import { useEffect, useRef, useState } from "react";
 import { Heading as AriaHeading } from "react-aria-components";
-import { toast } from "sonner";
+import { notify } from "@/components/application/notifications/notification";
 import { Dialog, Modal, ModalOverlay } from "@/components/application/modals/modal";
 import { Button } from "@/components/base/buttons/button";
 import { CloseButton } from "@/components/base/buttons/close-button";
@@ -64,7 +64,8 @@ function NoteEditor({ target }: { target: DialogTarget }) {
 
   const save = () => {
     saveNote(target.surah, target.ayah, text);
-    toast.success(text.trim() ? `Note saved for ${key}` : `Note removed from ${key}`);
+    if (text.trim()) notify.success("Note saved", { description: `${target.surahName} ${key} · find it in your Library` });
+    else notify.neutral(`Note removed from ${key}`);
     close();
   };
 
@@ -93,7 +94,9 @@ function NoteEditor({ target }: { target: DialogTarget }) {
             iconLeading={Trash01}
             onPress={() => {
               saveNote(target.surah, target.ayah, "");
-              toast(`Note removed from ${key}`);
+              notify.neutral(`Note removed from ${key}`, {
+                action: { label: "Undo", onPress: () => saveNote(target.surah, target.ayah, existing) },
+              });
               close();
             }}
           >
@@ -252,9 +255,9 @@ function ImageCard({ target }: { target: DialogTarget }) {
     try {
       if (!b) throw new Error("no image");
       await navigator.clipboard.write([new ClipboardItem({ "image/png": b })]);
-      toast.success("Image copied");
+      notify.success("Image copied", { description: "Paste it into a message or post." });
     } catch {
-      toast.error("Your browser couldn't copy the image");
+      notify.error("Couldn't copy the image", { description: "Your browser doesn't allow copying images. Use Share instead." });
     }
   };
 

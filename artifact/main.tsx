@@ -182,7 +182,7 @@ createRoot(document.getElementById("mishkah-root")!).render(
       <Footer />
       <AudioPlayerBar />
       <CommandPalette chapters={chapters} />
-      <Toaster position="bottom-center" offset={104} richColors closeButton />
+      <Toaster position="bottom-center" offset={112} toastOptions={{ unstyled: true }} />
     </div>
   </Shell>,
 );
