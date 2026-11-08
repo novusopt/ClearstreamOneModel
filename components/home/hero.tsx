@@ -1,28 +1,29 @@
 "use client";
 
-import { ArrowRight, BookOpen01, ChevronDown } from "@untitledui/icons";
+import { ArrowRight, BookOpen01, CheckCircle } from "@untitledui/icons";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { Button } from "@/components/base/buttons/button";
+import Link from "next/link";
+import { HeroShowcase } from "@/components/home/hero-showcase";
 import { useLibrary } from "@/lib/library";
-import type { Chapter } from "@/lib/types";
-import { ButtonUtility } from "@/components/base/buttons/button-utility";
+import type { Chapter, Verse } from "@/lib/types";
 
 const HEADLINE = ["A", "lantern", "for", "the", "Qurʾān."];
 
-export function Hero({ chapters }: { chapters: Chapter[] }) {
+const TRUST = ["Free, no account", "Private: saved on your device", "Works offline"];
+
+export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Verse[] }) {
   const lastRead = useLibrary((s) => s.lastRead);
   const resume = lastRead ? chapters[lastRead.surah - 1] : null;
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 220]);
-  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
-  const arabicY = useTransform(scrollYProgress, [0, 1], [0, -140]);
+  const arabicY = useTransform(scrollYProgress, [0, 1], [0, -80]);
   const starRotate = useTransform(scrollYProgress, [0, 1], [0, 90]);
   const starScale = useTransform(scrollYProgress, [0, 1], [1, 1.35]);
 
   return (
-    <section ref={ref} className="relative flex min-h-[100svh] items-center overflow-hidden pt-28 pb-20">
+    <section ref={ref} className="relative isolate overflow-hidden pt-32 pb-16 md:pt-40 md:pb-24">
       {/* Aurora backdrop */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-brand-50/60 via-transparent to-transparent dark:from-brand-950/80" />
@@ -30,13 +31,15 @@ export function Hero({ chapters }: { chapters: Chapter[] }) {
         <div className="absolute -top-40 -left-40 size-[34rem] animate-aurora rounded-full bg-brand-300/25 blur-3xl dark:bg-brand-700/25" />
         <div className="absolute -right-40 bottom-0 size-[30rem] animate-aurora rounded-full bg-brand-200/30 blur-3xl [animation-delay:-9s] dark:bg-brand-800/30" />
         <div className="absolute inset-0 bg-[radial-gradient(var(--color-border-secondary)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)] bg-[size:24px_24px]" />
+        {/* Fade into the page so the backdrop has no hard bottom edge. */}
+        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-bg-primary" />
       </div>
 
       <motion.svg
         aria-hidden="true"
         viewBox="0 0 200 260"
         style={{ scale: starScale }}
-        className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-[52rem] -translate-x-1/2 -translate-y-1/2 text-brand-500/20 dark:text-brand-300/15"
+        className="pointer-events-none absolute top-0 left-1/2 -z-10 h-[52rem] -translate-x-1/2 text-brand-500/20 dark:text-brand-300/15"
       >
         <g fill="none" stroke="currentColor">
           <path d="M20 258 V110 C20 60 60 22 100 4 C140 22 180 60 180 110 V258" strokeWidth="0.8" />
@@ -45,7 +48,7 @@ export function Hero({ chapters }: { chapters: Chapter[] }) {
         </g>
       </motion.svg>
 
-      <motion.div style={{ y, opacity }} className="mx-auto w-full max-w-6xl px-4 text-center md:px-8">
+      <div className="mx-auto w-full max-w-7xl px-4 text-center md:px-8">
         <motion.p
           style={{ y: arabicY }}
           initial={{ opacity: 0, scale: 0.9, filter: "blur(16px)" }}
@@ -53,7 +56,7 @@ export function Hero({ chapters }: { chapters: Chapter[] }) {
           transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
           lang="ar"
           dir="rtl"
-          className="font-quran text-5xl leading-tight sm:text-6xl md:text-7xl"
+          className="font-quran text-3xl leading-tight sm:text-4xl"
         >
           <span className="bg-gradient-to-br from-brand-700 via-brand-500 to-gold-500 bg-clip-text text-transparent dark:from-gold-200 dark:via-gold-300 dark:to-brand-300">
             ٱللَّهُ نُورُ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ
@@ -63,12 +66,23 @@ export function Hero({ chapters }: { chapters: Chapter[] }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="mt-5 text-sm text-tertiary italic"
+          className="mt-2 text-sm text-tertiary italic"
         >
           “Allah is the Light of the heavens and the earth” — An-Nūr 24:35
         </motion.p>
 
-        <h1 className="mt-10 text-display-md font-display font-medium tracking-tight text-primary sm:text-display-lg md:text-display-xl">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.6 }} className="mt-8 flex justify-center">
+          <Link
+            href="/#journey"
+            className="group inline-flex items-center gap-3 rounded-full border border-secondary bg-primary/80 py-1 pr-3 pl-1 text-sm font-medium text-secondary shadow-xs backdrop-blur transition hover:border-brand hover:text-primary outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            <span className="rounded-full bg-brand-solid px-2.5 py-0.5 text-xs font-semibold text-white">New</span>
+            Tafsir in 9 languages and memorisation review
+            <ArrowRight aria-hidden="true" className="size-4 text-fg-quaternary transition group-hover:translate-x-0.5 group-hover:text-fg-brand-secondary" />
+          </Link>
+        </motion.div>
+
+        <h1 className="mt-6 text-display-md font-display font-medium tracking-tight text-primary sm:text-display-lg md:text-display-2xl">
           {HEADLINE.map((word, i) => (
             <motion.span
               key={word}
@@ -109,16 +123,26 @@ export function Hero({ chapters }: { chapters: Chapter[] }) {
             Browse all 114 surahs
           </Button>
         </motion.div>
-      </motion.div>
+        <motion.ul
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2, duration: 0.7 }}
+          className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-tertiary"
+        >
+          {TRUST.map((t) => (
+            <li key={t} className="flex items-center gap-1.5">
+              <CheckCircle aria-hidden="true" className="size-4 text-fg-success-secondary" />
+              {t}
+            </li>
+          ))}
+        </motion.ul>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1, y: [0, 8, 0] }}
-        transition={{ opacity: { delay: 1.4 }, y: { repeat: Infinity, duration: 2, ease: "easeInOut" } }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <ButtonUtility href="#features" size="sm" color="secondary" tooltip="Scroll to features" icon={ChevronDown} className="rounded-full" />
-      </motion.div>
+        {fatihah && fatihah.length > 0 && (
+          <motion.div initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9, duration: 1.1, ease: [0.22, 1, 0.36, 1] }}>
+            <HeroShowcase verses={fatihah} />
+          </motion.div>
+        )}
+      </div>
     </section>
   );
 }

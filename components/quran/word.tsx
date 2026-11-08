@@ -28,7 +28,8 @@ interface WordProps {
 
 const RULE_BY_CLASS = new Map(TAJWEED_RULES.flatMap((r) => r.classes.map((c) => [c, r] as const)));
 
-function rulesIn(segments: TajweedSegment[]) {
+/** Tajweed rules present in a word (deduplicated, in order). */
+export function rulesIn(segments: TajweedSegment[]) {
   const seen = new Map<string, (typeof TAJWEED_RULES)[number]>();
   for (const [, cls] of segments) {
     const rule = cls ? RULE_BY_CLASS.get(cls) : undefined;

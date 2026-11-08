@@ -7,12 +7,16 @@ const EXPLORE = [
   { href: "/surah/36", label: "Yā-Sīn" },
   { href: "/surah/67", label: "Al-Mulk" },
   { href: "/surah/18", label: "Al-Kahf" },
+  { href: "/review", label: "Memorisation review" },
+  { href: "/#faq", label: "FAQ" },
 ];
 
 const CREDITS = [
   { href: "https://github.com/ivosetyadi/quran-recital", label: "quran-recital (MIT)", note: "Words, glosses, timings, tajweed markup (Quran.com API-derived)" },
   { href: "https://tanzil.net", label: "Tanzil", note: "Translations and transliteration" },
   { href: "https://quranenc.com", label: "QuranEnc", note: "Indonesian and Chinese translations" },
+  { href: "https://github.com/spa5k/tafsir_api", label: "Al-Mukhtaṣar tafsir", note: "Tafsir Center for Quranic Studies, 9 languages" },
+  { href: "https://github.com/Waqar144/Quran_Mutashabihat_Data", label: "Quran Mutashabihat Data (CC0)", note: "Look-alike ayat" },
   { href: "https://alquran.cloud", label: "Islamic Network", note: "Recitation audio, with EveryAyah as fallback" },
 ];
 

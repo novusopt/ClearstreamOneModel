@@ -36,7 +36,8 @@ npm run build:artifact  # single-page build for the claude.ai-hosted version (di
 ```
 app/
   layout.tsx              # fonts (Inter, Amiri Quran — local), providers, header/footer, player bar
-  page.tsx                # home: hero, stats, bento features, Al-Fātiḥah scroll story, surah/juz index
+  page.tsx                # landing: hero + live reader preview, sources marquee, bento, journey (sticky steps),
+                          # Al-Fātiḥah scroll story, stats, surah/juz index, principles, FAQ, closing CTA
   surah/[id]/page.tsx     # reader (generateStaticParams → 114 static pages)
   library/page.tsx        # progress & reading plan, bookmarks, notes, memorised (UUI Tabs)
   bookmarks/page.tsx      # same view, Bookmarks tab
@@ -45,7 +46,8 @@ components/
   base/, application/, foundations/   # Untitled UI components (vendored, kebab-case files)
   providers/              # Providers (theme, router, MotionConfig), SmoothScroll (Lenis)
   site/                   # header, footer, logo, theme toggle, scroll progress
-  home/                   # hero, bento-features, fatihah-story, stats, surah-index, continue-reading
+  home/                   # hero, hero-showcase, sources-marquee, bento-features, journey, fatihah-story, stats,
+                          # surah-index, continue-reading, principles, faq, final-cta
   quran/                  # surah-reader, reader-bar (position + Display presets), resume-banner,
                           # reader-tips, juz-divider, surah-end, basmala (opening of each surah), verse-card, word, tajweed-text, reading-view, hifz-panel,
                           # verse-dialogs (note, share image, similar), tafsir-section, similar-ayat, hizb-mark, reader-settings, tajweed-legend,
@@ -103,7 +105,8 @@ Button / ButtonUtility / ButtonGroup, Badge, Input, Select, Toggle, Slider, Tabs
 NavItemBase, Avatar, FeaturedIcon, EmptyState, LoadingIndicator, Dropdown, TextArea, ProgressBar.
 Alerts and toasts: the open-source kit has no component for these, so `components/application/alerts/alert.tsx`
 (inline) and `components/application/notifications/notification.tsx` (`notify.success/error/warning/info/neutral`,
-rendered via sonner's headless `toast.custom`) follow the Untitled UI anatomy. Never call sonner's `toast()` directly. Before hand-building something, check the
+rendered via sonner's headless `toast.custom`) follow the Untitled UI anatomy, as does `components/application/accordion/accordion.tsx`
+(FAQ, on React Aria Disclosure). Never call sonner's `toast()` directly. Before hand-building something, check the
 Untitled UI React repo (github.com/untitleduico/react) and vendor the component instead.
 
 The only deliberately custom pieces are Qurʾān-specific: the interlinear `Word` token (a single button whose CSS
