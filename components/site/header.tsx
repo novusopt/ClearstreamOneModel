@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen01, Bookmark, Grid01, LayersThree01, Menu02, SearchLg } from "@untitledui/icons";
+import { BookOpen01, Bookmark, Command, Grid01, LayersThree01, Menu02, SearchLg } from "@untitledui/icons";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import Link from "next/link";
 import { useState } from "react";
@@ -92,7 +92,9 @@ export function Header() {
         <div className="flex items-center gap-1">
           <Button size="sm" color="secondary" iconLeading={SearchLg} onPress={openCommandPalette} className="hidden lg:inline-flex" aria-label="Go to surah or ayah">
             <span className="text-tertiary">Go to…</span>
-            <Kbd>⌘K</Kbd>
+            <Kbd icon={Command} label="Command K">
+              K
+            </Kbd>
           </Button>
           <ButtonUtility size="sm" color="tertiary" tooltip="Go to surah or ayah" tooltipPlacement="bottom" icon={SearchLg} onPress={openCommandPalette} className="lg:hidden" />
           <ThemeToggle />

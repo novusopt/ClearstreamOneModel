@@ -1,6 +1,6 @@
 "use client";
 
-import { CursorClick02, Headphones02, SearchLg } from "@untitledui/icons";
+import { Command, CursorClick02, Headphones02, SearchLg } from "@untitledui/icons";
 import { AnimatePresence, motion } from "motion/react";
 import type { FC } from "react";
 import { Button } from "@/components/base/buttons/button";
@@ -11,7 +11,7 @@ import { setSettings, useSettings } from "@/lib/settings";
 const TIPS: Array<{ icon: FC<{ className?: string }>; title: string; body: React.ReactNode }> = [
   { icon: CursorClick02, title: "Every word is alive", body: "Hover or focus a word for its meaning and transliteration. Tap it to hear it pronounced." },
   { icon: Headphones02, title: "Listen and follow", body: <>Press Listen, or <Kbd>Space</Kbd>. The reciter’s current word lights up as you go.</> },
-  { icon: SearchLg, title: "Go anywhere", body: <>Press <Kbd>⌘K</Kbd> to jump to an ayah like 2:255 or search words such as “mercy”.</> },
+  { icon: SearchLg, title: "Go anywhere", body: <>Press <Kbd icon={Command} label="Command K">K</Kbd> to jump to an ayah like 2:255 or search words such as “mercy”.</> },
 ];
 
 /** Shown once, the first time someone opens a surah. */

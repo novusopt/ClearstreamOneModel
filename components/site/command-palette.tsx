@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, BookOpen01, Bookmark, CornerDownLeft, File06, Hash01, SearchLg } from "@untitledui/icons";
+import { ArrowDown, ArrowRight, ArrowUp, BookOpen01, Bookmark, CornerDownLeft, File06, Hash01, SearchLg } from "@untitledui/icons";
 import { useRouter } from "next/navigation";
 import { type FC, useEffect, useMemo, useState } from "react";
 import { Heading as AriaHeading, ListBox as AriaListBox, ListBoxItem as AriaListBoxItem } from "react-aria-components";
@@ -268,10 +268,10 @@ export function CommandPalette({ chapters }: { chapters: Chapter[] }) {
           )}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-secondary bg-secondary px-4 py-2.5 text-xs text-tertiary">
             <span>
-              <Kbd>↵</Kbd> open
+              <Kbd icon={CornerDownLeft} label="Enter" /> open
             </span>
             <span>
-              <Kbd>↓</Kbd> <Kbd>↑</Kbd> move
+              <Kbd icon={ArrowDown} label="Down arrow" /> <Kbd icon={ArrowUp} label="Up arrow" /> move
             </span>
             <span>
               <Kbd>esc</Kbd> close
@@ -286,9 +286,14 @@ export function CommandPalette({ chapters }: { chapters: Chapter[] }) {
   );
 }
 
-export function Kbd({ children }: { children: React.ReactNode }) {
+/** Keyboard key hint. Symbol keys use Untitled UI icons (with an accessible label) rather than glyphs. */
+export function Kbd({ children, icon: Icon, label }: { children?: React.ReactNode; icon?: FC<{ className?: string }>; label?: string }) {
   return (
-    <kbd className="inline-flex min-w-5 items-center justify-center rounded border border-secondary bg-primary px-1 font-sans text-[11px] font-medium text-secondary shadow-xs">
+    <kbd
+      aria-label={label}
+      className="inline-flex h-5 min-w-5 items-center justify-center gap-0.5 rounded border border-secondary bg-primary px-1 font-sans text-[11px] font-medium text-secondary shadow-xs"
+    >
+      {Icon && <Icon aria-hidden="true" className="size-3" />}
       {children}
     </kbd>
   );

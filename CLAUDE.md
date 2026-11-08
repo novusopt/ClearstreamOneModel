@@ -15,7 +15,9 @@ localStorage. There is no backend and no auth.
 - **UI**: Untitled UI React components (open source, MIT), built on React Aria Components,
   Tailwind CSS v4. Design tokens live in `styles/theme.css` (brand palette = teal).
 - **Motion**: `motion` (Framer Motion) for scroll-linked/reveal animations, `lenis` for smooth scrolling
-- **Icons**: `@untitledui/icons`
+- **Icons**: `@untitledui/icons` only (enforced by `no-restricted-imports` in `eslint.config.mjs`). Keyboard hints use
+  `<Kbd icon={…}>` with Untitled UI icons, not glyphs. Qurʾānic marks (۞ rub el hizb, ۩ sajdah) and the brand/ornament
+  SVGs (logo, ayah star, niches) are typography/illustration, not UI icons.
 - **Misc**: next-themes (`light-mode` / `dark-mode` classes), sonner (toasts)
 
 ## Commands
