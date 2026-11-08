@@ -7,7 +7,7 @@ import { type FC, useState } from "react";
 import { Alert } from "@/components/application/alerts/alert";
 import { EmptyState } from "@/components/application/empty-state/empty-state";
 import { Tabs } from "@/components/application/tabs/tabs";
-import { Badge } from "@/components/base/badges/badges";
+import { Badge, BadgeWithButton } from "@/components/base/badges/badges";
 import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
 import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
@@ -273,17 +273,16 @@ function MemorisedTab({ chapters }: { chapters: Chapter[] }) {
               <ProgressBar value={ayat.length} max={ch.versesCount} labelPosition="right" className="mt-3" />
               <div className="mt-3 flex flex-wrap gap-1">
                 {ayat.map((a) => (
-                  <button
+                  <BadgeWithButton
                     key={a}
-                    type="button"
-                    onClick={() => toggleMemorised(s, a)}
-                    title="Unmark"
-                    className="cursor-pointer rounded-full outline-focus-ring focus-visible:outline-2"
+                    type="pill-color"
+                    color="success"
+                    size="sm"
+                    buttonLabel={`Unmark ayah ${a} as memorised`}
+                    onButtonClick={() => toggleMemorised(s, a)}
                   >
-                    <Badge type="pill-color" color="success" size="sm" className="tabular-nums">
-                      {a}
-                    </Badge>
-                  </button>
+                    <span className="tabular-nums">{a}</span>
+                  </BadgeWithButton>
                 ))}
               </div>
             </li>

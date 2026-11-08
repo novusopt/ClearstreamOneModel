@@ -111,7 +111,8 @@ Untitled UI React repo (github.com/untitleduico/react) and vendor the component 
 
 The only deliberately custom pieces are Qurʾān-specific: the interlinear `Word` token (a single button whose CSS
 hover card stays light enough for 6,000+ words in Al-Baqarah), ayah markers, tajweed text, and the decorative
-bento-grid demos and scroll story. Vendored components keep Untitled UI conventions (kebab-case files,
+bento-grid demos and scroll story. Landing-page demos (hero preview, journey panels) are built from UUI Badge,
+ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress`) or `BadgeWithButton`, never a native `<button>`. Vendored components keep Untitled UI conventions (kebab-case files,
 `Aria*` import aliases); fix overlay stacking by passing `className="z-50"` rather than editing them.
 
 ## Code Style

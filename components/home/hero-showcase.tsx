@@ -3,6 +3,8 @@
 import { Headphones02, Palette, PlayCircle } from "@untitledui/icons";
 import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Badge, BadgeWithIcon } from "@/components/base/badges/badges";
+import { ProgressBarBase } from "@/components/base/progress-indicators/progress-indicators";
 import { AyahMarker } from "@/components/quran/ayah-marker";
 import { TajweedText } from "@/components/quran/tajweed-text";
 import { rulesIn } from "@/components/quran/word";
@@ -85,10 +87,16 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
                   Ayah {verse?.n ?? 1} of 7 · Page 1 · Juzʾ 1
                 </p>
               </div>
-              <span className="ml-auto hidden items-center gap-1.5 rounded-lg bg-brand-solid px-3 py-1.5 text-xs font-semibold text-white shadow-xs sm:flex">
-                <Headphones02 className="size-3.5" /> Listening
+              <span className="ml-auto hidden sm:inline-flex">
+                <BadgeWithIcon type="pill-color" color="brand" size="md" iconLeading={Headphones02}>
+                  Listening
+                </BadgeWithIcon>
               </span>
-              <span className="hidden rounded-lg px-3 py-1.5 text-xs font-semibold text-secondary ring-1 ring-primary md:inline">Study</span>
+              <span className="hidden md:inline-flex">
+                <Badge type="modern" size="md">
+                  Study preset
+                </Badge>
+              </span>
             </div>
 
             {/* Text */}
@@ -147,9 +155,11 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
               <ul className="mt-2 flex min-h-12 flex-wrap content-start gap-1.5">
                 {rules.length > 0 ? (
                   rules.map((r) => (
-                    <li key={r.id} className="flex items-center gap-1.5 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary ring-1 ring-secondary">
-                      <span className={`tj-${r.classes[0]} size-1.5 rounded-full bg-current`} />
-                      {r.name}
+                    <li key={r.id}>
+                      <Badge type="modern" size="sm">
+                        <span className={`tj-${r.classes[0]} mr-1 size-1.5 rounded-full bg-current`} />
+                        {r.name}
+                      </Badge>
                     </li>
                   ))
                 ) : (
@@ -162,9 +172,7 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
                 <span className="font-semibold text-secondary">Today</span>
                 <span className="text-tertiary tabular-nums">{Math.round(progress * 7)} / 7 ayat</span>
               </div>
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-quaternary">
-                <div className="h-full rounded-full bg-brand-solid transition-[width] duration-500" style={{ width: `${progress * 100}%` }} />
-              </div>
+              <ProgressBarBase value={progress * 100} className="mt-2 h-1.5" progressClassName="duration-500" />
             </div>
           </div>
         </div>
@@ -177,9 +185,7 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
               <span className="truncate font-semibold text-secondary">Mahmoud Khalil Al-Husary</span>
               <span className="hidden text-tertiary sm:inline">Word-synced · 1×</span>
             </div>
-            <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-quaternary">
-              <div className="h-full rounded-full bg-gold-500 transition-[width] duration-500" style={{ width: `${progress * 100}%` }} />
-            </div>
+            <ProgressBarBase value={progress * 100} className="mt-1.5 h-1" progressClassName="bg-gold-500 duration-500" />
           </div>
           <span className="flex h-5 items-end gap-0.5" aria-hidden="true">
             {[0, 1, 2, 3].map((i) => (

@@ -3,6 +3,7 @@
 import { ArrowRight, BookOpen01, CheckCircle } from "@untitledui/icons";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
+import { Badge } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
 import Link from "next/link";
 import { HeroShowcase } from "@/components/home/hero-showcase";
@@ -76,7 +77,9 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
             href="/#journey"
             className="group inline-flex items-center gap-3 rounded-full border border-secondary bg-primary/80 py-1 pr-3 pl-1 text-sm font-medium text-secondary shadow-xs backdrop-blur transition hover:border-brand hover:text-primary outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            <span className="rounded-full bg-brand-solid px-2.5 py-0.5 text-xs font-semibold text-white">New</span>
+            <Badge type="pill-color" color="brand" size="sm">
+              New
+            </Badge>
             Tafsir in 9 languages and memorisation review
             <ArrowRight aria-hidden="true" className="size-4 text-fg-quaternary transition group-hover:translate-x-0.5 group-hover:text-fg-brand-secondary" />
           </Link>

@@ -7,6 +7,7 @@ import { Avatar } from "@/components/base/avatar/avatar";
 import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { Slider } from "@/components/base/slider/slider";
+import { CountdownBar } from "@/components/quran/countdown-bar";
 import { getReciter } from "@/lib/audio";
 import { player, usePlayer, useTick } from "@/lib/audio-engine";
 import { setSettings, useSettings } from "@/lib/settings";
@@ -50,15 +51,9 @@ function YourTurn() {
         <Microphone01 aria-hidden="true" className="size-4" />
         Your turn: recite ayah {ayah}
       </span>
-      <span className="h-1 flex-1 overflow-hidden rounded-full bg-quaternary">
-        <motion.span
-          key={pause.from}
-          className="block h-full rounded-full bg-gold-500"
-          initial={{ width: "0%" }}
-          animate={{ width: "100%" }}
-          transition={{ duration: seconds, ease: "linear" }}
-        />
-      </span>
+      <div className="flex-1">
+        <CountdownBar key={pause.from} seconds={seconds} className="h-1" progressClassName="bg-gold-500" />
+      </div>
       <span className="w-9 text-tertiary tabular-nums">{seconds}s</span>
     </div>
   );

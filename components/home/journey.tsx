@@ -4,9 +4,12 @@ import { BookOpen01, CheckCircle, GraduationHat01, Lightbulb02, Microphone01, Re
 import { AnimatePresence, motion, useInView } from "motion/react";
 import { type FC, useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/base/badges/badges";
+import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
 import { Button } from "@/components/base/buttons/button";
+import { ProgressBarBase } from "@/components/base/progress-indicators/progress-indicators";
 import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
 import { AyahMarker } from "@/components/quran/ayah-marker";
+import { CountdownBar } from "@/components/quran/countdown-bar";
 import { TafsirBody, useTafsirText } from "@/components/quran/tafsir-section";
 import { TajweedText } from "@/components/quran/tajweed-text";
 import { Word } from "@/components/quran/word";
@@ -111,23 +114,53 @@ function UnderstandPanel({ verse, load }: { verse: Verse; load: boolean }) {
   );
 }
 
+type HideMode = "all" | "alternate" | "half" | "first-letter";
+const HIDE_MODES: Array<{ id: HideMode; label: string }> = [
+  { id: "all", label: "All words" },
+  { id: "alternate", label: "Every other" },
+  { id: "half", label: "Second half" },
+  { id: "first-letter", label: "First letters" },
+];
+
+function hiddenBy(mode: HideMode, i: number, count: number) {
+  if (mode === "alternate") return i % 2 === 1;
+  if (mode === "half") return i >= Math.ceil(count / 2);
+  return true;
+}
+
+/** Restarts the "Your turn" countdown every few seconds while the demo is on screen. */
+function useCycle(ms: number) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    const id = window.setInterval(() => setN((x) => x + 1), ms);
+    return () => window.clearInterval(id);
+  }, [ms]);
+  return n;
+}
+
 function MemorisePanel({ verse }: { verse: Verse }) {
+  const [mode, setMode] = useState<HideMode>("first-letter");
   const [revealed, setRevealed] = useState<Set<number>>(() => new Set());
+  const cycle = useCycle(6500);
   return (
     <Panel>
-      <div className="flex flex-wrap gap-1.5">
-        {["All words", "Every other", "Second half", "First letters"].map((m) => (
-          <span
-            key={m}
-            className={cx(
-              "rounded-lg px-2.5 py-1 text-xs font-semibold ring-1",
-              m === "First letters" ? "bg-primary_hover text-primary ring-primary" : "text-tertiary ring-secondary",
-            )}
-          >
-            {m}
-          </span>
+      <ButtonGroup
+        size="sm"
+        selectedKeys={[mode]}
+        disallowEmptySelection
+        onSelectionChange={(k) => {
+          setMode([...k][0] as HideMode);
+          setRevealed(new Set());
+        }}
+        aria-label="Hide"
+        className="max-w-full overflow-x-auto"
+      >
+        {HIDE_MODES.map((m) => (
+          <ButtonGroupItem key={m.id} id={m.id}>
+            {m.label}
+          </ButtonGroupItem>
         ))}
-      </div>
+      </ButtonGroup>
       <div dir="rtl" lang="ar" className="mt-6 flex flex-wrap items-start justify-center gap-x-1 gap-y-3">
         {verse.w.map((w, i) => (
           <Word
@@ -141,50 +174,45 @@ function MemorisePanel({ verse }: { verse: Verse }) {
             wbwTransliteration={false}
             active={false}
             sizeClass="text-3xl sm:text-4xl"
-            concealed={!revealed.has(i)}
-            hint
+            concealed={hiddenBy(mode, i, verse.w.length) && !revealed.has(i)}
+            hint={mode === "first-letter"}
             onReveal={(n) => setRevealed((prev) => new Set(prev).add(n))}
           />
         ))}
       </div>
-      <p className="mt-3 text-center text-xs text-quaternary">Tap a word to peek.</p>
+      <p className="mt-3 text-center text-xs text-quaternary">Tap a hidden word to peek.</p>
       <div className="mt-6 flex items-center gap-3 rounded-2xl border border-secondary bg-secondary/60 p-3">
         <FeaturedIcon icon={Microphone01} color="brand" theme="light" size="sm" />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-primary">Your turn: recite ayah {verse.n}</p>
-          <div className="mt-2 h-1 overflow-hidden rounded-full bg-quaternary">
-            <motion.div
-              className="h-full rounded-full bg-brand-solid"
-              initial={{ width: "100%" }}
-              animate={{ width: "0%" }}
-              transition={{ duration: 6, ease: "linear", repeat: Infinity }}
-            />
-          </div>
+          <CountdownBar key={cycle} seconds={6} className="mt-2 h-1" />
         </div>
       </div>
     </Panel>
   );
 }
 
-const GRADES = [
-  { label: "Again", when: "Tomorrow", tone: "text-error-primary ring-error_subtle" },
-  { label: "Hard", when: "In 2 days", tone: "text-secondary ring-primary" },
-  { label: "Good", when: "In 3 days", tone: "bg-brand-solid text-white ring-transparent" },
-  { label: "Easy", when: "In 4 days", tone: "text-secondary ring-primary" },
+const GRADES: Array<{ id: string; label: string; days: number; color: "secondary-destructive" | "secondary" | "primary" }> = [
+  { id: "again", label: "Again", days: 1, color: "secondary-destructive" },
+  { id: "hard", label: "Hard", days: 2, color: "secondary" },
+  { id: "good", label: "Good", days: 3, color: "primary" },
+  { id: "easy", label: "Easy", days: 4, color: "secondary" },
 ];
 
+const inDays = (d: number) => (d === 1 ? "Tomorrow" : `In ${d} days`);
+
 function ReviewPanel({ verse }: { verse: Verse }) {
+  const [graded, setGraded] = useState<(typeof GRADES)[number] | null>(null);
+  const done = graded ? 3 : 2;
   return (
     <Panel>
       <div className="flex items-center justify-between gap-3">
         <span className="text-sm font-semibold text-primary">Today’s review</span>
         <span className="flex items-center gap-1.5 text-sm text-tertiary tabular-nums">
-          <RefreshCw01 aria-hidden="true" className="size-4" /> 3 of 5
+          <RefreshCw01 aria-hidden="true" className="size-4" /> {done + 1} of 5
         </span>
       </div>
-      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-quaternary">
-        <div className="h-full w-2/5 rounded-full bg-brand-solid" />
-      </div>
+      <ProgressBarBase value={done} max={5} className="mt-3 h-1.5" progressClassName="duration-500" />
       <p className="mt-6 text-center text-sm font-medium text-tertiary">Check your recitation</p>
       <p dir="rtl" lang="ar" className="mt-2 text-center font-quran text-3xl leading-[2.2] text-primary">
         {verse.w.map((w) => w.a).join(" ")}{" "}
@@ -192,13 +220,27 @@ function ReviewPanel({ verse }: { verse: Verse }) {
           <AyahMarker n={verse.n} />
         </span>
       </p>
-      <div className="mt-6 grid grid-cols-2 gap-2 border-t border-secondary pt-5 sm:grid-cols-4" aria-hidden="true">
-        {GRADES.map((g) => (
-          <span key={g.label} className={cx("flex flex-col items-center rounded-lg py-2 text-sm font-semibold shadow-xs ring-1", g.tone)}>
-            {g.label}
-            <span className="text-xs font-normal opacity-80">{g.when}</span>
-          </span>
-        ))}
+      <div className="mt-6 border-t border-secondary pt-5">
+        {graded ? (
+          <div className="flex flex-wrap items-center justify-center gap-3 text-center">
+            <p className="flex items-center gap-2 text-sm text-secondary" role="status">
+              <CheckCircle aria-hidden="true" className="size-5 text-fg-success-secondary" />
+              Graded “{graded.label}”. Next review: {inDays(graded.days).toLowerCase()}.
+            </p>
+            <Button size="sm" color="link-color" onPress={() => setGraded(null)}>
+              Try again
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {GRADES.map((g) => (
+              <Button key={g.id} color={g.color} size="md" onPress={() => setGraded(g)} className="flex-col gap-0 py-2">
+                {g.label}
+                <span className="text-xs font-normal opacity-80">{inDays(g.days)}</span>
+              </Button>
+            ))}
+          </div>
+        )}
       </div>
     </Panel>
   );

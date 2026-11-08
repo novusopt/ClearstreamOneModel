@@ -3,6 +3,7 @@
 import { Bookmark, BookmarkCheck, CheckCircle, Copy01, Copy07, Edit05, Eye, EyeOff, Image01, Link01, PauseCircle, PlayCircle, Share07, Type01 } from "@untitledui/icons";
 import { motion } from "motion/react";
 import { memo, useState } from "react";
+import { Button as AriaButton } from "react-aria-components";
 import { notify } from "@/components/application/notifications/notification";
 import { Badge, BadgeWithIcon } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
@@ -124,16 +125,15 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
             </Badge>
           )}
           {similar && similar.length > 0 && (
-            <button
-              type="button"
-              onClick={() => onMenu("similar")}
-              className="rounded-full outline-focus-ring focus-visible:outline-2"
-              title="Ayat with near-identical wording"
+            <AriaButton
+              onPress={() => onMenu("similar")}
+              className="cursor-pointer rounded-full outline-focus-ring focus-visible:outline-2"
+              aria-label={`Similar wording: ${similar.length} ayat with near-identical wording`}
             >
               <BadgeWithIcon type="pill-color" color={hifz ? "warning" : "gray"} size="sm" iconLeading={Copy07} className="cursor-pointer">
                 Similar wording · {similar.length}
               </BadgeWithIcon>
-            </button>
+            </AriaButton>
           )}
           {sajdah && (
             <Tooltip title="Ayah of prostration" description="It is recommended to prostrate (sajdat at-tilāwah) after reciting this ayah." placement="top">
@@ -268,9 +268,8 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
           {(!hifz || allRevealed) && <TafsirSection surah={surah} ayah={verse.n} />}
 
           {note && (
-            <button
-              type="button"
-              onClick={() => onMenu("note")}
+            <AriaButton
+              onPress={() => onMenu("note")}
               className="flex w-full cursor-pointer gap-3 rounded-xl border border-gold-400/40 bg-gold-100/40 px-4 py-3 text-left text-sm text-secondary outline-focus-ring transition hover:bg-gold-100/70 focus-visible:outline-2 dark:bg-gold-500/10 dark:hover:bg-gold-500/15"
             >
               <Edit05 aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-gold-600 dark:text-gold-400" />
@@ -278,7 +277,7 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
                 <span className="sr-only">Your note: </span>
                 {note}
               </span>
-            </button>
+            </AriaButton>
           )}
       </div>
     </motion.article>
