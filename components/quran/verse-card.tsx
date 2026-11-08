@@ -196,8 +196,10 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
                 onReveal={reveal}
               />
             ))}
-            {/* Centre on the letter bodies: word top padding (4px) + ~0.56em (line box middle, shifted down past the diacritic space). */}
-            <AyahMarker n={verse.n} active={isPlaying} className={cx(arabicSize, "mt-[calc(0.25rem+0.56em)]")} />
+            {/* Same box as a word's text (top padding + Qurʾān font line box) so the marker shares the words' baseline. */}
+            <span className={cx("font-quran pt-1", arabicSize)}>
+              <AyahMarker n={verse.n} active={isPlaying} />
+            </span>
           </div>
 
           {hifz && (
