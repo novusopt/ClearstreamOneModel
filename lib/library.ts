@@ -16,6 +16,20 @@ export interface Note {
   at: number;
 }
 
+/** Spaced-repetition state for a memorised ayah (SM-2 style). */
+export interface Review {
+  /** Current interval in days. */
+  i: number;
+  /** Next review date (local ISO date). */
+  due: string;
+  /** Successful reviews in a row. */
+  n: number;
+  /** Ease factor. */
+  e: number;
+}
+
+export type Grade = "again" | "hard" | "good" | "easy";
+
 export interface LibraryState {
   /** Bookmarked ayat as "surah:ayah" keys, newest first. */
   bookmarks: string[];
@@ -29,9 +43,13 @@ export interface LibraryState {
   /** Ayat read per day, keyed by local ISO date. */
   log: Record<string, number>;
   plan: ReadingPlan | null;
+  /** Review schedule for memorised ayat. */
+  reviews: Record<string, Review>;
+  /** When all surahs were last saved for offline reading. */
+  offlineAt: number | null;
 }
 
-const INITIAL: LibraryState = { bookmarks: [], lastRead: null, notes: {}, memorised: [], read: {}, log: {}, plan: null };
+const INITIAL: LibraryState = { bookmarks: [], lastRead: null, notes: {}, memorised: [], read: {}, log: {}, plan: null, reviews: {}, offlineAt: null };
 
 export const libraryStore = createStore<LibraryState>(INITIAL, `${BRAND.storagePrefix}:library:v1`);
 
@@ -79,11 +97,63 @@ export function saveNote(surah: number, ayah: number, text: string) {
   });
 }
 
+export function addDays(iso: string, days: number): string {
+  const d = new Date(`${iso}T00:00:00`);
+  d.setDate(d.getDate() + days);
+  return today(d);
+}
+
 export function toggleMemorised(surah: number, ayah: number): boolean {
   const key = verseKey(surah, ayah);
   const has = libraryStore.get().memorised.includes(key);
-  libraryStore.set((s) => ({ memorised: has ? s.memorised.filter((k) => k !== key) : [...s.memorised, key] }));
+  libraryStore.set((s) => {
+    const reviews = { ...s.reviews };
+    if (has) delete reviews[key];
+    // First review tomorrow: the classic "sleep on it" step.
+    else reviews[key] = { i: 1, due: addDays(today(), 1), n: 0, e: 2.5 };
+    return { memorised: has ? s.memorised.filter((k) => k !== key) : [...s.memorised, key], reviews };
+  });
   return !has;
+}
+
+/** Next schedule for a grade (pure, so buttons can preview it). */
+export function schedule(r: Review | undefined, grade: Grade): Review {
+  const cur = r ?? { i: 1, due: today(), n: 0, e: 2.5 };
+  let { i, n, e } = cur;
+  if (grade === "again") {
+    n = 0;
+    i = 1;
+    e = Math.max(1.3, e - 0.2);
+  } else if (grade === "hard") {
+    i = Math.max(1, Math.round(i * 1.2));
+    e = Math.max(1.3, e - 0.15);
+    n += 1;
+  } else if (grade === "good") {
+    i = n === 0 ? 1 : n === 1 ? 3 : Math.round(i * e);
+    n += 1;
+  } else {
+    i = n === 0 ? 3 : Math.round(Math.max(i, 1) * e * 1.3);
+    e += 0.15;
+    n += 1;
+  }
+  return { i, n, e, due: addDays(today(), i) };
+}
+
+export function gradeReview(key: string, grade: Grade) {
+  libraryStore.set((s) => ({ reviews: { ...s.reviews, [key]: schedule(s.reviews[key], grade) } }));
+}
+
+/** Memorised ayat due today or earlier (missing schedules count as due), oldest first. */
+export function dueReviews(state: Pick<LibraryState, "memorised" | "reviews">): string[] {
+  const t = today();
+  return state.memorised
+    .filter((k) => (state.reviews[k]?.due ?? t) <= t)
+    .sort((a, b) => (state.reviews[a]?.due ?? "").localeCompare(state.reviews[b]?.due ?? ""));
+}
+
+export function nextReviewDate(state: Pick<LibraryState, "memorised" | "reviews">): string | null {
+  const dates = state.memorised.map((k) => state.reviews[k]?.due).filter(Boolean) as string[];
+  return dates.length ? dates.sort()[0] : null;
 }
 
 export function startPlan(days: number) {

@@ -15,7 +15,7 @@ import type { Chapter } from "@/lib/types";
 import { cx } from "@/utils/cx";
 
 /** Where am I: surah · ayah · juzʾ, following the reading line. */
-function Position({ chapter }: { chapter: Chapter }) {
+function Position({ chapter, pages }: { chapter: Chapter; pages?: Array<number | undefined> }) {
   const ayah = useReaderPosition((p) => (p.surah === chapter.id ? p.ayah : 0));
   return (
     <div className="hidden min-w-0 items-center gap-3 pl-2 lg:flex" aria-live="polite">
@@ -27,7 +27,9 @@ function Position({ chapter }: { chapter: Chapter }) {
         <span className="block h-4 overflow-hidden text-xs text-tertiary tabular-nums">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.span key={ayah} initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -10, opacity: 0 }} className="block">
-              {ayah ? `Ayah ${ayah} of ${chapter.versesCount} · Juzʾ ${juzOf(chapter.id, ayah)}` : `${chapter.versesCount} ayat · ${chapter.nameTranslation}`}
+              {ayah
+                ? `Ayah ${ayah} of ${chapter.versesCount}${pages?.[ayah - 1] ? ` · Page ${pages[ayah - 1]}` : ""} · Juzʾ ${juzOf(chapter.id, ayah)}`
+                : `${chapter.versesCount} ayat · ${chapter.nameTranslation}`}
             </motion.span>
           </AnimatePresence>
         </span>
@@ -88,9 +90,11 @@ function DisplayMenu() {
 interface ReaderBarProps {
   chapter: Chapter;
   onPlay: () => void;
+  /** Mushaf page per ayah (index = ayah − 1). */
+  pages?: Array<number | undefined>;
 }
 
-export function ReaderBar({ chapter, onPlay }: ReaderBarProps) {
+export function ReaderBar({ chapter, onPlay, pages }: ReaderBarProps) {
   const viewMode = useSettings((s) => s.viewMode);
   const isThisSurah = usePlayer((s) => s.surah === chapter.id);
   const isPlaying = usePlayer((s) => s.surah === chapter.id && (s.status === "playing" || s.status === "loading"));
@@ -112,7 +116,7 @@ export function ReaderBar({ chapter, onPlay }: ReaderBarProps) {
         animate={{ y: 0 }}
         className="mx-auto flex max-w-max items-center justify-between gap-2 rounded-2xl bg-primary/85 p-2 shadow-lg ring-1 ring-secondary_alt backdrop-blur-xl md:max-w-none"
       >
-        <Position chapter={chapter} />
+        <Position chapter={chapter} pages={pages} />
         <div className="flex items-center gap-2">
           <Button size="sm" iconLeading={isPlaying ? PauseCircle : PlayCircle} onPress={onPlay}>
             <span className="sm:hidden">{isPlaying ? "Pause" : "Listen"}</span>

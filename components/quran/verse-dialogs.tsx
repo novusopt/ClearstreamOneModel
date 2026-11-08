@@ -8,24 +8,27 @@ import { Dialog, Modal, ModalOverlay } from "@/components/application/modals/mod
 import { Button } from "@/components/base/buttons/button";
 import { CloseButton } from "@/components/base/buttons/close-button";
 import { TextArea } from "@/components/base/textarea/textarea";
+import { SimilarAyat } from "@/components/quran/similar-ayat";
 import { BRAND } from "@/lib/brand";
 import { createStore, useStore } from "@/lib/create-store";
 import { libraryStore, saveNote, verseKey } from "@/lib/library";
 import { IS_ARTIFACT } from "@/lib/runtime";
+import type { SimilarRef } from "@/lib/types";
 
 interface DialogTarget {
-  kind: "note" | "image" | null;
+  kind: "note" | "image" | "similar" | null;
   surah: number;
   ayah: number;
   surahName: string;
   arabic: string;
   translation: string;
+  similar?: SimilarRef[];
 }
 
 const EMPTY: DialogTarget = { kind: null, surah: 0, ayah: 0, surahName: "", arabic: "", translation: "" };
 const dialogStore = createStore<DialogTarget>(EMPTY);
 
-export const openVerseDialog = (target: Omit<DialogTarget, "kind">, kind: "note" | "image") => dialogStore.set({ ...target, kind });
+export const openVerseDialog = (target: Omit<DialogTarget, "kind">, kind: "note" | "image" | "similar") => dialogStore.set({ ...target, kind });
 const close = () => dialogStore.set({ kind: null });
 
 /** One shared instance per page: the note editor and the share-as-image card. */
@@ -33,10 +36,22 @@ export function VerseDialogs() {
   const target = useStore(dialogStore, (s) => s, EMPTY);
   return (
     <ModalOverlay isDismissable isOpen={target.kind != null} onOpenChange={(o) => !o && close()}>
-      <Modal className={target.kind === "image" ? "max-w-2xl" : "max-w-lg"}>
+      <Modal className={target.kind === "note" ? "max-w-lg" : "max-w-2xl"}>
         <Dialog aria-label={target.kind === "image" ? "Share as image" : "Note"}>
           {target.kind === "note" && <NoteEditor key={`${target.surah}:${target.ayah}`} target={target} />}
           {target.kind === "image" && <ImageCard key={`${target.surah}:${target.ayah}`} target={target} />}
+          {target.kind === "similar" && (
+            <>
+              <Header title="Similar wording" subtitle={`Ayat that are easy to mix up with ${target.surahName} ${target.surah}:${target.ayah}`} />
+              <div className="px-6 pt-5 pb-6">
+                <SimilarAyat
+                  current={{ s: target.surah, a: target.ayah, name: target.surahName, text: target.arabic }}
+                  items={target.similar ?? []}
+                  onNavigate={close}
+                />
+              </div>
+            </>
+          )}
         </Dialog>
       </Modal>
     </ModalOverlay>

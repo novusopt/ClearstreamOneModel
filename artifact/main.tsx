@@ -18,6 +18,7 @@ import { JuzIndex, SurahIndex } from "@/components/home/surah-index";
 import { scrollToElement, SmoothScroll, useLenis } from "@/components/providers/smooth-scroll";
 import { AudioPlayerBar } from "@/components/quran/audio-player-bar";
 import { LibraryView } from "@/components/library/library-view";
+import { ReviewSession } from "@/components/library/review-session";
 import { SurahHero } from "@/components/quran/surah-hero";
 import { SurahReader } from "@/components/quran/surah-reader";
 import { CommandPalette } from "@/components/site/command-palette";
@@ -157,6 +158,13 @@ function App() {
       {route.view === "home" && <HomeView />}
       {route.view === "surah" && <SurahView id={route.id} verse={route.verse} />}
       {route.view === "library" && <LibraryPageView tab={route.tab} />}
+      {route.view === "review" && (
+        <div className="mx-auto max-w-3xl px-4 pt-32 pb-24 md:px-8">
+          <p className="text-sm font-semibold text-brand-secondary">Memorisation</p>
+          <h1 className="mt-2 font-display text-display-sm font-medium tracking-tight text-primary">Today’s review</h1>
+          <ReviewSession chapters={chapters} />
+        </div>
+      )}
     </div>
   );
 }

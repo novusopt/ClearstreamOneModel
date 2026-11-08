@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import { AudioPlayerBar } from "@/components/quran/audio-player-bar";
 import { Providers } from "@/components/providers/providers";
+import { ServiceWorker } from "@/components/providers/service-worker";
 import { CommandPalette } from "@/components/site/command-palette";
 import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
@@ -39,6 +40,9 @@ const amiriQuran = localFont({
 export const metadata: Metadata = {
   title: { default: `${BRAND.name} — ${BRAND.tagline}`, template: `%s · ${BRAND.name}` },
   description: BRAND.description,
+  applicationName: BRAND.name,
+  appleWebApp: { capable: true, title: BRAND.name, statusBarStyle: "default" },
+  icons: { icon: "/icons/icon-192.png", apple: "/icons/apple-touch-icon.png" },
 };
 
 export const viewport: Viewport = {
@@ -66,6 +70,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Footer />
           <AudioPlayerBar />
           <CommandPalette chapters={getChapters()} />
+          <ServiceWorker />
           <Toaster position="bottom-center" offset={112} toastOptions={{ unstyled: true }} />
         </Providers>
       </body>

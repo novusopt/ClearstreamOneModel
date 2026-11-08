@@ -1,6 +1,6 @@
 "use client";
 
-import { GraduationHat01, Repeat01, StopCircle } from "@untitledui/icons";
+import { GraduationHat01, RefreshCw01, Repeat01, StopCircle } from "@untitledui/icons";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { Badge } from "@/components/base/badges/badges";
@@ -10,7 +10,8 @@ import { Input } from "@/components/base/input/input";
 import { ProgressBarBase } from "@/components/base/progress-indicators/progress-indicators";
 import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
 import { player, usePlayer } from "@/lib/audio-engine";
-import { useLibrary } from "@/lib/library";
+import { dueReviews, useLibrary } from "@/lib/library";
+import { setSettings, useSettings } from "@/lib/settings";
 import type { Chapter } from "@/lib/types";
 
 const TIMES = [1, 3, 5, 10];
@@ -23,6 +24,9 @@ export function HifzPanel({ chapter, onRepeat }: { chapter: Chapter; onRepeat: (
   const memorised = useLibrary((s) => s.memorised.filter((k) => k.startsWith(`${chapter.id}:`)).length);
   const range = usePlayer((s) => (s.surah === chapter.id ? s.range : null));
   const current = usePlayer((s) => (s.surah === chapter.id && s.range ? s.verses[s.index]?.n : null));
+  const hideMode = useSettings((s) => s.hifzHide);
+  const pauseAfter = useSettings((s) => s.pauseAfter);
+  const due = useLibrary((s) => dueReviews(s).length);
 
   const clamp = (v: string) => Math.min(chapter.versesCount, Math.max(1, Number(v) || 1));
   const pct = Math.round((memorised / chapter.versesCount) * 100);
@@ -73,6 +77,43 @@ export function HifzPanel({ chapter, onRepeat }: { chapter: Chapter; onRepeat: (
           )}
         </div>
       </div>
+      <div className="mt-5 flex flex-col gap-4 border-t border-secondary pt-5 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex flex-col gap-1.5">
+          <span className="text-sm font-medium text-secondary">Hide</span>
+          <ButtonGroup
+            size="sm"
+            selectedKeys={[hideMode]}
+            disallowEmptySelection
+            onSelectionChange={(k) => setSettings({ hifzHide: [...k][0] as typeof hideMode })}
+            aria-label="Which words to hide"
+          >
+            <ButtonGroupItem id="all">All words</ButtonGroupItem>
+            <ButtonGroupItem id="alternate">Every other</ButtonGroupItem>
+            <ButtonGroupItem id="half">Second half</ButtonGroupItem>
+            <ButtonGroupItem id="first-letter">First letters</ButtonGroupItem>
+          </ButtonGroup>
+        </div>
+        <div className="flex flex-wrap items-end gap-3">
+          <div className="flex flex-col gap-1.5">
+            <span className="text-sm font-medium text-secondary">Pause to repeat</span>
+            <ButtonGroup
+              size="sm"
+              selectedKeys={[String(pauseAfter)]}
+              disallowEmptySelection
+              onSelectionChange={(k) => setSettings({ pauseAfter: Number([...k][0]) })}
+              aria-label="Pause after each ayah"
+            >
+              <ButtonGroupItem id="0">Off</ButtonGroupItem>
+              <ButtonGroupItem id="5">5s</ButtonGroupItem>
+              <ButtonGroupItem id="-1">Ayah length</ButtonGroupItem>
+            </ButtonGroup>
+          </div>
+          <Button size="sm" color={due > 0 ? "primary" : "secondary"} href="/review" iconLeading={RefreshCw01}>
+            {due > 0 ? `Review ${due} due` : "Review"}
+          </Button>
+        </div>
+      </div>
+
       {range && (
         <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-secondary">
           <Badge type="pill-color" color="brand" size="sm">

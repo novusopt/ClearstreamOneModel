@@ -4,7 +4,8 @@ import { motion } from "motion/react";
 import { memo } from "react";
 import { TajweedText } from "@/components/quran/tajweed-text";
 import { player } from "@/lib/audio-engine";
-import type { Word as WordType } from "@/lib/types";
+import { TAJWEED_RULES } from "@/lib/constants";
+import type { TajweedSegment, Word as WordType } from "@/lib/types";
 import { cx } from "@/utils/cx";
 
 interface WordProps {
@@ -20,10 +21,27 @@ interface WordProps {
   sizeClass: string;
   /** Memorisation mode: the word is hidden until tapped. */
   concealed?: boolean;
+  /** With `concealed`: keep the first letter visible as a memory cue. */
+  hint?: boolean;
   onReveal?: (index: number) => void;
 }
 
-export const Word = memo(function Word({ word, surah, ayah, index, tajweed, wordByWord, wbwTransliteration, active, sizeClass, concealed = false, onReveal }: WordProps) {
+const RULE_BY_CLASS = new Map(TAJWEED_RULES.flatMap((r) => r.classes.map((c) => [c, r] as const)));
+
+function rulesIn(segments: TajweedSegment[]) {
+  const seen = new Map<string, (typeof TAJWEED_RULES)[number]>();
+  for (const [, cls] of segments) {
+    const rule = cls ? RULE_BY_CLASS.get(cls) : undefined;
+    if (rule) seen.set(rule.id, rule);
+  }
+  return [...seen.values()];
+}
+
+export const Word = memo(function Word({ word, surah, ayah, index, tajweed, wordByWord, wbwTransliteration, active, sizeClass, concealed = false, hint = false, onReveal }: WordProps) {
+  // Tajweed rules present in this word, named in the hover card (learn the colours in context).
+  const rules = tajweed && typeof word.j !== "string" ? rulesIn(word.j) : [];
+  // First letter plus its vowel marks, for the "first letter" memorisation cue.
+  const cue = hint && concealed ? (word.a.match(/^[\u0621-\u064A\u0671-\u06D3][\u064B-\u065F\u0670\u06D6-\u06ED]*/u)?.[0] ?? "") : "";
   return (
     <button
       type="button"
@@ -50,10 +68,19 @@ export const Word = memo(function Word({ word, surah, ayah, index, tajweed, word
           "relative font-quran text-primary transition-[filter,opacity] duration-300",
           sizeClass,
           active && "text-brand-primary",
-          concealed && "opacity-40 blur-md select-none",
+          concealed && !cue && "opacity-40 blur-md select-none",
         )}
       >
-        {tajweed ? <TajweedText value={word.j} /> : word.a}
+        {cue ? (
+          <>
+            <span className="text-brand-secondary">{cue}</span>
+            <span className="opacity-40 blur-md select-none">{word.a.slice(cue.length)}</span>
+          </>
+        ) : tajweed ? (
+          <TajweedText value={word.j} />
+        ) : (
+          word.a
+        )}
       </span>
       {concealed ? null : wordByWord ? (
         <span className="relative mt-1 flex max-w-36 flex-col items-center text-center leading-tight" dir="ltr">
@@ -73,6 +100,16 @@ export const Word = memo(function Word({ word, surah, ayah, index, tajweed, word
         >
           <span className="font-display text-sm text-gold-300 italic">{word.t}</span>
           <span className="text-xs font-medium text-white">{word.e}</span>
+          {tajweed && rules.length > 0 && (
+            <span className="mt-1.5 flex flex-wrap justify-center gap-1 border-t border-white/10 pt-1.5">
+              {rules.map((r) => (
+                <span key={r.id} className="inline-flex items-center gap-1 rounded-full bg-white/10 px-1.5 py-0.5 text-[10px] font-medium text-white/85">
+                  <span className={`tj-${r.classes[0]} size-1.5 rounded-full bg-current`} />
+                  {r.name}
+                </span>
+              ))}
+            </span>
+          )}
         </span>
       )}
     </button>

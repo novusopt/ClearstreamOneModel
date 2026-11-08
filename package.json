@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "data": "node scripts/build-quran-data.mjs && node scripts/build-search-index.mjs",
+    "data": "node scripts/build-quran-data.mjs && node scripts/build-search-index.mjs && node scripts/build-study-data.mjs",
     "build:artifact": "node scripts/build-artifact.mjs"
   },
   "dependencies": {

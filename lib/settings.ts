@@ -21,6 +21,14 @@ export interface ReaderSettings {
   repeat: "off" | "ayah" | "surah";
   /** First-visit reader tips have been dismissed. */
   seenTips: boolean;
+  /** Show the tafsir (Al-Mukhtasar) under every ayah instead of on demand. */
+  tafsirOpen: boolean;
+  /** Tafsir language: "auto" follows the translation (English fallback). */
+  tafsirLang: string;
+  /** Memorise mode: which words are hidden. */
+  hifzHide: "all" | "alternate" | "half" | "first-letter";
+  /** Teaching pause after each ayah: 0 = off, -1 = as long as the ayah, else seconds. */
+  pauseAfter: number;
 }
 
 export const DEFAULT_SETTINGS: ReaderSettings = {
@@ -38,6 +46,10 @@ export const DEFAULT_SETTINGS: ReaderSettings = {
   autoScroll: true,
   repeat: "off",
   seenTips: false,
+  tafsirOpen: false,
+  tafsirLang: "auto",
+  hifzHide: "all",
+  pauseAfter: 0,
 };
 
 export const settingsStore = createStore<ReaderSettings>(DEFAULT_SETTINGS, `${BRAND.storagePrefix}:settings:v1`);
@@ -59,17 +71,17 @@ export const DISPLAY_PRESETS: Record<DisplayPreset, { label: string; description
   read: {
     label: "Read",
     description: "Arabic with translation",
-    settings: { showTranslation: true, wordByWord: false, showTransliteration: false },
+    settings: { showTranslation: true, wordByWord: false, showTransliteration: false, tafsirOpen: false },
   },
   study: {
     label: "Study",
-    description: "Word-by-word meanings and transliteration",
-    settings: { showTranslation: true, wordByWord: true, wbwTransliteration: true, showTransliteration: true },
+    description: "Word meanings, transliteration and tafsir",
+    settings: { showTranslation: true, wordByWord: true, wbwTransliteration: true, showTransliteration: true, tafsirOpen: true },
   },
   arabic: {
     label: "Arabic only",
     description: "Just the Qurʾānic text",
-    settings: { showTranslation: false, wordByWord: false, showTransliteration: false },
+    settings: { showTranslation: false, wordByWord: false, showTransliteration: false, tafsirOpen: false },
   },
 };
 

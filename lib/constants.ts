@@ -102,3 +102,13 @@ export function juzStartingAt(surah: number, ayah: number): number | null {
   const i = JUZ_STARTS.findIndex(([s, a]) => s === surah && a === ayah);
   return i >= 0 ? i + 1 : null;
 }
+
+/** Tafsir: "Al-Mukhtasar fi Tafsir al-Qur'an" (Tafsir Center for Quranic Studies), via QUL / QuranEnc. */
+export const TAFSIR_SOURCE = {
+  name: "Al-Mukhtaṣar fī Tafsīr al-Qurʾān",
+  author: "Tafsir Center for Quranic Studies",
+  url: "https://qul.tarteel.ai/resources/tafsir",
+};
+/** Languages with an Al-Mukhtasar edition; others fall back to English. */
+export const TAFSIR_LANGS = ["en", "ar", "fr", "es", "id", "tr", "ru", "bn", "zh"] as const;
+export const tafsirLangFor = (lang: string) => ((TAFSIR_LANGS as readonly string[]).includes(lang) ? lang : "en");

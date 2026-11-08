@@ -7,7 +7,8 @@ import { IS_ARTIFACT } from "@/lib/runtime";
 import { settingsStore } from "@/lib/settings";
 import type { AudioVerse } from "@/lib/types";
 
-export type PlayerStatus = "idle" | "loading" | "playing" | "paused";
+/** "repeat" = teaching pause after an ayah, while the listener recites it back. */
+export type PlayerStatus = "idle" | "loading" | "playing" | "paused" | "repeat";
 
 interface PlayerState {
   surah: number | null;
@@ -17,6 +18,8 @@ interface PlayerState {
   status: PlayerStatus;
   /** Memorisation loop: play ayat [from, to] (indexes) `times` times; `pass` is 1-based. */
   range: { from: number; to: number; times: number; pass: number } | null;
+  /** During a teaching pause: when it started and ends (ms timestamps). */
+  pause: { from: number; until: number } | null;
 }
 
 interface TickState {
@@ -26,7 +29,7 @@ interface TickState {
   duration: number;
 }
 
-const PLAYER_INITIAL: PlayerState = { surah: null, surahName: "", verses: [], index: 0, status: "idle", range: null };
+const PLAYER_INITIAL: PlayerState = { surah: null, surahName: "", verses: [], index: 0, status: "idle", range: null, pause: null };
 const TICK_INITIAL: TickState = { word: -1, time: 0, duration: 0 };
 
 export const playerStore = createStore<PlayerState>(PLAYER_INITIAL);
@@ -112,6 +115,7 @@ function stopLoop() {
 }
 
 function loadIndex(index: number, autoplay: boolean, seekMs?: number) {
+  clearPause();
   const el = ensureAudio();
   const { verses, surah } = playerStore.get();
   const v = verses[index];
@@ -137,7 +141,33 @@ function preloadNext(index: number) {
   preloader.src = ayahAudioUrls(currentReciter(), surah, v.n, v.g)[0];
 }
 
+let pauseTimer = 0;
+
+function clearPause() {
+  if (pauseTimer) window.clearTimeout(pauseTimer);
+  pauseTimer = 0;
+  if (playerStore.get().pause) playerStore.set({ pause: null });
+}
+
+/** Teaching mode: give the listener time to repeat the ayah, then continue. */
 function onEnded() {
+  const { pauseAfter } = settingsStore.get();
+  const ms = pauseAfter === -1 ? (audio?.duration ?? 0) * 1000 : pauseAfter * 1000;
+  if (ms > 500) {
+    const now = Date.now();
+    playerStore.set({ status: "repeat", pause: { from: now, until: now + ms } });
+    tickStore.set({ word: -1 });
+    pauseTimer = window.setTimeout(() => {
+      pauseTimer = 0;
+      playerStore.set({ pause: null });
+      advance();
+    }, ms);
+    return;
+  }
+  advance();
+}
+
+function advance() {
   const { index, verses, range } = playerStore.get();
   if (range) {
     if (index < range.to) return loadIndex(index + 1, true);
@@ -188,6 +218,12 @@ export const player = {
     playerStore.set({ range: null });
   },
   toggle() {
+    if (playerStore.get().status === "repeat") {
+      // Skip the rest of the teaching pause.
+      clearPause();
+      advance();
+      return;
+    }
     const el = ensureAudio();
     const { status, surah } = playerStore.get();
     if (surah == null) return;
@@ -220,6 +256,7 @@ export const player = {
     if (surah != null) loadIndex(index, status === "playing" || status === "loading");
   },
   stop() {
+    clearPause();
     audio?.pause();
     if (audio) audio.removeAttribute("src");
     stopLoop();

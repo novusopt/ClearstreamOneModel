@@ -5,20 +5,15 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { Badge } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
-import { JUZ_STARTS } from "@/lib/constants";
+import { juzOf, SAJDAH_AYAT } from "@/lib/constants";
 import type { Chapter } from "@/lib/types";
 import { toArabicNumber } from "@/lib/utils";
 
-/** Juzʾ that a surah starts in. */
-function juzOf(surah: number): number {
-  let juz = 1;
-  JUZ_STARTS.forEach(([s, a], i) => {
-    if (s < surah || (s === surah && a === 1)) juz = i + 1;
-  });
-  return juz;
-}
-
 export function SurahHero({ chapter }: { chapter: Chapter }) {
+  const firstJuz = juzOf(chapter.id, 1);
+  const lastJuz = juzOf(chapter.id, chapter.versesCount);
+  const juzRange = firstJuz === lastJuz ? `Juzʾ ${firstJuz}` : `Juzʾ ${firstJuz}–${lastJuz}`;
+  const sajdahs = SAJDAH_AYAT.filter(([s]) => s === chapter.id).length;
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const opacity = useTransform(scrollYProgress, [0, 0.9], [1, 0.2]);
@@ -62,8 +57,23 @@ export function SurahHero({ chapter }: { chapter: Chapter }) {
                   {chapter.versesCount} ayat
                 </Badge>
                 <Badge type="modern" color="gray" size="sm">
-                  Juzʾ {juzOf(chapter.id)}
+                  {juzRange}
                 </Badge>
+                {chapter.pages && (
+                  <Badge type="modern" color="gray" size="sm">
+                    {chapter.pages[0] === chapter.pages[1] ? `Page ${chapter.pages[0]}` : `Pages ${chapter.pages[0]}–${chapter.pages[1]}`}
+                  </Badge>
+                )}
+                {chapter.words && (
+                  <Badge type="modern" color="gray" size="sm">
+                    {chapter.words.toLocaleString("en-US")} words
+                  </Badge>
+                )}
+                {sajdahs > 0 && (
+                  <Badge type="pill-color" color="warning" size="sm" className="gap-1">
+                    <span aria-hidden="true">۩</span> {sajdahs === 1 ? "Sajdah" : `${sajdahs} sajdahs`}
+                  </Badge>
+                )}
               </div>
             </div>
           </div>

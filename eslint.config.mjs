@@ -28,6 +28,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Downloaded sources and generated single-page build.
+    ".cache/**",
+    "dist-artifact/**",
   ]),
 ]);
 

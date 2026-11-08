@@ -9,7 +9,7 @@ import { SlideoutMenu } from "@/components/application/slideout-menus/slideout-m
 import { TajweedLegend } from "@/components/quran/tajweed-legend";
 import { player } from "@/lib/audio-engine";
 import { createStore, useStore } from "@/lib/create-store";
-import { RECITERS, TRANSLATIONS } from "@/lib/constants";
+import { RECITERS, TAFSIR_LANGS, TAFSIR_SOURCE, TRANSLATIONS } from "@/lib/constants";
 import { applyPreset, currentPreset, DISPLAY_PRESETS, type DisplayPreset, setSettings, useSettings } from "@/lib/settings";
 import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
 
@@ -122,6 +122,26 @@ export function ReaderSettings({ className }: { className?: string }) {
                 </div>
               </Section>
 
+              <Section title="Explanation (tafsir)">
+                <Toggle
+                  label="Show under every ayah"
+                  hint={`${TAFSIR_SOURCE.name}, by the ${TAFSIR_SOURCE.author}`}
+                  isSelected={s.tafsirOpen}
+                  onChange={(v) => setSettings({ tafsirOpen: v })}
+                />
+                <Select
+                  label="Language"
+                  selectedKey={s.tafsirLang}
+                  onSelectionChange={(k) => k && setSettings({ tafsirLang: String(k) })}
+                  items={[
+                    { id: "auto", label: "Same as translation", supportingText: "English when unavailable" },
+                    ...TAFSIR_LANGS.map((id) => ({ id, label: TRANSLATIONS.find((t) => t.id === id)?.language ?? "العربية" })),
+                  ]}
+                >
+                  {(item) => <Select.Item id={item.id} label={item.label} supportingText={item.supportingText} />}
+                </Select>
+              </Section>
+
               <Section title="Audio">
                 <Select
                   label="Reciter"
@@ -136,6 +156,20 @@ export function ReaderSettings({ className }: { className?: string }) {
                   {(item) => <Select.Item id={item.id} label={item.label} supportingText={item.supportingText} />}
                 </Select>
                 <Toggle label="Auto-scroll while playing" isSelected={s.autoScroll} onChange={(v) => setSettings({ autoScroll: v })} />
+                <Select
+                  label="Pause after each ayah"
+                  hint="Teaching mode: time to recite the ayah back"
+                  selectedKey={String(s.pauseAfter)}
+                  onSelectionChange={(k) => k != null && setSettings({ pauseAfter: Number(k) })}
+                  items={[
+                    { id: "0", label: "Off" },
+                    { id: "5", label: "5 seconds" },
+                    { id: "10", label: "10 seconds" },
+                    { id: "-1", label: "As long as the ayah" },
+                  ]}
+                >
+                  {(item) => <Select.Item id={item.id} label={item.label} />}
+                </Select>
               </Section>
             </SlideoutMenu.Content>
           </>

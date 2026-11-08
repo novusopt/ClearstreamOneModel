@@ -7,6 +7,8 @@
  *   data/surah-{n}.json   per-surah verse data, fetched on demand
  *   data/tr-{lang}.json   one file per non-English translation (all surahs)
  *   data/home.json        Al-Fatihah + Ayat al-Kursi for the home page demos
+ *   data/tafsir-{lang}.json  Al-Mukhtasar per language (array per surah)
+ *   data/similar.json     look-alike ayat for all surahs
  *
  * Usage: npm run build:artifact
  */
@@ -74,9 +76,19 @@ const fatihah = JSON.parse(readFileSync(join(ROOT, "data/quran/surah/1.json"), "
 const sample = JSON.parse(readFileSync(join(ROOT, "data/quran/surah/2.json"), "utf8")).verses[254];
 writeFileSync(join(DATA, "home.json"), JSON.stringify({ fatihah, sample }));
 writeFileSync(join(DATA, "search.json"), readFileSync(join(ROOT, "public/data/search.json")));
+// Study data: one tafsir file per language (array per surah) and one look-alike-ayat file.
+for (const lang of readdirSync(join(ROOT, "public/data/tafsir"))) {
+  const all = [];
+  for (let n = 1; n <= 114; n++) all.push(JSON.parse(readFileSync(join(ROOT, "public/data/tafsir", lang, `${n}.json`), "utf8")));
+  writeFileSync(join(DATA, `tafsir-${lang}.json`), JSON.stringify(all));
+}
+const similar = {};
+for (let n = 1; n <= 114; n++) similar[n] = JSON.parse(readFileSync(join(ROOT, "public/data/similar", `${n}.json`), "utf8"));
+writeFileSync(join(DATA, "similar.json"), JSON.stringify(similar));
 
 // 4. Page (no <html>/<head>/<body>: the host wraps it)
-const html = `<title>Mishkah</title>
+const html = `<meta charset="utf-8">
+<title>Mishkah</title>
 <meta name="description" content="A lantern for the Qurʾān: Uthmani text, translations, word-by-word meanings and colour-coded tajweed.">
 <style>${css}</style>
 <div id="mishkah-root"></div>

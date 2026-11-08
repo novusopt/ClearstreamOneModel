@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown, ArrowRight, ArrowUp, BookOpen01, Bookmark, CornerDownLeft, File06, Hash01, SearchLg } from "@untitledui/icons";
+import { ArrowDown, ArrowRight, ArrowUp, BookOpen01, Bookmark, CornerDownLeft, File06, Hash01, RefreshCw01, SearchLg } from "@untitledui/icons";
 import { useRouter } from "next/navigation";
 import { type FC, useEffect, useMemo, useState } from "react";
 import { Heading as AriaHeading, ListBox as AriaListBox, ListBoxItem as AriaListBoxItem } from "react-aria-components";
@@ -110,6 +110,7 @@ function search(query: string, chapters: Chapter[], lastRead: { surah: number; a
       const ch = chapters[lastRead.surah - 1];
       out.push({ id: "continue", href: `/surah/${ch.id}#v-${lastRead.ayah}`, title: "Continue reading", subtitle: `${ch.nameSimple} ${ch.id}:${lastRead.ayah}`, icon: BookOpen01 });
     }
+    out.push({ id: "review", href: "/review", title: "Review memorised ayat", subtitle: "Spaced repetition: today’s due ayat", icon: RefreshCw01 });
     out.push({ id: "library", href: "/library", title: "Your library", subtitle: "Progress, reading plan, bookmarks, notes", icon: Bookmark });
   }
 

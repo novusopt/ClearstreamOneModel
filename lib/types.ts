@@ -25,6 +25,10 @@ export interface Verse {
   /** English translation (Saheeh International). */
   en: string;
   w: Word[];
+  /** Madani mushaf page (1–604). */
+  p?: number;
+  /** Hizb quarter (1–240) that starts at this ayah. */
+  q?: number;
 }
 
 export interface Chapter {
@@ -34,6 +38,9 @@ export interface Chapter {
   nameTranslation: string;
   revelation: "meccan" | "medinan";
   versesCount: number;
+  /** First and last Madani mushaf page. */
+  pages?: [number, number];
+  words?: number;
 }
 
 export interface SurahData {
@@ -47,4 +54,14 @@ export interface AudioVerse {
   g: number;
   /** [start, end] ms per word, when the reciter has word timings. */
   t: Array<[number, number] | null>;
+}
+
+/** An ayah with near-identical wording (mutashabih). */
+export interface SimilarRef {
+  s: number;
+  a: number;
+  /** Surah name. */
+  n: string;
+  /** Arabic text. */
+  t: string;
 }

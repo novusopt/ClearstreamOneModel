@@ -1,9 +1,10 @@
 "use client";
 
-import { BookOpen01, CheckCircle, Edit05, Flag05, Target04, Trash01, TrendUp01, Zap } from "@untitledui/icons";
+import { ArrowRight, BookOpen01, CheckCircle, RefreshCw01, Edit05, Flag05, Target04, Trash01, TrendUp01, Zap } from "@untitledui/icons";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { type FC, useState } from "react";
+import { Alert } from "@/components/application/alerts/alert";
 import { EmptyState } from "@/components/application/empty-state/empty-state";
 import { Tabs } from "@/components/application/tabs/tabs";
 import { Badge } from "@/components/base/badges/badges";
@@ -14,8 +15,9 @@ import { ProgressBarCircle } from "@/components/base/progress-indicators/progres
 import { ProgressBar } from "@/components/base/progress-indicators/progress-indicators";
 import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
 import { BookmarkList } from "@/components/quran/bookmark-list";
+import { OfflineCard } from "@/components/library/offline-card";
 import { TOTAL_AYAT } from "@/lib/constants";
-import { planStatus, saveNote, startPlan, stopPlan, streak, today, toggleMemorised, totalRead, useLibrary } from "@/lib/library";
+import { dueReviews, planStatus, saveNote, startPlan, stopPlan, streak, today, toggleMemorised, totalRead, useLibrary } from "@/lib/library";
 import type { Chapter } from "@/lib/types";
 import { cx } from "@/utils/cx";
 
@@ -170,6 +172,7 @@ function ProgressTab({ chapters }: { chapters: Chapter[] }) {
           <Activity log={log} />
         </div>
       </div>
+      <OfflineCard />
     </div>
   );
 }
@@ -218,6 +221,7 @@ function NotesTab({ chapters }: { chapters: Chapter[] }) {
 
 function MemorisedTab({ chapters }: { chapters: Chapter[] }) {
   const memorised = useLibrary((s) => s.memorised);
+  const due = useLibrary((s) => dueReviews(s).length);
   if (!memorised.length)
     return (
       <EmptyState size="md" className="py-14">
@@ -239,6 +243,18 @@ function MemorisedTab({ chapters }: { chapters: Chapter[] }) {
     bySurah.set(s, [...(bySurah.get(s) ?? []), a].sort((x, y) => x - y));
   }
   return (
+    <div className="space-y-4">
+      <Alert
+        color={due > 0 ? "brand" : "success"}
+        icon={due > 0 ? RefreshCw01 : CheckCircle}
+        title={due > 0 ? `${due} ayah${due === 1 ? "" : "s"} due for review` : "All reviews done for today"}
+        description="Memorised ayat return at growing intervals (spaced repetition) so they stay firm."
+        actions={
+          <Button size="sm" color="link-color" href="/review" iconTrailing={ArrowRight}>
+            {due > 0 ? "Start review" : "Open review"}
+          </Button>
+        }
+      />
     <ul className="grid gap-3 sm:grid-cols-2">
       {[...bySurah.entries()]
         .sort((a, b) => a[0] - b[0])
@@ -274,6 +290,7 @@ function MemorisedTab({ chapters }: { chapters: Chapter[] }) {
           );
         })}
     </ul>
+    </div>
   );
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Bookmark, BookmarkCheck, CheckCircle, Copy01, Edit05, Eye, EyeOff, Image01, Link01, PauseCircle, PlayCircle, Share07, Type01 } from "@untitledui/icons";
+import { Bookmark, BookmarkCheck, CheckCircle, Copy01, Copy07, Edit05, Eye, EyeOff, Image01, Link01, PauseCircle, PlayCircle, Share07, Type01 } from "@untitledui/icons";
 import { motion } from "motion/react";
 import { memo, useState } from "react";
 import { notify } from "@/components/application/notifications/notification";
@@ -9,6 +9,8 @@ import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { Dropdown } from "@/components/base/dropdown/dropdown";
 import { Tooltip, TooltipTrigger } from "@/components/base/tooltip/tooltip";
+import { quarterLabel } from "@/components/quran/hizb-mark";
+import { TafsirSection } from "@/components/quran/tafsir-section";
 import { Word } from "@/components/quran/word";
 import { AyahMarker } from "@/components/quran/ayah-marker";
 import { VerseNumber } from "@/components/quran/verse-number";
@@ -16,7 +18,7 @@ import { openVerseDialog } from "@/components/quran/verse-dialogs";
 import { player, usePlayer, useTick } from "@/lib/audio-engine";
 import { toggleBookmark, toggleMemorised, useLibrary, verseKey } from "@/lib/library";
 import { ARABIC_SIZES, TRANSLATION_SIZES, useSettings } from "@/lib/settings";
-import type { Verse } from "@/lib/types";
+import type { SimilarRef, Verse } from "@/lib/types";
 import { cx } from "@/utils/cx";
 
 interface VerseCardProps {
@@ -28,10 +30,12 @@ interface VerseCardProps {
   translationRtl: boolean;
   /** Ayah of prostration (۩). */
   sajdah?: boolean;
+  /** Ayat with near-identical wording. */
+  similar?: SimilarRef[];
   onPlay: (index: number) => void;
 }
 
-export const VerseCard = memo(function VerseCard({ verse, index, surah, surahName, translation, translationRtl, sajdah = false, onPlay }: VerseCardProps) {
+export const VerseCard = memo(function VerseCard({ verse, index, surah, surahName, translation, translationRtl, sajdah = false, similar, onPlay }: VerseCardProps) {
   const isCurrent = usePlayer((s) => s.surah === surah && s.index === index && s.status !== "idle");
   const isPlaying = usePlayer((s) => s.surah === surah && s.index === index && (s.status === "playing" || s.status === "loading"));
   const activeWord = useTick((s) => (isCurrent ? s.word : -1));
@@ -41,7 +45,12 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
   const hifz = useSettings((s) => s.viewMode === "hifz");
   // Memorisation mode: words stay hidden until revealed (one tap per word, or all at once).
   const [revealed, setRevealed] = useState<Set<number>>(() => new Set());
-  const allRevealed = revealed.size >= verse.w.length;
+  const hideMode = useSettings((s) => s.hifzHide);
+  // Which words start hidden in Memorise mode (progressive hiding, as huffaz are taught).
+  const hiddenByMode = (i: number) =>
+    hideMode === "alternate" ? i % 2 === 1 : hideMode === "half" ? i >= Math.ceil(verse.w.length / 2) : true;
+  const isConcealed = (i: number) => hifz && hiddenByMode(i) && !revealed.has(i);
+  const allRevealed = verse.w.every((_, i) => !isConcealed(i));
   const reveal = (i: number) => setRevealed((prev) => new Set(prev).add(i));
 
   const tajweed = useSettings((s) => s.tajweed);
@@ -83,6 +92,7 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
     const target = { surah, ayah: verse.n, surahName, arabic, translation: text };
     if (action === "note") openVerseDialog(target, "note");
     if (action === "image") openVerseDialog(target, "image");
+    if (action === "similar") openVerseDialog({ ...target, similar }, "similar");
     if (action === "memorised") {
       const added = toggleMemorised(surah, verse.n);
       if (added) notify.success(`Ayah ${key} memorised`, { id: `mem-${key}`, description: "Keep going: it's added to your Library." });
@@ -108,6 +118,23 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
       <div className="mb-5 flex items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <VerseNumber surah={surah} ayah={verse.n} active={isCurrent} playing={isPlaying} />
+          {verse.q && (
+            <Badge type="pill-color" color="warning" size="sm" className="gap-1">
+              <span aria-hidden="true">۞</span> {quarterLabel(verse.q)}
+            </Badge>
+          )}
+          {similar && similar.length > 0 && (
+            <button
+              type="button"
+              onClick={() => onMenu("similar")}
+              className="rounded-full outline-focus-ring focus-visible:outline-2"
+              title="Ayat with near-identical wording"
+            >
+              <BadgeWithIcon type="pill-color" color={hifz ? "warning" : "gray"} size="sm" iconLeading={Copy07} className="cursor-pointer">
+                Similar wording · {similar.length}
+              </BadgeWithIcon>
+            </button>
+          )}
           {sajdah && (
             <Tooltip title="Ayah of prostration" description="It is recommended to prostrate (sajdat at-tilāwah) after reciting this ayah." placement="top">
               <TooltipTrigger className="rounded-full">
@@ -169,6 +196,7 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
                 </Dropdown.Section>
                 <Dropdown.Separator />
                 <Dropdown.Section>
+                  {similar && similar.length > 0 && <Dropdown.Item id="similar" icon={Copy07} label="Compare similar ayat" />}
                   <Dropdown.Item id="image" icon={Image01} label="Share as image" />
                   <Dropdown.Item id="share" icon={Share07} label="Share link…" />
                 </Dropdown.Section>
@@ -192,7 +220,8 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
                 wbwTransliteration={wbwTransliteration}
                 active={activeWord === i}
                 sizeClass={arabicSize}
-                concealed={hifz && !revealed.has(i)}
+                concealed={isConcealed(i)}
+                hint={hideMode === "first-letter"}
                 onReveal={reveal}
               />
             ))}
@@ -235,6 +264,8 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
               {translation ?? verse.en}
             </p>
           )}
+
+          {(!hifz || allRevealed) && <TafsirSection surah={surah} ayah={verse.n} />}
 
           {note && (
             <button

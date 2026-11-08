@@ -18,7 +18,9 @@ import { isSajdah, juzStartingAt, TRANSLATIONS } from "@/lib/constants";
 import { setLastRead } from "@/lib/library";
 import { positionStore } from "@/lib/reader-position";
 import { setSettings, settingsStore, useSettings } from "@/lib/settings";
-import type { AudioVerse, Chapter, Verse } from "@/lib/types";
+import { dataUrl, pickSurah } from "@/lib/data-urls";
+import type { AudioVerse, Chapter, SimilarRef, Verse } from "@/lib/types";
+import { useRemote } from "@/lib/use-remote";
 
 interface SurahReaderProps {
   chapter: Chapter;
@@ -34,6 +36,8 @@ export function SurahReader({ chapter, verses, prev, next, basmala }: SurahReade
   const viewMode = useSettings((s) => s.viewMode);
   const lang = useSettings((s) => s.translation);
   const { texts } = useTranslationText(chapter.id, lang);
+  const similarRaw = useRemote<unknown>(dataUrl.similar(chapter.id));
+  const similar = similarRaw ? pickSurah<Record<string, SimilarRef[]>>("similar", similarRaw, chapter.id) : null;
   const rtl = TRANSLATIONS.find((t) => t.id === lang)?.rtl ?? false;
 
   const audioVerses = useMemo<AudioVerse[]>(
@@ -126,6 +130,7 @@ export function SurahReader({ chapter, verses, prev, next, basmala }: SurahReade
     };
   }, [chapter.id, viewMode]);
 
+  const pageList = useMemo(() => verses.map((v) => v.p), [verses]);
   const togglePlay = () => (playerStore.get().surah === chapter.id ? player.toggle() : playFrom(0));
   const resume = (ayah: number) => {
     const el = document.getElementById(`v-${ayah}`);
@@ -134,7 +139,7 @@ export function SurahReader({ chapter, verses, prev, next, basmala }: SurahReade
 
   return (
     <div className="mx-auto max-w-5xl px-3 pb-40 sm:px-6 md:pb-24">
-      <ReaderBar chapter={chapter} onPlay={togglePlay} />
+      <ReaderBar chapter={chapter} onPlay={togglePlay} pages={pageList} />
       <ResumeBanner surah={chapter.id} total={chapter.versesCount} onResume={resume} />
       <ReaderTips />
 
@@ -161,6 +166,7 @@ export function SurahReader({ chapter, verses, prev, next, basmala }: SurahReade
                   translation={texts ? texts[i] : lang === "en" ? v.en : null}
                   translationRtl={rtl}
                   sajdah={isSajdah(chapter.id, v.n)}
+                  similar={similar?.[v.n]}
                   onPlay={playFrom}
                 />
               </Fragment>

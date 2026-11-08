@@ -5,7 +5,8 @@
 export type Route =
   | { view: "home"; section: string | null }
   | { view: "surah"; id: number; verse: number | null }
-  | { view: "library"; tab: "progress" | "bookmarks" };
+  | { view: "library"; tab: "progress" | "bookmarks" }
+  | { view: "review" };
 
 export function pathToHash(href: string): string {
   if (href.startsWith("#")) return href;
@@ -19,6 +20,7 @@ export function pathToHash(href: string): string {
   }
   if (path === "/bookmarks") return "#bookmarks";
   if (path === "/library") return "#library";
+  if (path === "/review") return "#review";
   return frag ? `#${frag}` : "#home";
 }
 
@@ -31,6 +33,7 @@ export function parseHash(hash: string): Route {
   }
   if (name === "bookmarks") return { view: "library", tab: "bookmarks" };
   if (name === "library") return { view: "library", tab: "progress" };
+  if (name === "review") return { view: "review" };
   return { view: "home", section: name && name !== "home" ? name : null };
 }
 

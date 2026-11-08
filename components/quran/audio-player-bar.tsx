@@ -1,6 +1,6 @@
 "use client";
 
-import { FastForward, PauseCircle, PlayCircle, Repeat04, SkipBack, SkipForward, XClose } from "@untitledui/icons";
+import { FastForward, Microphone01, PauseCircle, PlayCircle, Repeat04, SkipBack, SkipForward, XClose } from "@untitledui/icons";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { Avatar } from "@/components/base/avatar/avatar";
@@ -38,6 +38,32 @@ function Equalizer({ playing }: { playing: boolean }) {
   );
 }
 
+/** Teaching pause: the listener's turn to recite, with a countdown to the next ayah. */
+function YourTurn() {
+  const pause = usePlayer((s) => s.pause);
+  const ayah = usePlayer((s) => s.verses[s.index]?.n ?? 0);
+  if (!pause) return null;
+  const seconds = Math.max(1, Math.round((pause.until - pause.from) / 1000));
+  return (
+    <div className="flex w-full items-center gap-3 text-xs" role="status">
+      <span className="flex shrink-0 items-center gap-1.5 font-semibold text-brand-secondary">
+        <Microphone01 aria-hidden="true" className="size-4" />
+        Your turn: recite ayah {ayah}
+      </span>
+      <span className="h-1 flex-1 overflow-hidden rounded-full bg-quaternary">
+        <motion.span
+          key={pause.from}
+          className="block h-full rounded-full bg-gold-500"
+          initial={{ width: "0%" }}
+          animate={{ width: "100%" }}
+          transition={{ duration: seconds, ease: "linear" }}
+        />
+      </span>
+      <span className="w-9 text-tertiary tabular-nums">{seconds}s</span>
+    </div>
+  );
+}
+
 function Progress() {
   const time = useTick((s) => s.time);
   const duration = useTick((s) => s.duration);
@@ -68,7 +94,7 @@ export function AudioPlayerBar() {
   const reciterId = useSettings((s) => s.reciter);
   const rate = useSettings((s) => s.playbackRate);
   const repeat = useSettings((s) => s.repeat);
-  const playing = status === "playing" || status === "loading";
+  const playing = status === "playing" || status === "loading" || status === "repeat";
   const reciter = getReciter(reciterId);
 
   return (
@@ -122,7 +148,7 @@ export function AudioPlayerBar() {
                   {rate}×
                 </Button>
               </div>
-              <Progress />
+              {status === "repeat" ? <YourTurn /> : <Progress />}
             </div>
 
             <div className="absolute top-2 right-2 md:static">
