@@ -61,6 +61,23 @@ export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
     });
   }, [chapter.id, lenis]);
 
+  // Keyboard: Space play/pause, J next ayah, K previous ayah.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (e.metaKey || e.ctrlKey || e.altKey || t?.closest("input, textarea, select, [role=dialog], [role=menu], [contenteditable=true]")) return;
+      const active = playerStore.get().surah === chapter.id;
+      if (e.key === " " && !t?.closest("button, a")) {
+        e.preventDefault();
+        if (active) player.toggle();
+        else playFrom(0);
+      } else if (active && e.key.toLowerCase() === "j") player.next();
+      else if (active && e.key.toLowerCase() === "k") player.prev();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [chapter.id, playFrom]);
+
   // Remember the ayah the reader is looking at.
   useEffect(() => {
     const els = document.querySelectorAll<HTMLElement>("[data-ayah]");
@@ -118,7 +135,7 @@ export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
       {viewMode === "reading" ? (
         <ReadingView verses={verses} surah={chapter.id} />
       ) : (
-        <div className="space-y-3">
+        <div className="rounded-3xl border border-secondary bg-primary shadow-xs [&>article:first-child]:rounded-t-3xl [&>article:last-child]:rounded-b-3xl">
           {verses.map((v, i) => (
             <VerseCard
               key={v.n}

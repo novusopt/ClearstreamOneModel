@@ -20,6 +20,7 @@ import { AudioPlayerBar } from "@/components/quran/audio-player-bar";
 import { BookmarkList } from "@/components/quran/bookmark-list";
 import { SurahHero } from "@/components/quran/surah-hero";
 import { SurahReader } from "@/components/quran/surah-reader";
+import { CommandPalette } from "@/components/site/command-palette";
 import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
 import { ScrollProgress } from "@/components/site/scroll-progress";
@@ -173,6 +174,7 @@ createRoot(document.getElementById("mishkah-root")!).render(
       </main>
       <Footer />
       <AudioPlayerBar />
+      <CommandPalette chapters={chapters} />
       <Toaster position="bottom-center" offset={104} richColors closeButton />
     </div>
   </Shell>,

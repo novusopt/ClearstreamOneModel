@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen01, Bookmark, Grid01, LayersThree01, Menu02, Stars02 } from "@untitledui/icons";
+import { BookOpen01, Bookmark, Grid01, LayersThree01, Menu02, SearchLg, Stars02 } from "@untitledui/icons";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import Link from "next/link";
 import { useState } from "react";
@@ -8,6 +8,7 @@ import { NavItemBase } from "@/components/application/app-navigation/base-compon
 import { SlideoutMenu } from "@/components/application/slideout-menus/slideout-menu";
 import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
+import { Kbd, openCommandPalette } from "@/components/site/command-palette";
 import { Logo } from "@/components/site/logo";
 import { ThemeToggle } from "@/components/site/theme-toggle";
 import { useLibrary } from "@/lib/library";
@@ -86,6 +87,11 @@ export function Header() {
           ))}
         </nav>
         <div className="flex items-center gap-1">
+          <Button size="sm" color="secondary" iconLeading={SearchLg} onPress={openCommandPalette} className="hidden lg:inline-flex" aria-label="Go to surah or ayah">
+            <span className="text-tertiary">Go to…</span>
+            <Kbd>⌘K</Kbd>
+          </Button>
+          <ButtonUtility size="sm" color="tertiary" tooltip="Go to surah or ayah" tooltipPlacement="bottom" icon={SearchLg} onPress={openCommandPalette} className="lg:hidden" />
           <ThemeToggle />
           <MobileMenu />
           <Button size="sm" href={lastRead ? `/surah/${lastRead.surah}#v-${lastRead.ayah}` : "/surah/1"} iconLeading={BookOpen01}>

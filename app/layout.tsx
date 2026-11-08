@@ -3,9 +3,11 @@ import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import { AudioPlayerBar } from "@/components/quran/audio-player-bar";
 import { Providers } from "@/components/providers/providers";
+import { CommandPalette } from "@/components/site/command-palette";
 import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
 import { BRAND } from "@/lib/brand";
+import { getChapters } from "@/lib/quran";
 import "./globals.css";
 
 const inter = localFont({
@@ -63,6 +65,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </main>
           <Footer />
           <AudioPlayerBar />
+          <CommandPalette chapters={getChapters()} />
           <Toaster position="bottom-center" offset={104} richColors closeButton />
         </Providers>
       </body>

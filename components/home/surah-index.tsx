@@ -31,7 +31,7 @@ function SurahCard({ chapter, i }: { chapter: Chapter; i: number }) {
         className="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-secondary bg-primary p-4 outline-focus-ring transition duration-300 hover:-translate-y-1 hover:border-brand hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2"
       >
         <span className="relative flex size-12 shrink-0 items-center justify-center">
-          <span className="absolute inset-0 rotate-45 rounded-xl bg-secondary ring-1 ring-secondary transition duration-500 group-hover:rotate-[135deg] group-hover:bg-brand-solid" />
+          <span className="absolute inset-[7px] rotate-45 rounded-lg bg-secondary ring-1 ring-secondary transition duration-500 group-hover:rotate-[135deg] group-hover:bg-brand-solid" />
           <span className="relative text-sm font-semibold text-secondary tabular-nums transition group-hover:text-white">{chapter.id}</span>
         </span>
         <span className="min-w-0 flex-1">

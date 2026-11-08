@@ -1,11 +1,12 @@
 "use client";
 
-import { Bookmark, BookmarkCheck, Copy01, PauseCircle, PlayCircle, Share07 } from "@untitledui/icons";
+import { Bookmark, BookmarkCheck, Copy01, Link01, PauseCircle, PlayCircle, Share07, Type01 } from "@untitledui/icons";
 import { motion } from "motion/react";
 import { memo } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/base/badges/badges";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
+import { Dropdown } from "@/components/base/dropdown/dropdown";
 import { Word } from "@/components/quran/word";
 import { AyahMarker } from "@/components/quran/ayah-marker";
 import { player, usePlayer, useTick } from "@/lib/audio-engine";
@@ -40,24 +41,32 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
 
   const key = verseKey(surah, verse.n);
 
-  const copy = async () => {
-    const text = `${verse.w.map((w) => w.a).join(" ")}\n\n${translation ?? verse.en}\n\n— ${surahName} ${key}`;
+  const arabic = verse.w.map((w) => w.a).join(" ");
+  const text = translation ?? verse.en;
+  const link = () => `${window.location.origin}/surah/${surah}#v-${verse.n}`;
+
+  const copy = async (value: string, label: string) => {
     try {
-      await navigator.clipboard.writeText(text);
-      toast.success(`Copied ${key}`);
+      await navigator.clipboard.writeText(value);
+      toast.success(label);
     } catch {
       toast.error("Couldn't access the clipboard");
     }
   };
 
   const share = async () => {
-    const url = `${window.location.origin}/surah/${surah}#v-${verse.n}`;
     if (navigator.share) {
-      await navigator.share({ title: `${surahName} ${key}`, text: translation ?? verse.en, url }).catch(() => undefined);
+      await navigator.share({ title: `${surahName} ${key}`, text, url: link() }).catch(() => undefined);
     } else {
-      await navigator.clipboard.writeText(url).catch(() => undefined);
-      toast.success("Link copied");
+      await copy(link(), "Link copied");
     }
+  };
+
+  const onMenu = (action: string) => {
+    if (action === "copy-verse") void copy(`${arabic}\n\n${text}\n\n— ${surahName} ${key}`, `Copied ${key}`);
+    if (action === "copy-arabic") void copy(arabic, "Arabic text copied");
+    if (action === "copy-link") void copy(link(), "Link copied");
+    if (action === "share") void share();
   };
 
   return (
@@ -70,17 +79,16 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
       viewport={{ once: true, margin: "0px 0px -60px 0px" }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       className={cx(
-        "group/verse relative scroll-mt-36 rounded-3xl border p-4 transition-[background-color,border-color,box-shadow] duration-500 sm:p-6 md:p-8",
-        isCurrent
-          ? "border-brand bg-brand-primary/40 shadow-[0_0_0_6px] shadow-brand-500/10"
-          : "border-secondary bg-primary hover:shadow-md",
+        "group/verse relative scroll-mt-36 border-b border-secondary px-4 py-7 transition-colors duration-500 last:border-b-0 sm:px-8 sm:py-9",
+        isCurrent ? "bg-brand-primary/50" : "hover:bg-secondary/40",
       )}
     >
-      <div className="mb-4 flex items-center justify-between gap-2">
+      {isCurrent && <motion.span layoutId={`verse-indicator-${surah}`} className="absolute inset-y-0 left-0 w-0.5 bg-brand-solid" />}
+      <div className="mb-5 flex items-center justify-between gap-2">
         <Badge type="pill-color" color="brand" size="lg" className="min-w-14 justify-center rounded-t-full rounded-b-md pt-2 font-display tabular-nums">
           {key}
         </Badge>
-        <div className="flex items-center gap-0.5 opacity-100 transition-opacity duration-300 md:opacity-60 md:group-hover/verse:opacity-100 md:group-focus-within/verse:opacity-100">
+        <div className="flex items-center gap-0.5">
           <ButtonUtility
             size="sm"
             color="tertiary"
@@ -93,14 +101,28 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
             color="tertiary"
             tooltip={bookmarked ? "Remove bookmark" : "Bookmark"}
             icon={bookmarked ? BookmarkCheck : Bookmark}
-            className={cx(bookmarked && "text-brand-secondary")}
+            className={cx(bookmarked && "text-fg-brand-primary")}
             onPress={() => {
               const added = toggleBookmark(surah, verse.n);
               toast(added ? `Bookmarked ${key}` : `Removed bookmark ${key}`);
             }}
           />
-          <ButtonUtility size="sm" color="tertiary" tooltip="Copy" icon={Copy01} onPress={copy} />
-          <ButtonUtility size="sm" color="tertiary" tooltip="Share" icon={Share07} onPress={share} />
+          <Dropdown.Root>
+            <Dropdown.DotsButton className="ml-1 p-1.5" />
+            <Dropdown.Popover className="w-56">
+              <Dropdown.Menu onAction={(k) => onMenu(String(k))} aria-label={`Actions for ayah ${key}`}>
+                <Dropdown.Section>
+                  <Dropdown.Item id="copy-verse" icon={Copy01} label="Copy verse" />
+                  <Dropdown.Item id="copy-arabic" icon={Type01} label="Copy Arabic only" />
+                  <Dropdown.Item id="copy-link" icon={Link01} label="Copy link" />
+                </Dropdown.Section>
+                <Dropdown.Separator />
+                <Dropdown.Section>
+                  <Dropdown.Item id="share" icon={Share07} label="Share…" />
+                </Dropdown.Section>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown.Root>
         </div>
       </div>
 
