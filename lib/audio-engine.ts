@@ -1,7 +1,9 @@
 "use client";
 
+import { toast } from "sonner";
 import { ayahAudioUrls, getReciter, wordAudioUrl } from "@/lib/audio";
 import { createStore, useStore } from "@/lib/create-store";
+import { IS_ARTIFACT } from "@/lib/runtime";
 import { settingsStore } from "@/lib/settings";
 import type { AudioVerse } from "@/lib/types";
 
@@ -143,9 +145,19 @@ function onEnded() {
   tickStore.set({ word: -1 });
 }
 
+function audioBlocked(): boolean {
+  if (!IS_ARTIFACT) return false;
+  toast.info("Recitation isn't available on this preview page", {
+    id: "audio-blocked",
+    description: "Audio streams from external recitation servers, which this hosted page can't reach. It plays in the full app.",
+  });
+  return true;
+}
+
 export const player = {
   /** Start (or restart) playback of a surah at a given ayah index. */
   play(surah: number, surahName: string, verses: AudioVerse[], index = 0, seekMs?: number) {
+    if (audioBlocked()) return;
     wordAudio?.pause();
     playerStore.set({ surah, surahName, verses });
     loadIndex(index, true, seekMs);
@@ -191,6 +203,7 @@ export const player = {
   },
   /** Plays a single word's pronunciation (pauses the recitation). */
   playWord(surah: number, ayah: number, word: number) {
+    if (audioBlocked()) return;
     audio?.pause();
     wordAudio ??= new Audio();
     wordAudio.src = wordAudioUrl(surah, ayah, word);

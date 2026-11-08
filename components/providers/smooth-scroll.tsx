@@ -2,6 +2,7 @@
 
 import Lenis from "lenis";
 import { type ReactNode, useEffect, useSyncExternalStore } from "react";
+import { IS_ARTIFACT } from "@/lib/runtime";
 
 let current: Lenis | null = null;
 const listeners = new Set<() => void>();
@@ -25,7 +26,8 @@ export const useLenis = () =>
 export function SmoothScroll({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const instance = new Lenis({ autoRaf: true, lerp: 0.12, anchors: { offset: -96 } });
+    // In the hash-routed build, anchors are handled by the app router instead.
+    const instance = new Lenis({ autoRaf: true, lerp: 0.12, anchors: IS_ARTIFACT ? false : { offset: -96 } });
     setCurrent(instance);
     return () => {
       instance.destroy();
