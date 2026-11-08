@@ -1,122 +1,145 @@
 @import "tailwindcss";
+@import "../styles/theme.css";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
 
+@custom-variant dark (&:where(.dark-mode, .dark-mode *));
+@custom-variant label (& [data-label]);
+@custom-variant focus-input-within (&:has(input:focus));
+
+@theme {
+  --font-quran: var(--font-amiri-quran), "Amiri Quran", "KFGQPC Uthmanic Script HAFS", serif;
+
+  /* Gold accent used for ornaments (rub el hizb star, ayah markers). */
+  --color-gold-300: rgb(240 214 150);
+  --color-gold-400: rgb(226 189 105);
+  --color-gold-500: rgb(201 160 72);
+  --color-gold-600: rgb(166 127 47);
+
+  --animate-aurora: aurora 18s ease-in-out infinite alternate;
+  --animate-spin-slow: spin 60s linear infinite;
+  --animate-equalizer: equalizer 1.1s ease-in-out infinite;
+
+  @keyframes aurora {
+    0% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(4%, -6%, 0) scale(1.08); }
+    100% { transform: translate3d(-5%, 4%, 0) scale(0.96); }
+  }
+
+  @keyframes equalizer {
+    0%, 100% { transform: scaleY(0.25); }
+    50% { transform: scaleY(1); }
+  }
+}
+
+/*
+ * Tajweed palette — the colour convention used by Quran.com and most printed tajweed
+ * mushafs. Light/dark values are tuned for contrast on each background.
+ */
 :root {
-  --background: 0 0% 100%;
-  --foreground: 222 47% 11%;
-  --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
-  --primary: 221 83% 53%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 210 40% 96%;
-  --secondary-foreground: 222 47% 11%;
-  --muted: 210 40% 96%;
-  --muted-foreground: 215 16% 47%;
-  --accent: 210 40% 96%;
-  --accent-foreground: 222 47% 11%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 100%;
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --ring: 221 83% 53%;
-  --radius: 0.75rem;
+  --tj-silent: rgb(150 150 150);
+  --tj-madd-normal: rgb(83 127 255);
+  --tj-madd-permissible: rgb(64 80 255);
+  --tj-madd-necessary: rgb(0 14 188);
+  --tj-madd-obligatory: rgb(33 68 193);
+  --tj-qalqalah: rgb(221 0 8);
+  --tj-ikhfa-shafawi: rgb(213 0 183);
+  --tj-ikhfa: rgb(148 0 168);
+  --tj-idgham-shafawi: rgb(88 184 0);
+  --tj-iqlab: rgb(38 191 253);
+  --tj-idgham-ghunnah: rgb(22 151 119);
+  --tj-idgham-wo-ghunnah: rgb(22 146 0);
+  --tj-idgham-misc: rgb(161 161 161);
+  --tj-ghunnah: rgb(255 126 30);
 }
 
-.dark {
-  --background: 222 47% 5%;
-  --foreground: 210 40% 98%;
-  --card: 222 47% 7%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222 47% 7%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 217 91% 60%;
-  --primary-foreground: 222 47% 11%;
-  --secondary: 217 33% 17%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217 33% 17%;
-  --muted-foreground: 215 20% 65%;
-  --accent: 217 33% 17%;
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 63% 45%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217 33% 20%;
-  --input: 217 33% 20%;
-  --ring: 217 91% 60%;
+.dark-mode {
+  --tj-silent: rgb(130 130 140);
+  --tj-madd-normal: rgb(130 165 255);
+  --tj-madd-permissible: rgb(120 135 255);
+  --tj-madd-necessary: rgb(100 120 255);
+  --tj-madd-obligatory: rgb(110 145 255);
+  --tj-qalqalah: rgb(255 85 90);
+  --tj-ikhfa-shafawi: rgb(240 90 220);
+  --tj-ikhfa: rgb(200 100 225);
+  --tj-idgham-shafawi: rgb(130 215 50);
+  --tj-iqlab: rgb(80 205 255);
+  --tj-idgham-ghunnah: rgb(45 200 160);
+  --tj-idgham-wo-ghunnah: rgb(70 200 60);
+  --tj-idgham-misc: rgb(160 160 170);
+  --tj-ghunnah: rgb(255 150 70);
 }
 
-@theme inline {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-display);
+.tj-ham_wasl, .tj-slnt, .tj-laam_shamsiyah { color: var(--tj-silent); }
+.tj-madda_normal { color: var(--tj-madd-normal); }
+.tj-madda_permissible { color: var(--tj-madd-permissible); }
+.tj-madda_necessary { color: var(--tj-madd-necessary); }
+.tj-madda_obligatory_mottasel, .tj-madda_obligatory_monfasel { color: var(--tj-madd-obligatory); }
+.tj-qalaqah { color: var(--tj-qalqalah); }
+.tj-ikhafa_shafawi { color: var(--tj-ikhfa-shafawi); }
+.tj-ikhafa { color: var(--tj-ikhfa); }
+.tj-idgham_shafawi { color: var(--tj-idgham-shafawi); }
+.tj-iqlab { color: var(--tj-iqlab); }
+.tj-idgham_ghunnah { color: var(--tj-idgham-ghunnah); }
+.tj-idgham_wo_ghunnah { color: var(--tj-idgham-wo-ghunnah); }
+.tj-idgham_mutajanisayn, .tj-idgham_mutaqaribayn { color: var(--tj-idgham-misc); }
+.tj-ghunnah { color: var(--tj-ghunnah); }
+
+@utility scrollbar-hide {
+  &::-webkit-scrollbar {
+    display: none;
+    -webkit-appearance: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-@layer base {
-  * {
-    border-color: hsl(var(--border));
-  }
-  body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-    font-feature-settings: "cv11", "ss01";
-    -webkit-font-smoothing: antialiased;
-  }
-  html {
-    scroll-behavior: smooth;
-  }
-  h1, h2, h3, h4 {
-    letter-spacing: -0.02em;
-    text-wrap: balance;
-  }
+@utility transition-inherit-all {
+  transition-property: inherit;
+  transition-duration: inherit;
+  transition-timing-function: inherit;
 }
 
-@layer utilities {
-  .container-page {
-    max-width: 80rem;
-    margin-inline: auto;
-    padding-inline: 1rem;
-  }
-  @media (min-width: 768px) {
-    .container-page { padding-inline: 2rem; }
-  }
-  .gradient-mask-b {
-    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-            mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-  }
-  .bg-grid {
-    background-image:
-      linear-gradient(to right, hsl(var(--border) / 0.4) 1px, transparent 1px),
-      linear-gradient(to bottom, hsl(var(--border) / 0.4) 1px, transparent 1px);
-    background-size: 48px 48px;
-  }
+/* Lenis smooth scrolling */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
 }
 
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+html,
+body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-kerning: normal;
 }
-.animate-fade-in { animation: fade-in 0.5s ease-out both; }
+
+.font-quran {
+  font-family: var(--font-quran);
+  font-feature-settings: "calt", "liga";
+  line-height: 2.1;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

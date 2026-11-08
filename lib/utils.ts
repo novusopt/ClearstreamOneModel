@@ -1,29 +1,31 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+const ARABIC_DIGITS = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+export function toArabicNumber(n: number): string {
+  return String(n).replace(/\d/g, (d) => ARABIC_DIGITS[Number(d)]);
 }
 
-export function formatPrice(n: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(n);
+export const pad3 = (n: number) => String(n).padStart(3, "0");
+
+export function formatTime(seconds: number): string {
+  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-export function formatMiles(n: number) {
-  return `${new Intl.NumberFormat("en-US").format(n)} mi`;
+/** Strips Arabic diacritics and normalises letters so search ignores harakat. */
+export function normalizeArabic(s: string): string {
+  return s
+    .replace(/[ً-ٰٟۖ-ۭـ]/g, "")
+    .replace(/[ٱأإآ]/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/ة/g, "ه");
 }
 
-export function formatRelative(iso: string) {
-  const now = Date.now();
-  const then = new Date(iso).getTime();
-  const days = Math.max(0, Math.round((now - then) / 86_400_000));
-  if (days === 0) return "Listed today";
-  if (days === 1) return "Listed yesterday";
-  if (days < 7) return `Listed ${days} days ago`;
-  if (days < 30) return `Listed ${Math.round(days / 7)} weeks ago`;
-  return `Listed ${Math.round(days / 30)} months ago`;
+export function normalizeLatin(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/['’ʿʾ`-]/g, "")
+    .toLowerCase();
 }

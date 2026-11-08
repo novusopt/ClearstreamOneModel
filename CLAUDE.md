@@ -1,133 +1,98 @@
-# Clearstream — Modern Car Marketplace
-
-<!--
-MAINTENANCE NOTES
-- Keep this file under ~200 lines. Long CLAUDE.md files reduce adherence and eat context.
-- Add a rule when: (a) Claude made the same mistake twice, (b) a reviewer caught something
-  Claude should have known, (c) a new contributor would need the same context.
-- Prefer concrete, verifiable rules ("use 2-space indent") over vague ones ("write clean code").
-- Put personal overrides in CLAUDE.local.md (gitignored) — not here.
-- HTML comments are stripped before injection, so they don't cost tokens.
-- Reference: https://code.claude.com/docs/en/memory
--->
+# Noor — Modern Qurʾān App
 
 ## Project Overview
 
-Clearstream is a buyer-side car marketplace: home, listings with URL-driven filters, car detail
-pages, and an inquiry dialog. It is a self-contained demo backed by a local JSON file — there
-is no real backend, no auth, no seller flow. The goal is a polished, accessible, responsive UI
-that a real API can slot into later without reshaping components.
+Noor is a reader for the Qurʾān: Uthmani text, translations, word-by-word meanings, colour-coded
+tajweed and recitation audio with word-level highlighting. It is fully static: every surah is
+pre-rendered from a bundled dataset, and user state (settings, bookmarks, last read) lives in
+localStorage. There is no backend and no auth.
 
 ## Tech Stack
 
 - **Runtime**: Node 22, npm 10
-- **Framework**: Next.js 16 (App Router, React Server Components, Turbopack dev)
+- **Framework**: Next.js 16 (App Router, React Server Components, Turbopack)
 - **Language**: TypeScript (strict)
-- **UI**: React 19, Tailwind CSS v4 (CSS-first config via `@theme` in `app/globals.css`)
-- **Primitives**: Radix UI (Dialog, Select, Slider, Label, Tabs, Checkbox, Dropdown, Slot)
-- **Forms**: react-hook-form + zod (via `@hookform/resolvers`)
-- **Misc**: next-themes, framer-motion, sonner (toasts), lucide-react, class-variance-authority,
-  clsx, tailwind-merge
-- **Data**: `data/cars.json` (~12 cars), validated at import time via a zod schema
+- **UI**: Untitled UI React components (open source, MIT), built on React Aria Components,
+  Tailwind CSS v4. Design tokens live in `styles/theme.css` (brand palette = teal).
+- **Motion**: `motion` (Framer Motion) for scroll-linked/reveal animations, `lenis` for smooth scrolling
+- **Icons**: `@untitledui/icons`
+- **Misc**: next-themes (`light-mode` / `dark-mode` classes), sonner (toasts)
 
 ## Commands
 
 ```bash
-npm install            # install deps
-npm run dev            # dev server → http://localhost:3000  (Turbopack)
-npm run build          # production build (must succeed with no type errors)
-npm start              # serve production build
-npm run lint           # eslint (flat config in eslint.config.mjs)
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # static build of all 114 surahs (runs tsc)
+npm run lint
+npm run data     # regenerate data/quran + public/data from upstream sources
 ```
-
-There is no separate typecheck script — `next build` runs `tsc` as part of its pipeline.
 
 ## Directory Layout
 
 ```
-app/                      # App Router entries
-  layout.tsx              # root shell, fonts, ThemeProvider, Header/Footer, Toaster
-  page.tsx                # home
-  globals.css             # Tailwind v4 import + CSS custom properties (light + dark)
-  cars/
-    page.tsx              # listings (server component, reads searchParams)
-    [id]/page.tsx         # detail (uses generateStaticParams)
+app/
+  layout.tsx              # fonts (Inter, Amiri Quran — local), providers, header/footer, player bar
+  page.tsx                # home: hero, stats, bento features, Al-Fātiḥah scroll story, surah/juz index
+  surah/[id]/page.tsx     # reader (generateStaticParams → 114 static pages)
+  bookmarks/page.tsx
+  globals.css             # Tailwind import, tajweed colour tokens (light + dark), Lenis CSS
 components/
-  ui/                     # small, stateless primitives (button, card, input, dialog, ...)
-  site/                   # Header, Footer, ThemeProvider, ThemeToggle
-  home/                   # Hero, CategoryTiles, FeaturedCarousel, HowItWorks, CtaBanner
-  cars/                   # CarCard, CarGrid, CarFilters, CarGallery, SpecGrid,
-                          # SellerCard, SimilarCars, SortDropdown, SearchBar, InquiryDialog
+  base/, application/, foundations/   # Untitled UI components (vendored, kebab-case files)
+  providers/              # Providers (theme, router, MotionConfig), SmoothScroll (Lenis)
+  site/                   # header, footer, logo, theme toggle, scroll progress
+  home/                   # hero, bento-features, fatihah-story, stats, surah-index, continue-reading
+  quran/                  # surah-reader, verse-card, word, tajweed-text, reading-view,
+                          # reader-settings, tajweed-legend, audio-player-bar, bookmark-list
 lib/
-  cars.ts                 # getCars / getCarById / getFeaturedCars / getSimilarCars / getMakes
-  filters.ts              # parseSearchParams, stateToSearchParams, applyFilters (pure)
-  schemas.ts              # zod schemas: carSchema, inquirySchema (+ derived TS types)
-  constants.ts            # BODY_TYPES, FUEL_TYPES, TRANSMISSIONS, SORT_OPTIONS, bounds
-  utils.ts                # cn(), formatPrice, formatMiles, formatRelative
-data/cars.json            # mock inventory (the only source of truth)
-public/                   # static assets
+  quran.ts                # server-only data access (chapters, surah files)
+  types.ts                # Verse / Word / Chapter types (compact JSON keys documented there)
+  constants.ts            # reciters, translations, tajweed rules, juz starts
+  audio.ts                # audio URL builders (ayah + per-word)
+  audio-engine.ts         # client audio player + external stores (player, tick)
+  settings.ts, library.ts # persisted client stores (localStorage)
+  create-store.ts         # tiny useSyncExternalStore-based store
+data/quran/               # generated: chapters.json, surah/{n}.json
+public/data/translations/ # generated: {lang}/{n}.json, fetched on demand
+scripts/build-quran-data.mjs
 ```
 
-Path alias: `@/*` → repo root (see `tsconfig.json`).
+Path alias: `@/*` → repo root.
+
+## Data
+
+Generated by `npm run data` — do not hand-edit. Sources:
+
+- Words, transliteration, English gloss, Husary recitation timings and tajweed markup: derived from
+  the Quran.com API via the MIT-licensed `ivosetyadi/quran-recital` dataset.
+- Surah metadata, verse transliteration and translations: npm `quran-json@3.1.2` (CC-BY-4.0;
+  Tanzil / QuranEnc).
+- Audio is streamed at runtime: `cdn.islamic.network` (primary) → EveryAyah mirrors (fallback);
+  word pronunciation from `audio.qurancdn.com/wbw`. Word-sync highlighting is only available for
+  Al-Husary (the reciter the timings were recorded against).
 
 ## Code Style
 
-- 2-space indent, double quotes in TS/TSX (Next default), trailing commas, semicolons on.
-- **Never `any`** — if types are unclear, introduce a `type`/`interface` in `lib/schemas.ts` or
-  next to the component that owns it.
-- Components: `PascalCase.tsx`. Utilities: `camelCase.ts`. Constants: `UPPER_SNAKE_CASE`.
-- Prefer **Server Components** by default; add `"use client"` only when the file uses hooks,
-  event handlers, Radix primitives, or browser APIs.
-- Data fetching: call `lib/cars.ts` helpers from server components. Never import `data/cars.json`
-  in a client component — always go through `lib/cars.ts`.
-- Styling: Tailwind classes only, using the CSS-variable tokens (`bg-background`, `text-foreground`,
-  `border-border`, etc.). No inline `style={{ ... }}` unless dynamic values require it.
-- Use `cn()` from `@/lib/utils` whenever joining conditional classes.
-- Icons: `lucide-react`; size via Tailwind (`className="h-4 w-4"`), not the `size` prop.
-- Forms: always `react-hook-form` + `zodResolver(<schema>)`. Schemas live in `lib/schemas.ts`.
-- Filters: the URL is the source of truth. Components read via `useSearchParams` and write via
-  `router.replace(pathname + "?" + qs, { scroll: false })`. Do not mirror filter state in React
-  state except for uncontrolled inputs that debounce into the URL.
+- Follow the Untitled UI conventions in vendored components: kebab-case file names,
+  `react-aria-components` imports aliased as `Aria*`, `cx()` from `@/utils/cx` for classes.
+- Server Components by default; `"use client"` only for hooks, events, motion, React Aria.
+- Never import `data/quran/*` from client components — go through `lib/quran.ts` on the server.
+- Use semantic token classes (`bg-primary`, `text-secondary`, `border-secondary`, `bg-brand-solid`…).
+  No hard-coded hex in components; tajweed colours are CSS variables in `globals.css`.
+- React Aria buttons take `onPress`, not `onClick`.
+- Hot paths (verse/word rendering) subscribe to narrow store selectors so only the active ayah
+  re-renders during playback. Keep it that way.
+- Scroll-linked `useTransform` input ranges must be strictly increasing and within [0, 1]
+  (motion accelerates them with WAAPI, which throws otherwise).
 
-## Accessibility & UX
+## Accessibility
 
-- All interactive elements must be keyboard-reachable and show a visible focus ring
-  (`focus-visible:ring-2 focus-visible:ring-ring`).
-- Images: always include `alt` text (car make + model + trim).
-- Motion: wrap animations so they respect `prefers-reduced-motion` (framer-motion does this
-  automatically; keep it that way).
-- Color: don't hard-code hex — use the token classes so dark mode works.
-- Dialogs and Sheets come from Radix — don't roll custom modals.
+- Keyboard reachable controls with visible focus (`outline-focus-ring`).
+- Arabic text gets `lang="ar" dir="rtl"`; Urdu translation renders RTL.
+- Animations respect `prefers-reduced-motion` (MotionConfig `reducedMotion="user"`, Lenis disabled).
 
 ## Git Workflow
 
-- Active branch: `claude/modern-car-sales-ui-puab8`. Do not push to `main`.
-- Conventional commit subjects (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`).
-- Keep commits focused; small PRs over mega-PRs.
-- Push with `git push -u origin <branch>`. Retry on network errors with exponential backoff.
-- Only open a PR when the user explicitly asks.
-
-## Things Claude Should NOT Do
-
-- Don't force-push, `git reset --hard` shared branches, or `git clean -fd` without asking.
-- Don't `--no-verify` past a failing hook — fix the underlying issue.
-- Don't add a real backend, auth, payment flow, or database. Scope is buyer-side only.
-- Don't swap the tech stack (Next.js + Tailwind v4 + Radix is locked in).
-- Don't install a UI kit that overlaps with what's already here (no MUI, Chakra, Mantine, etc.).
-- Don't commit `.env*`, build artifacts, `node_modules/`, or editor-specific files.
-- Don't put mock data anywhere except `data/cars.json`; everything reads through `lib/cars.ts`.
-- Don't delete or rename files without checking imports first.
-
-## Verification Checklist (run before saying a change is done)
-
-1. `npm run build` completes with no type or lint errors.
-2. `npm run dev` → the touched pages render without console errors at 375 / 768 / 1440 px.
-3. Filters: toggling any filter updates the URL and grid; empty state appears when nothing matches.
-4. Detail page: gallery thumbnails swap the main image; inquiry dialog opens; empty submit shows
-   zod errors; valid submit shows a success toast.
-5. Theme toggle flips light/dark without a flash on reload.
-
-## Not In Scope
-
-Auth, payments, real backend, seller/dealer flows, saved favorites persistence, image uploads,
-reviews, messaging, i18n, analytics, SEO beyond basic metadata.
+- Conventional commit subjects (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`).
+- Push with `git push -u origin <branch>`; only open a PR when asked.
+- Don't commit `.env*`, `.next/`, `.cache/`, `node_modules/`.

@@ -1,0 +1,55 @@
+"use client";
+
+import { ArrowRight, BookOpen01, Bookmark } from "@untitledui/icons";
+import { AnimatePresence, motion } from "motion/react";
+import Link from "next/link";
+import { useLibrary } from "@/lib/library";
+import type { Chapter } from "@/lib/types";
+
+export function ContinueReading({ chapters }: { chapters: Chapter[] }) {
+  const lastRead = useLibrary((s) => s.lastRead);
+  const bookmarks = useLibrary((s) => s.bookmarks);
+  if (!lastRead && bookmarks.length === 0) return null;
+  const ch = lastRead ? chapters[lastRead.surah - 1] : null;
+
+  return (
+    <AnimatePresence>
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-10 grid gap-3 md:grid-cols-2">
+        {ch && lastRead && (
+          <Link
+            href={`/surah/${ch.id}#v-${lastRead.ayah}`}
+            className="group flex items-center gap-4 rounded-2xl bg-brand-solid p-5 text-white shadow-lg outline-focus-ring transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            <span className="flex size-12 items-center justify-center rounded-xl bg-white/15">
+              <BookOpen01 className="size-6" />
+            </span>
+            <span className="flex-1">
+              <span className="block text-sm text-white/80">Continue reading</span>
+              <span className="block text-lg font-semibold">
+                {ch.nameSimple} · {ch.id}:{lastRead.ayah}
+              </span>
+            </span>
+            <ArrowRight className="size-5 transition group-hover:translate-x-1" />
+          </Link>
+        )}
+        {bookmarks.length > 0 && (
+          <Link
+            href="/bookmarks"
+            className="group flex items-center gap-4 rounded-2xl border border-secondary bg-primary p-5 outline-focus-ring transition hover:-translate-y-0.5 hover:border-brand focus-visible:outline-2"
+          >
+            <span className="flex size-12 items-center justify-center rounded-xl bg-brand-primary text-fg-brand-primary">
+              <Bookmark className="size-6" />
+            </span>
+            <span className="flex-1">
+              <span className="block text-sm text-tertiary">Bookmarks</span>
+              <span className="block text-lg font-semibold text-primary">
+                {bookmarks.length} saved {bookmarks.length === 1 ? "ayah" : "ayat"}
+              </span>
+            </span>
+            <ArrowRight className="size-5 text-fg-quaternary transition group-hover:translate-x-1" />
+          </Link>
+        )}
+      </motion.div>
+    </AnimatePresence>
+  );
+}

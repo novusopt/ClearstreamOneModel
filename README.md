@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Noor — a modern Qurʾān app
 
-## Getting Started
+Read, listen to and understand the Qurʾān. Built with Next.js 16, Untitled UI (React Aria + Tailwind v4)
+and Motion.
 
-First, run the development server:
+## Features
+
+- **Qurʾānic text**: Uthmani script in the Amiri Quran typeface, adjustable size and ornamented ayah markers.
+- **Tajweed**: 19 recitation rules colour-coded letter by letter, with a legend.
+- **Word by word**: hover or tap any word for its transliteration and meaning, or show glosses inline. Tapping a word plays its pronunciation.
+- **Translation**: Saheeh International plus 9 more languages (fr, es, id, tr, ur, bn, ru, zh, sv), loaded on demand. Verse transliteration is optional.
+- **Audio**: 5 reciters, continuous playback, repeat (ayah/surah), speed control, auto-scroll and a persistent mini-player. With Al-Husary, each word lights up as it is recited.
+- **Reading modes**: verse cards or a continuous mushaf-style page.
+- **Navigation**: surah search (Latin, Arabic or number), Meccan/Medinan filter, browse by juzʾ, deep links (`/surah/2#v-255`).
+- **Your library**: bookmarks and "continue reading", saved locally.
+- **Motion**: parallax hero, scroll-reveal bento grid, a sticky scroll-driven walk through Al-Fātiḥah, Lenis smooth scrolling. All of it honours reduced-motion.
+- Light and dark themes; responsive from 375 px up.
+
+## How others solved it
+
+The design follows established open-source readers:
+
+- **Quran.com**: the tajweed colour scheme, word-by-word hover cards, per-word audio (`audio.qurancdn.com/wbw`) and the verse/reading view split.
+- **Quran Recital**: interlinear glosses and word timing sync, where the active word is the one whose `start ≤ t < end`. It also showed how to fall back across several audio CDNs.
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run build      # pre-renders all 114 surahs
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The dataset is committed. To regenerate it from upstream run `npm run data`, which needs network access to GitHub and npm.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Credits & licences
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Word data, timings and tajweed markup come from the [Quran.com API](https://quran.com) via [ivosetyadi/quran-recital](https://github.com/ivosetyadi/quran-recital) (MIT).
+- Translations and transliteration come from [quran-json](https://github.com/risan/quran-json) (CC-BY-4.0), sourced from Tanzil.net and QuranEnc.
+- Audio is streamed from Islamic Network CDN and EveryAyah.
+- UI components: [Untitled UI React](https://github.com/untitleduico/react) (MIT).
+- Fonts: Amiri Quran (OFL) and Inter (OFL).
