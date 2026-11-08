@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { EmptyState } from "@/components/application/empty-state/empty-state";
-import { Badge } from "@/components/base/badges/badges";
+import { VerseNumber } from "@/components/quran/verse-number";
 import { toggleBookmark, useLibrary } from "@/lib/library";
 import type { Chapter } from "@/lib/types";
 
@@ -51,9 +51,7 @@ export function BookmarkList({ chapters }: { chapters: Chapter[] }) {
               className="flex items-center gap-3 rounded-2xl border border-secondary bg-primary p-4"
             >
               <Link href={`/surah/${s}#v-${a}`} className="flex min-w-0 flex-1 items-center gap-4 rounded-lg outline-focus-ring focus-visible:outline-2">
-                <Badge type="pill-color" color="brand" size="lg" className="min-w-14 justify-center rounded-t-full rounded-b-md pt-2 font-display tabular-nums">
-                  {key}
-                </Badge>
+                <VerseNumber surah={s} ayah={a} />
                 <span className="min-w-0">
                   <span className="block truncate font-semibold text-primary">{ch.nameSimple}</span>
                   <span className="block truncate text-sm text-tertiary">Ayah {a} of {ch.versesCount}</span>

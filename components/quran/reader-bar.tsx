@@ -7,6 +7,7 @@ import { Button } from "@/components/base/buttons/button";
 import { Dropdown } from "@/components/base/dropdown/dropdown";
 import { openReaderSettings, ReaderSettings } from "@/components/quran/reader-settings";
 import { usePlayer } from "@/lib/audio-engine";
+import { useChrome } from "@/lib/chrome";
 import { juzOf } from "@/lib/constants";
 import { useReaderPosition } from "@/lib/reader-position";
 import { applyPreset, currentPreset, DISPLAY_PRESETS, type DisplayPreset, setSettings, useSettings } from "@/lib/settings";
@@ -94,12 +95,15 @@ export function ReaderBar({ chapter, onPlay }: ReaderBarProps) {
   const isThisSurah = usePlayer((s) => s.surah === chapter.id);
   const isPlaying = usePlayer((s) => s.surah === chapter.id && (s.status === "playing" || s.status === "loading"));
   const playerOpen = usePlayer((s) => s.surah != null);
+  // When the site header slides back in, tuck the sticky bar beneath it instead of under it.
+  const headerVisible = useChrome((c) => c.headerVisible);
 
   return (
     // Thumb-reach bar at the bottom on phones; sticky at the top on larger screens.
     <div
       className={cx(
-        "fixed inset-x-0 z-30 px-3 transition-[bottom] duration-300 md:sticky md:top-4 md:bottom-auto md:mb-6 md:px-0",
+        "fixed inset-x-0 z-30 px-3 transition-[bottom,top] duration-300 md:sticky md:bottom-auto md:mb-6 md:px-0",
+        headerVisible ? "md:top-[5.5rem]" : "md:top-4",
         playerOpen ? "bottom-[calc(env(safe-area-inset-bottom,0px)+9.5rem)]" : "bottom-[calc(env(safe-area-inset-bottom,0px)+0.75rem)]",
       )}
     >

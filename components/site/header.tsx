@@ -11,6 +11,7 @@ import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { Kbd, openCommandPalette } from "@/components/site/command-palette";
 import { Logo } from "@/components/site/logo";
 import { ThemeToggle } from "@/components/site/theme-toggle";
+import { chromeStore } from "@/lib/chrome";
 import { useLibrary } from "@/lib/library";
 import { cx } from "@/utils/cx";
 
@@ -59,8 +60,11 @@ export function Header() {
   useMotionValueEvent(scrollY, "change", (y) => {
     const prev = scrollY.getPrevious() ?? 0;
     setScrolled(y > 12);
-    setHidden(y > 320 && y > prev + 4);
-    if (y < prev - 4) setHidden(false);
+    const hide = y > 320 && y > prev + 4;
+    const show = y < prev - 4;
+    if (hide) setHidden(true);
+    if (show) setHidden(false);
+    if ((hide || show) && chromeStore.get().headerVisible !== show) chromeStore.set({ headerVisible: show });
   });
 
   return (

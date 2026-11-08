@@ -12,12 +12,14 @@
   --font-quran: var(--font-amiri-quran), "Amiri Quran", "KFGQPC Uthmanic Script HAFS", serif;
 
     /* Lantern amber — the brand's light. */
+  --color-gold-50: rgb(254 250 240);
   --color-gold-100: rgb(253 243 222);
   --color-gold-200: rgb(251 230 189);
   --color-gold-300: rgb(247 214 153);
   --color-gold-400: rgb(240 188 92);
   --color-gold-500: rgb(222 158 52);
   --color-gold-600: rgb(178 118 28);
+  --color-gold-700: rgb(140 90 20);
 
   --animate-aurora: aurora 18s ease-in-out infinite alternate;
   --animate-spin-slow: spin 60s linear infinite;

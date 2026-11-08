@@ -11,6 +11,7 @@ import { Dropdown } from "@/components/base/dropdown/dropdown";
 import { Tooltip, TooltipTrigger } from "@/components/base/tooltip/tooltip";
 import { Word } from "@/components/quran/word";
 import { AyahMarker } from "@/components/quran/ayah-marker";
+import { VerseNumber } from "@/components/quran/verse-number";
 import { openVerseDialog } from "@/components/quran/verse-dialogs";
 import { player, usePlayer, useTick } from "@/lib/audio-engine";
 import { toggleBookmark, toggleMemorised, useLibrary, verseKey } from "@/lib/library";
@@ -99,15 +100,13 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       className={cx(
         "group/verse relative scroll-mt-36 border-b border-secondary px-4 py-7 transition-colors duration-500 last:border-b-0 sm:px-8 sm:py-9",
-        isCurrent ? "bg-brand-primary/50" : "hover:bg-secondary/40",
+        isCurrent ? "bg-brand-primary/50 dark:bg-brand-900/25" : "hover:bg-secondary/40",
       )}
     >
       {isCurrent && <motion.span layoutId={`verse-indicator-${surah}`} className="absolute inset-y-0 left-0 w-0.5 bg-brand-solid" />}
       <div className="mb-5 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <Badge type="pill-color" color="brand" size="lg" className="min-w-14 justify-center rounded-t-full rounded-b-md pt-2 font-display tabular-nums">
-            {key}
-          </Badge>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <VerseNumber surah={surah} ayah={verse.n} active={isCurrent} playing={isPlaying} />
           {sajdah && (
             <Tooltip title="Ayah of prostration" description="It is recommended to prostrate (sajdat at-tilāwah) after reciting this ayah." placement="top">
               <TooltipTrigger className="rounded-full">
@@ -185,7 +184,7 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
                 onReveal={reveal}
               />
             ))}
-            <AyahMarker n={verse.n} className={cx(arabicSize, "self-center")} />
+            <AyahMarker n={verse.n} active={isPlaying} className={cx(arabicSize, "self-center")} />
           </div>
 
           {hifz && (

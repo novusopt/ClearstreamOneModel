@@ -15,7 +15,7 @@ function ReadingVerse({ verse, index, surah }: { verse: Verse; index: number; su
   const size = useSettings((s) => ARABIC_SIZES[s.arabicSize - 1] ?? ARABIC_SIZES[2]);
 
   return (
-    <span id={`v-${verse.n}`} data-ayah={verse.n} className={cx("scroll-mt-40 rounded-2xl transition-colors duration-500", isCurrent && "bg-brand-primary/50")}>
+    <span id={`v-${verse.n}`} data-ayah={verse.n} className={cx("group/ayah scroll-mt-40 rounded-2xl transition-colors duration-500", isCurrent && "bg-brand-primary/50")}>
       {verse.w.map((w, i) => (
         <Word
           key={i}
@@ -30,7 +30,7 @@ function ReadingVerse({ verse, index, surah }: { verse: Verse; index: number; su
           sizeClass={size}
         />
       ))}
-      <AyahMarker n={verse.n} className={size} />
+      <AyahMarker n={verse.n} active={isCurrent} className={size} />
     </span>
   );
 }
