@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { Button } from "@/components/base/buttons/button";
 
-const HEADLINE = ["Read.", "Listen.", "Understand."];
+const HEADLINE = ["A", "lantern", "for", "the", "Qurʾān."];
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -20,25 +20,23 @@ export function Hero() {
     <section ref={ref} className="relative flex min-h-[100svh] items-center overflow-hidden pt-28 pb-20">
       {/* Aurora backdrop */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-40 left-1/2 size-[46rem] -translate-x-1/2 animate-aurora rounded-full bg-brand-400/25 blur-3xl dark:bg-brand-600/20" />
-        <div className="absolute top-1/3 -left-40 size-[30rem] animate-aurora rounded-full bg-gold-300/30 blur-3xl [animation-delay:-6s] dark:bg-gold-500/10" />
-        <div className="absolute -right-32 bottom-0 size-[28rem] animate-aurora rounded-full bg-brand-200/40 blur-3xl [animation-delay:-12s] dark:bg-brand-800/30" />
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-50/60 via-transparent to-transparent dark:from-brand-950/80" />
+        <div className="absolute top-[18%] left-1/2 size-[38rem] -translate-x-1/2 animate-flicker rounded-full bg-gold-300/35 blur-3xl dark:bg-gold-500/15" />
+        <div className="absolute -top-40 -left-40 size-[34rem] animate-aurora rounded-full bg-brand-300/25 blur-3xl dark:bg-brand-700/25" />
+        <div className="absolute -right-40 bottom-0 size-[30rem] animate-aurora rounded-full bg-brand-200/30 blur-3xl [animation-delay:-9s] dark:bg-brand-800/30" />
         <div className="absolute inset-0 bg-[radial-gradient(var(--color-border-secondary)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)] bg-[size:24px_24px]" />
       </div>
 
       <motion.svg
         aria-hidden="true"
-        viewBox="0 0 200 200"
-        style={{ rotate: starRotate, scale: starScale }}
-        className="pointer-events-none absolute top-1/2 left-1/2 -z-10 size-[56rem] -translate-x-1/2 -translate-y-1/2 text-brand-500/15"
+        viewBox="0 0 200 260"
+        style={{ scale: starScale }}
+        className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-[52rem] -translate-x-1/2 -translate-y-1/2 text-brand-500/20 dark:text-brand-300/15"
       >
-        <g fill="none" stroke="currentColor" strokeWidth="0.35" className="origin-center animate-spin-slow">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <rect key={i} x="45" y="45" width="110" height="110" transform={`rotate(${i * 11.25} 100 100)`} />
-          ))}
-          <circle cx="100" cy="100" r="40" />
-          <circle cx="100" cy="100" r="78" />
-          <circle cx="100" cy="100" r="96" strokeDasharray="1 3" />
+        <g fill="none" stroke="currentColor">
+          <path d="M20 258 V110 C20 60 60 22 100 4 C140 22 180 60 180 110 V258" strokeWidth="0.8" />
+          <path d="M36 258 V114 C36 72 68 40 100 26 C132 40 164 72 164 114 V258" strokeWidth="0.5" strokeDasharray="2 3" />
+          <motion.path style={{ rotate: starRotate }} d="M100 70 l8 14 16 -2 -2 16 14 8 -14 8 2 16 -16 -2 -8 14 -8 -14 -16 2 2 -16 -14 -8 14 -8 -2 -16 16 2 Z" strokeWidth="0.6" />
         </g>
       </motion.svg>
 
@@ -50,10 +48,10 @@ export function Hero() {
           transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
           lang="ar"
           dir="rtl"
-          className="font-quran text-6xl leading-tight sm:text-7xl md:text-8xl"
+          className="font-quran text-5xl leading-tight sm:text-6xl md:text-7xl"
         >
-          <span className="bg-gradient-to-br from-brand-500 via-brand-700 to-gold-500 bg-clip-text text-transparent dark:from-brand-200 dark:via-brand-400 dark:to-gold-300">
-            ٱقْرَأْ بِٱسْمِ رَبِّكَ
+          <span className="bg-gradient-to-br from-brand-700 via-brand-500 to-gold-500 bg-clip-text text-transparent dark:from-gold-200 dark:via-gold-300 dark:to-brand-300">
+            ٱللَّهُ نُورُ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ
           </span>
         </motion.p>
         <motion.p
@@ -62,17 +60,17 @@ export function Hero() {
           transition={{ delay: 0.6 }}
           className="mt-5 text-sm text-tertiary italic"
         >
-          “Read in the name of your Lord” — Al-ʿAlaq 96:1
+          “Allah is the Light of the heavens and the earth” — An-Nūr 24:35
         </motion.p>
 
-        <h1 className="mt-10 text-display-md font-semibold tracking-tight text-primary sm:text-display-lg md:text-display-xl">
+        <h1 className="mt-10 text-display-md font-display font-medium tracking-tight text-primary sm:text-display-lg md:text-display-xl">
           {HEADLINE.map((word, i) => (
             <motion.span
               key={word}
               initial={{ opacity: 0, y: 40, rotateX: -60 }}
               animate={{ opacity: 1, y: 0, rotateX: 0 }}
               transition={{ delay: 0.35 + i * 0.14, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              className={i === 2 ? "inline-block bg-gradient-to-r from-brand-600 to-brand-400 bg-clip-text pr-1 text-transparent" : "mr-3 inline-block"}
+              className={i >= 3 ? "mr-3 inline-block bg-gradient-to-r from-gold-600 to-gold-400 bg-clip-text pr-1 text-transparent italic" : "mr-3 inline-block"}
             >
               {word}
             </motion.span>
@@ -84,8 +82,8 @@ export function Hero() {
           transition={{ delay: 0.8, duration: 0.7 }}
           className="mx-auto mt-6 max-w-2xl text-lg text-tertiary md:text-xl"
         >
-          The Qurʾān in Uthmani script with ten translations, word-by-word meanings, colour-coded tajweed and recitation that highlights every
-          word as it’s recited.
+          Read the Uthmani text, listen as every word lights up with the recitation, and understand it word by word, in ten languages,
+          with tajweed in colour.
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -94,7 +92,7 @@ export function Hero() {
           className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"
         >
           <Button size="xl" href="/surah/1" iconLeading={BookOpen01}>
-            Begin with Al-Fātiḥah
+            Open Al-Fātiḥah
           </Button>
           <Button size="xl" color="secondary" href="#surahs" iconTrailing={ArrowRight}>
             Browse all 114 surahs

@@ -76,7 +76,7 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
       )}
     >
       <div className="mb-4 flex items-center justify-between gap-2">
-        <span className="inline-flex h-7 min-w-12 items-center justify-center rounded-full bg-secondary px-2.5 text-xs font-semibold text-secondary tabular-nums ring-1 ring-secondary">
+        <span className="inline-flex min-w-14 items-center justify-center rounded-t-full rounded-b-md bg-brand-primary px-3 pt-2.5 pb-1 font-display text-sm font-medium text-brand-secondary tabular-nums ring-1 ring-brand/30">
           {key}
         </span>
         <div className="flex items-center gap-0.5 opacity-100 transition-opacity duration-300 md:opacity-60 md:group-hover/verse:opacity-100 md:group-focus-within/verse:opacity-100">

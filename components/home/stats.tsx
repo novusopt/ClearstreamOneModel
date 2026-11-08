@@ -40,7 +40,7 @@ export function Stats() {
             transition={{ delay: i * 0.1 }}
             className="text-center"
           >
-            <p className="text-display-sm font-semibold tracking-tight text-primary md:text-display-md">
+            <p className="text-display-sm font-display font-medium tracking-tight text-primary md:text-display-md">
               <Counter to={s.value} />
             </p>
             <p className="mt-1 text-sm font-medium text-tertiary">{s.label}</p>

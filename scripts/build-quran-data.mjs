@@ -5,7 +5,7 @@
  * Sources (fetched into .cache/quran-sources, which is git-ignored):
  *  - github.com/ivosetyadi/quran-recital (MIT): per-word Uthmani text, transliteration,
  *    English gloss and recitation timings (Mahmoud Khalil al-Husary), plus per-word
- *    tajweed markup. Both are derived from the Quran.com API.
+ *    tajweed markup (originally sourced from the Quran.com API).
  *  - npm quran-json@3.1.2 (CC-BY-4.0): surah metadata, full-verse transliteration
  *    (tanzil.net) and translations (Saheeh International for English, tanzil.net).
  *

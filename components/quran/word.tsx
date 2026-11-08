@@ -52,12 +52,12 @@ export const Word = memo(function Word({ word, surah, ayah, index, tajweed, word
           role="presentation"
           dir="ltr"
           className={cx(
-            "pointer-events-none absolute bottom-full left-1/2 z-20 mb-1 hidden w-max max-w-56 -translate-x-1/2 flex-col items-center rounded-lg bg-primary-solid px-3 py-2 text-center shadow-lg",
+            "pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 hidden w-max max-w-56 -translate-x-1/2 flex-col items-center rounded-t-2xl rounded-b-lg border border-gold-400/50 bg-brand-950 px-3.5 pt-2.5 pb-2 text-center shadow-xl",
             "group-hover/word:flex group-focus-visible/word:flex",
           )}
         >
-          <span className="text-xs font-medium text-gold-300 italic">{word.t}</span>
-          <span className="text-xs font-semibold text-white">{word.e}</span>
+          <span className="font-display text-sm text-gold-300 italic">{word.t}</span>
+          <span className="text-xs font-medium text-white">{word.e}</span>
         </span>
       )}
     </button>

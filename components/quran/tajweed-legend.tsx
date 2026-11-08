@@ -22,9 +22,9 @@ export function TajweedLegend({ compact = false }: { compact?: boolean }) {
                 <div className="mb-5 flex items-start justify-between gap-4">
                   <div>
                     <AriaHeading slot="title" className="text-lg font-semibold text-primary">
-                      Tajweed colour guide
+                      Mishkah tajweed palette
                     </AriaHeading>
-                    <p className="mt-1 text-sm text-tertiary">Each colour marks a recitation rule, following the Quran.com convention.</p>
+                    <p className="mt-1 text-sm text-tertiary">Each colour marks a recitation rule. Families share a hue: nasal sounds are warm, prolongations are blue, merging is green.</p>
                   </div>
                   <CloseButton size="sm" onClick={close} />
                 </div>

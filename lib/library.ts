@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/brand";
 import { createStore, useStore } from "@/lib/create-store";
 
 export interface LibraryState {
@@ -10,7 +11,7 @@ export interface LibraryState {
 
 const INITIAL: LibraryState = { bookmarks: [], lastRead: null };
 
-export const libraryStore = createStore<LibraryState>(INITIAL, "noor:library:v1");
+export const libraryStore = createStore<LibraryState>(INITIAL, `${BRAND.storagePrefix}:library:v1`);
 
 export function useLibrary<S>(selector: (s: LibraryState) => S): S {
   return useStore(libraryStore, selector, INITIAL);

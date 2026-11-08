@@ -14,7 +14,7 @@ export function ayahAudioUrls(reciter: Reciter, surah: number, ayah: number, glo
   ];
 }
 
-/** Single-word pronunciation clip, as used by Quran.com's word-by-word mode. */
+/** Single-word pronunciation clip (public word-by-word audio CDN). */
 export function wordAudioUrl(surah: number, ayah: number, word: number): string {
   return `https://audio.qurancdn.com/wbw/${pad3(surah)}_${pad3(ayah)}_${pad3(word)}.mp3`;
 }

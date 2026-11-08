@@ -11,15 +11,24 @@
 @theme {
   --font-quran: var(--font-amiri-quran), "Amiri Quran", "KFGQPC Uthmanic Script HAFS", serif;
 
-  /* Gold accent used for ornaments (rub el hizb star, ayah markers). */
-  --color-gold-300: rgb(240 214 150);
-  --color-gold-400: rgb(226 189 105);
-  --color-gold-500: rgb(201 160 72);
-  --color-gold-600: rgb(166 127 47);
+    /* Lantern amber — the brand's light. */
+  --color-gold-100: rgb(253 243 222);
+  --color-gold-200: rgb(251 230 189);
+  --color-gold-300: rgb(247 214 153);
+  --color-gold-400: rgb(240 188 92);
+  --color-gold-500: rgb(222 158 52);
+  --color-gold-600: rgb(178 118 28);
 
   --animate-aurora: aurora 18s ease-in-out infinite alternate;
   --animate-spin-slow: spin 60s linear infinite;
   --animate-equalizer: equalizer 1.1s ease-in-out infinite;
+  --animate-flicker: flicker 4s ease-in-out infinite;
+
+  @keyframes flicker {
+    0%, 100% { opacity: 0.85; transform: scale(1); }
+    45% { opacity: 1; transform: scale(1.06); }
+    60% { opacity: 0.9; transform: scale(0.98); }
+  }
 
   @keyframes aurora {
     0% { transform: translate3d(0, 0, 0) scale(1); }
@@ -34,41 +43,67 @@
 }
 
 /*
- * Tajweed palette — the colour convention used by Quran.com and most printed tajweed
- * mushafs. Light/dark values are tuned for contrast on each background.
+ * Mishkah brand surfaces: warm "paper" in light mode, midnight ink in dark mode.
+ * (Overrides Untitled UI's neutral surfaces; text/border tokens are inherited.)
  */
-:root {
-  --tj-silent: rgb(150 150 150);
-  --tj-madd-normal: rgb(83 127 255);
-  --tj-madd-permissible: rgb(64 80 255);
-  --tj-madd-necessary: rgb(0 14 188);
-  --tj-madd-obligatory: rgb(33 68 193);
-  --tj-qalqalah: rgb(221 0 8);
-  --tj-ikhfa-shafawi: rgb(213 0 183);
-  --tj-ikhfa: rgb(148 0 168);
-  --tj-idgham-shafawi: rgb(88 184 0);
-  --tj-iqlab: rgb(38 191 253);
-  --tj-idgham-ghunnah: rgb(22 151 119);
-  --tj-idgham-wo-ghunnah: rgb(22 146 0);
-  --tj-idgham-misc: rgb(161 161 161);
-  --tj-ghunnah: rgb(255 126 30);
+:root:not(.dark-mode) {
+  --color-bg-primary: rgb(251 249 244);
+  --color-bg-primary_alt: rgb(255 254 250);
+  --color-bg-secondary: rgb(245 242 234);
+  --color-bg-secondary_alt: rgb(247 244 237);
+  --color-bg-primary_hover: rgb(243 240 232);
+  --color-border-secondary: rgb(232 227 214);
+  --color-border-primary: rgb(214 208 192);
 }
 
 .dark-mode {
-  --tj-silent: rgb(130 130 140);
-  --tj-madd-normal: rgb(130 165 255);
-  --tj-madd-permissible: rgb(120 135 255);
-  --tj-madd-necessary: rgb(100 120 255);
-  --tj-madd-obligatory: rgb(110 145 255);
-  --tj-qalqalah: rgb(255 85 90);
-  --tj-ikhfa-shafawi: rgb(240 90 220);
-  --tj-ikhfa: rgb(200 100 225);
-  --tj-idgham-shafawi: rgb(130 215 50);
-  --tj-iqlab: rgb(80 205 255);
-  --tj-idgham-ghunnah: rgb(45 200 160);
-  --tj-idgham-wo-ghunnah: rgb(70 200 60);
-  --tj-idgham-misc: rgb(160 160 170);
-  --tj-ghunnah: rgb(255 150 70);
+  --color-bg-primary: rgb(11 13 26);
+  --color-bg-primary_alt: rgb(15 18 34);
+  --color-bg-secondary: rgb(19 22 41);
+  --color-bg-secondary_alt: rgb(17 20 37);
+  --color-bg-primary_hover: rgb(24 28 50);
+  --color-border-secondary: rgb(36 41 68);
+  --color-border-primary: rgb(52 58 92);
+}
+
+/*
+ * Mishkah tajweed palette — our own colour system. Rules are grouped into families so the page
+ * reads calmly: nasal sounds (ghunnah, ikhfāʾ, iqlāb) are warm saffron/amber/coral, prolongations
+ * (madd) are a blue scale that deepens with length, merging (idghām) is green, qalqalah is
+ * crimson, and silent letters recede to a soft grey.
+ */
+:root {
+  --tj-silent: rgb(160 156 148);
+  --tj-ghunnah: rgb(214 120 18);
+  --tj-ikhfa: rgb(190 92 140);
+  --tj-ikhfa-shafawi: rgb(160 82 170);
+  --tj-iqlab: rgb(214 82 60);
+  --tj-idgham-ghunnah: rgb(34 139 96);
+  --tj-idgham-wo-ghunnah: rgb(96 140 40);
+  --tj-idgham-shafawi: rgb(20 150 140);
+  --tj-idgham-misc: rgb(120 150 120);
+  --tj-qalqalah: rgb(196 30 58);
+  --tj-madd-normal: rgb(80 140 220);
+  --tj-madd-permissible: rgb(62 110 205);
+  --tj-madd-obligatory: rgb(52 80 180);
+  --tj-madd-necessary: rgb(70 40 160);
+}
+
+.dark-mode {
+  --tj-silent: rgb(120 124 145);
+  --tj-ghunnah: rgb(245 165 70);
+  --tj-ikhfa: rgb(232 140 185);
+  --tj-ikhfa-shafawi: rgb(205 140 230);
+  --tj-iqlab: rgb(250 130 105);
+  --tj-idgham-ghunnah: rgb(80 205 150);
+  --tj-idgham-wo-ghunnah: rgb(165 210 90);
+  --tj-idgham-shafawi: rgb(70 210 200);
+  --tj-idgham-misc: rgb(160 190 160);
+  --tj-qalqalah: rgb(255 100 120);
+  --tj-madd-normal: rgb(130 185 255);
+  --tj-madd-permissible: rgb(115 155 255);
+  --tj-madd-obligatory: rgb(140 140 255);
+  --tj-madd-necessary: rgb(175 140 255);
 }
 
 .tj-ham_wasl, .tj-slnt, .tj-laam_shamsiyah { color: var(--tj-silent); }

@@ -75,7 +75,7 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
             <p className="text-sm font-semibold text-brand-secondary">The Noble Qurʾān</p>
-            <h2 className="mt-2 text-display-sm font-semibold tracking-tight text-primary">All 114 surahs</h2>
+            <h2 className="mt-2 text-display-sm font-display font-medium tracking-tight text-primary">All 114 surahs</h2>
           </motion.div>
           <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center md:w-auto">
             <Tabs selectedKey={filter} onSelectionChange={(k) => setFilter(k as Filter)} className="w-auto">
@@ -125,7 +125,7 @@ export function JuzIndex({ chapters }: { chapters: Chapter[] }) {
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
           <p className="text-sm font-semibold text-brand-secondary">Thirty parts</p>
-          <h2 className="mt-2 text-display-sm font-semibold tracking-tight text-primary">Browse by juzʾ</h2>
+          <h2 className="mt-2 text-display-sm font-display font-medium tracking-tight text-primary">Browse by juzʾ</h2>
         </motion.div>
         <ol className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6">
           {JUZ_STARTS.map(([s, a], i) => (

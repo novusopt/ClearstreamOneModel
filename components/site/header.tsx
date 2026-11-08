@@ -42,7 +42,7 @@ export function Header() {
           scrolled ? "bg-primary/75 shadow-lg ring-1 ring-secondary_alt backdrop-blur-xl" : "bg-transparent",
         )}
       >
-        <Link href="/" className="rounded-lg outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-4" aria-label="Noor home">
+        <Link href="/" className="rounded-lg outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-4" aria-label="Mishkah home">
           <Logo />
         </Link>
         <nav aria-label="Main" className="hidden items-center gap-1 md:flex">

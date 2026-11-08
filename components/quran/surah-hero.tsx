@@ -61,7 +61,7 @@ export function SurahHero({ chapter }: { chapter: Chapter }) {
           </span>
         </motion.h1>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>
-          <p className="mt-2 text-display-xs font-semibold tracking-tight text-primary md:text-display-sm">{chapter.nameSimple}</p>
+          <p className="mt-2 text-display-xs font-display font-medium tracking-tight text-primary md:text-display-sm">{chapter.nameSimple}</p>
           <p className="mt-1 text-md text-tertiary">
             {chapter.nameTranslation} · <span className="font-quran">سورة {toArabicNumber(chapter.id)}</span>
           </p>

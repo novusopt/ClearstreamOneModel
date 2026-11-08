@@ -8,7 +8,7 @@ export default function BookmarksPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 pt-32 pb-24">
       <p className="text-sm font-semibold text-brand-secondary">Saved on this device</p>
-      <h1 className="mt-2 text-display-sm font-semibold tracking-tight text-primary">Bookmarks</h1>
+      <h1 className="mt-2 text-display-sm font-display font-medium tracking-tight text-primary">Bookmarks</h1>
       <BookmarkList chapters={getChapters()} />
     </div>
   );

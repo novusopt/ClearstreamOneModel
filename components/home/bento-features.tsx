@@ -67,7 +67,7 @@ function BentoCard({
         </span>
         {eyebrow}
       </div>
-      <h3 className="relative mt-4 text-xl font-semibold tracking-tight text-primary md:text-display-xs">{title}</h3>
+      <h3 className="relative mt-4 text-xl font-display font-medium tracking-tight text-primary md:text-display-xs">{title}</h3>
       <p className="relative mt-2 max-w-md text-md text-tertiary">{description}</p>
       <div className="relative mt-6 flex flex-1 items-end">{children}</div>
     </motion.div>
@@ -244,7 +244,7 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
           className="mx-auto max-w-2xl text-center"
         >
           <p className="text-sm font-semibold text-brand-secondary">Everything in one reader</p>
-          <h2 className="mt-3 text-display-sm font-semibold tracking-tight text-primary md:text-display-md">Built for reciting, reflecting & learning</h2>
+          <h2 className="mt-3 text-display-sm font-display font-medium tracking-tight text-primary md:text-display-md">Built for reciting, reflecting & learning</h2>
           <p className="mt-4 text-lg text-tertiary">Each layer can be switched on or off, so the page stays as quiet or as rich as you need.</p>
         </motion.div>
 

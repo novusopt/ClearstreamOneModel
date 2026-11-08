@@ -5,12 +5,22 @@ import { AudioPlayerBar } from "@/components/quran/audio-player-bar";
 import { Providers } from "@/components/providers/providers";
 import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
+import { BRAND } from "@/lib/brand";
 import "./globals.css";
 
 const inter = localFont({
   src: "./fonts/inter-latin.woff2",
   variable: "--font-inter",
   weight: "100 900",
+  display: "swap",
+});
+
+const fraunces = localFont({
+  src: [
+    { path: "./fonts/fraunces-latin.woff2", weight: "100 900" },
+    { path: "./fonts/fraunces-latin-ext.woff2", weight: "100 900" },
+  ],
+  variable: "--font-display-face",
   display: "swap",
 });
 
@@ -25,21 +35,20 @@ const amiriQuran = localFont({
 });
 
 export const metadata: Metadata = {
-  title: { default: "Noor — Read, listen & understand the Qurʾān", template: "%s · Noor" },
-  description:
-    "A modern Qurʾān app with Uthmani text, translations in 10 languages, word-by-word meanings, synced recitation and colour-coded tajweed.",
+  title: { default: `${BRAND.name} — ${BRAND.tagline}`, template: `%s · ${BRAND.name}` },
+  description: BRAND.description,
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0c0e12" },
+    { media: "(prefers-color-scheme: light)", color: "#fbf9f4" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0d1a" },
   ],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${amiriQuran.variable} antialiased`}>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${fraunces.variable} ${amiriQuran.variable} antialiased`}>
       <body className="flex min-h-dvh flex-col bg-primary text-primary">
         <Providers>
           <a

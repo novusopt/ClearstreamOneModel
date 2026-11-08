@@ -1,6 +1,7 @@
 "use client";
 
 import { DEFAULT_RECITER } from "@/lib/constants";
+import { BRAND } from "@/lib/brand";
 import { createStore, useStore } from "@/lib/create-store";
 
 export interface ReaderSettings {
@@ -36,7 +37,7 @@ export const DEFAULT_SETTINGS: ReaderSettings = {
   repeat: "off",
 };
 
-export const settingsStore = createStore<ReaderSettings>(DEFAULT_SETTINGS, "noor:settings:v1");
+export const settingsStore = createStore<ReaderSettings>(DEFAULT_SETTINGS, `${BRAND.storagePrefix}:settings:v1`);
 
 export function useSettings<S>(selector: (s: ReaderSettings) => S): S {
   return useStore(settingsStore, selector, DEFAULT_SETTINGS);

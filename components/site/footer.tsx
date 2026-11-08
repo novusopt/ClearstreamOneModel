@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/site/logo";
+import { BRAND } from "@/lib/brand";
 
 export function Footer() {
   return (
@@ -8,7 +9,7 @@ export function Footer() {
         <div className="space-y-3">
           <Logo />
           <p className="max-w-xs text-sm text-tertiary">
-            A calm, modern place to read, listen to and understand the Qurʾān — word by word.
+            {BRAND.tagline}. Named after the lamp-niche of Āyat an-Nūr (24:35): a quiet place to read, listen and understand.
           </p>
         </div>
         <div className="space-y-3 text-sm">
@@ -21,12 +22,12 @@ export function Footer() {
           </ul>
         </div>
         <div className="space-y-3 text-sm">
-          <h2 className="font-semibold text-primary">Sources</h2>
+          <h2 className="font-semibold text-primary">Data &amp; credits</h2>
           <p className="text-tertiary">
-            Text, word-by-word data, tajweed and timings derived from the Quran.com API (via the MIT-licensed{" "}
-            <a className="underline hover:text-secondary" href="https://github.com/ivosetyadi/quran-recital">quran-recital</a> dataset).
+            Word-by-word data, tajweed markup and timings from the open, MIT-licensed{" "}
+            <a className="underline hover:text-secondary" href="https://github.com/ivosetyadi/quran-recital">quran-recital</a> dataset (Quran.com API-derived).
             Translations from <a className="underline hover:text-secondary" href="https://tanzil.net">Tanzil</a> and{" "}
-            <a className="underline hover:text-secondary" href="https://quranenc.com">QuranEnc</a>. Audio streamed from{" "}
+            <a className="underline hover:text-secondary" href="https://quranenc.com">QuranEnc</a>. Recitation streamed from{" "}
             <a className="underline hover:text-secondary" href="https://alquran.cloud">Islamic Network</a> and EveryAyah.
           </p>
         </div>

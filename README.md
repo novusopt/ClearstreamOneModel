@@ -1,4 +1,8 @@
-# Noor — a modern Qurʾān app
+# Mishkah · مشكاة — a lantern for the Qurʾān
+
+Mishkah (“lamp-niche”) takes its name from Āyat an-Nūr (24:35): *“The example of His light is like a
+niche within which is a lamp.”* The brand follows that image: a midnight-indigo niche holding
+lantern-amber light.
 
 Read, listen to and understand the Qurʾān. Built with Next.js 16, Untitled UI (React Aria + Tailwind v4)
 and Motion.
@@ -16,12 +20,20 @@ and Motion.
 - **Motion**: parallax hero, scroll-reveal bento grid, a sticky scroll-driven walk through Al-Fātiḥah, Lenis smooth scrolling. All of it honours reduced-motion.
 - Light and dark themes; responsive from 375 px up.
 
-## How others solved it
+## Brand
 
-The design follows established open-source readers:
+- **Name & mark**: Mishkah, with an original logo of a lamp glowing inside a pointed-arch niche. Brand constants live in `lib/brand.ts`.
+- **Palette**: midnight indigo (`brand-*`) and lantern amber (`gold-*`), on warm paper in light mode and deep ink in dark mode.
+- **Type**: Fraunces (display serif), Inter (UI) and Amiri Quran (Arabic).
+- **Motifs**: arch-shaped verse tags and hover cards, an eight-point ayah medallion and a flickering lantern glow.
+- **Tajweed palette**: Mishkah's own colour system, grouped by family. Nasal rules are warm, madd is a deepening blue scale, idghām is green, qalqalah is crimson and silent letters are grey.
 
-- **Quran.com**: the tajweed colour scheme, word-by-word hover cards, per-word audio (`audio.qurancdn.com/wbw`) and the verse/reading view split.
-- **Quran Recital**: interlinear glosses and word timing sync, where the active word is the one whose `start ≤ t < end`. It also showed how to fall back across several audio CDNs.
+## Research notes
+
+We looked at how existing open readers handle the hard parts, then designed our own UI. Ideas we kept:
+toggling word-by-word glosses on and off, a verse view alongside a continuous reading view, and per-word
+timing sync, where the active word is the one whose `start ≤ t < end`. We also fall back across several
+audio CDNs if one fails.
 
 ## Getting started
 
@@ -35,7 +47,8 @@ The dataset is committed. To regenerate it from upstream run `npm run data`, whi
 
 ## Credits & licences
 
-- Word data, timings and tajweed markup come from the [Quran.com API](https://quran.com) via [ivosetyadi/quran-recital](https://github.com/ivosetyadi/quran-recital) (MIT).
+- Word data, timings and tajweed markup come from [ivosetyadi/quran-recital](https://github.com/ivosetyadi/quran-recital) (MIT), which is itself derived from the Quran.com API.
+- Per-word pronunciation clips are streamed from the public word-by-word audio CDN.
 - Translations and transliteration come from [quran-json](https://github.com/risan/quran-json) (CC-BY-4.0), sourced from Tanzil.net and QuranEnc.
 - Audio is streamed from Islamic Network CDN and EveryAyah.
 - UI components: [Untitled UI React](https://github.com/untitleduico/react) (MIT).
