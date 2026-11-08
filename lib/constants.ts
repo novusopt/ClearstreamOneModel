@@ -79,3 +79,26 @@ export const JUZ_STARTS: Array<[number, number]> = [
 ];
 
 export const BISMILLAH = "بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ";
+
+/** Ayat of prostration (sajdat at-tilāwah), as marked with ۩ in the mushaf: [surah, ayah]. */
+export const SAJDAH_AYAT: Array<[number, number]> = [
+  [7, 206], [13, 15], [16, 50], [17, 109], [19, 58], [22, 18], [22, 77], [25, 60],
+  [27, 26], [32, 15], [38, 24], [41, 38], [53, 62], [84, 21], [96, 19],
+];
+
+export const isSajdah = (surah: number, ayah: number) => SAJDAH_AYAT.some(([s, a]) => s === surah && a === ayah);
+
+/** Juzʾ (1–30) containing a given ayah. */
+export function juzOf(surah: number, ayah: number): number {
+  let juz = 1;
+  JUZ_STARTS.forEach(([s, a], i) => {
+    if (s < surah || (s === surah && a <= ayah)) juz = i + 1;
+  });
+  return juz;
+}
+
+/** Juzʾ number if one begins exactly at this ayah. */
+export function juzStartingAt(surah: number, ayah: number): number | null {
+  const i = JUZ_STARTS.findIndex(([s, a]) => s === surah && a === ayah);
+  return i >= 0 ? i + 1 : null;
+}

@@ -44,7 +44,8 @@ components/
   providers/              # Providers (theme, router, MotionConfig), SmoothScroll (Lenis)
   site/                   # header, footer, logo, theme toggle, scroll progress
   home/                   # hero, bento-features, fatihah-story, stats, surah-index, continue-reading
-  quran/                  # surah-reader, verse-card, word, tajweed-text, reading-view, hifz-panel,
+  quran/                  # surah-reader, reader-bar (position + Display presets), resume-banner,
+                          # reader-tips, juz-divider, surah-end, verse-card, word, tajweed-text, reading-view, hifz-panel,
                           # verse-dialogs (note + share image), reader-settings, tajweed-legend,
                           # audio-player-bar, bookmark-list
   library/                # library-view (progress, plan, notes, memorised)
@@ -55,7 +56,8 @@ lib/
   constants.ts            # reciters, translations, tajweed rules, juz starts
   audio.ts                # audio URL builders (ayah + per-word)
   audio-engine.ts         # client audio player + external stores (player, tick)
-  settings.ts             # persisted reader settings (view mode: verse | reading | hifz)
+  settings.ts             # persisted reader settings (view mode: verse | reading | hifz) + display presets
+  reader-position.ts      # live "ayah on the reading line" store (reader bar)
   library.ts              # persisted bookmarks, notes, memorised, read ayat, daily log, plan, streak
   create-store.ts         # tiny useSyncExternalStore-based store
 data/quran/               # generated: chapters.json, surah/{n}.json
@@ -111,6 +113,13 @@ bento-grid demos and scroll story. Vendored components keep Untitled UI conventi
   re-renders during playback. Keep it that way.
 - Scroll-linked `useTransform` input ranges must be strictly increasing and within [0, 1]
   (motion accelerates them with WAAPI, which throws otherwise).
+
+## Reading experience principles
+
+- The Arabic text leads; everything else (translation, glosses, controls) is quieter and optional.
+- Always show where the reader is: surah, ayah and juzʾ in the reader bar; juzʾ dividers and sajdah (۩) badges in the text.
+- Prefer presets (Read / Study / Arabic only) over exposing every switch; detailed toggles live in Settings.
+- Respect continuity: offer to resume, end each surah with progress and the next surah.
 
 ## Accessibility
 

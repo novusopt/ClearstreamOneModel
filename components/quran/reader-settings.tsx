@@ -8,8 +8,10 @@ import { Toggle } from "@/components/base/toggle/toggle";
 import { SlideoutMenu } from "@/components/application/slideout-menus/slideout-menu";
 import { TajweedLegend } from "@/components/quran/tajweed-legend";
 import { player } from "@/lib/audio-engine";
+import { createStore, useStore } from "@/lib/create-store";
 import { RECITERS, TRANSLATIONS } from "@/lib/constants";
-import { setSettings, useSettings } from "@/lib/settings";
+import { applyPreset, currentPreset, DISPLAY_PRESETS, type DisplayPreset, setSettings, useSettings } from "@/lib/settings";
+import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
 
 const ARABIC_SAMPLE = "بِسْمِ ٱللَّهِ";
 
@@ -22,12 +24,17 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-export function ReaderSettings() {
+const panelStore = createStore({ open: false });
+/** Open the settings panel from elsewhere (e.g. the Display menu on phones). */
+export const openReaderSettings = () => panelStore.set({ open: true });
+
+export function ReaderSettings({ className }: { className?: string }) {
+  const open = useStore(panelStore, (p) => p.open, { open: false });
   const s = useSettings((x) => x);
 
   return (
-    <SlideoutMenu.Trigger>
-      <Button size="sm" color="secondary" iconLeading={Settings04} aria-label="Reader settings">
+    <SlideoutMenu.Trigger isOpen={open} onOpenChange={(o) => panelStore.set({ open: o })}>
+      <Button size="sm" color="secondary" iconLeading={Settings04} aria-label="Reader settings" className={className}>
         <span className="hidden sm:inline">Settings</span>
       </Button>
       <SlideoutMenu isDismissable className="z-50">
@@ -38,6 +45,34 @@ export function ReaderSettings() {
               <p className="mt-1 text-sm text-tertiary">Saved on this device.</p>
             </SlideoutMenu.Header>
             <SlideoutMenu.Content data-lenis-prevent>
+              <Section title="Display">
+                <ButtonGroup
+                  size="sm"
+                  selectedKeys={currentPreset(s) ? [currentPreset(s)!] : []}
+                  onSelectionChange={(k) => {
+                    const id = [...k][0];
+                    if (id) applyPreset(id as DisplayPreset);
+                  }}
+                  aria-label="Display preset"
+                  className="w-full"
+                >
+                  {(Object.keys(DISPLAY_PRESETS) as DisplayPreset[]).map((id) => (
+                    <ButtonGroupItem key={id} id={id} className="flex-1 justify-center">
+                      {DISPLAY_PRESETS[id].label}
+                    </ButtonGroupItem>
+                  ))}
+                </ButtonGroup>
+                <p className="text-xs text-tertiary">
+                  {currentPreset(s) ? DISPLAY_PRESETS[currentPreset(s)!].description : "Custom: adjust the options below."}
+                </p>
+                <Toggle
+                  label="Show tips"
+                  hint="How to use words, audio and search"
+                  isSelected={!s.seenTips}
+                  onChange={(v) => setSettings({ seenTips: !v })}
+                />
+              </Section>
+
               <Section title="Arabic text">
                 <Toggle label="Tajweed colours" hint="Colour-code recitation rules" isSelected={s.tajweed} onChange={(v) => setSettings({ tajweed: v })} />
                 <div className="space-y-2">

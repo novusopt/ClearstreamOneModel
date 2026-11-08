@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen01, Bookmark, Grid01, LayersThree01, Menu02, SearchLg, Stars02 } from "@untitledui/icons";
+import { BookOpen01, Bookmark, Grid01, LayersThree01, Menu02, SearchLg } from "@untitledui/icons";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import Link from "next/link";
 import { useState } from "react";
@@ -17,7 +17,6 @@ import { cx } from "@/utils/cx";
 const NAV = [
   { href: "/#surahs", label: "Surahs", icon: Grid01 },
   { href: "/#juz", label: "Juzʾ", icon: LayersThree01 },
-  { href: "/#features", label: "Features", icon: Stars02 },
   { href: "/library", label: "Library", icon: Bookmark },
 ];
 

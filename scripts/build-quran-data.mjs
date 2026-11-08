@@ -113,7 +113,10 @@ function main() {
         tr: translit[n - 1].verses[i].transliteration,
         en: en[n - 1].verses[i].translation,
         w: a.words.map((w, j) => {
-          const word = { a: w.ar, t: w.tr, e: w.en, j: parseTajweed(tjw[j]) };
+          // A few upstream tajweed strings carry HTML-entity residue (e.g. "&gt;" in 32:3); use the
+          // plain Uthmani word for those rather than showing broken text.
+          const tajweed = /&[a-z#0-9]+;/i.test(tjw[j]) ? w.ar : parseTajweed(tjw[j]);
+          const word = { a: w.ar, t: w.tr, e: w.en, j: tajweed };
           if (w.start != null && w.end != null) {
             word.s = w.start;
             word.f = w.end;

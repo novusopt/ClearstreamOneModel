@@ -8,6 +8,7 @@ import { Badge, BadgeWithIcon } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { Dropdown } from "@/components/base/dropdown/dropdown";
+import { Tooltip, TooltipTrigger } from "@/components/base/tooltip/tooltip";
 import { Word } from "@/components/quran/word";
 import { AyahMarker } from "@/components/quran/ayah-marker";
 import { openVerseDialog } from "@/components/quran/verse-dialogs";
@@ -24,10 +25,12 @@ interface VerseCardProps {
   surahName: string;
   translation: string | null;
   translationRtl: boolean;
+  /** Ayah of prostration (۩). */
+  sajdah?: boolean;
   onPlay: (index: number) => void;
 }
 
-export const VerseCard = memo(function VerseCard({ verse, index, surah, surahName, translation, translationRtl, onPlay }: VerseCardProps) {
+export const VerseCard = memo(function VerseCard({ verse, index, surah, surahName, translation, translationRtl, sajdah = false, onPlay }: VerseCardProps) {
   const isCurrent = usePlayer((s) => s.surah === surah && s.index === index && s.status !== "idle");
   const isPlaying = usePlayer((s) => s.surah === surah && s.index === index && (s.status === "playing" || s.status === "loading"));
   const activeWord = useTick((s) => (isCurrent ? s.word : -1));
@@ -105,6 +108,15 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
           <Badge type="pill-color" color="brand" size="lg" className="min-w-14 justify-center rounded-t-full rounded-b-md pt-2 font-display tabular-nums">
             {key}
           </Badge>
+          {sajdah && (
+            <Tooltip title="Ayah of prostration" description="It is recommended to prostrate (sajdat at-tilāwah) after reciting this ayah." placement="top">
+              <TooltipTrigger className="rounded-full">
+                <Badge type="pill-color" color="warning" size="sm" className="gap-1">
+                  <span aria-hidden="true">۩</span> Sajdah
+                </Badge>
+              </TooltipTrigger>
+            </Tooltip>
+          )}
           {memorised && (
             <BadgeWithIcon type="pill-color" color="success" size="sm" iconLeading={CheckCircle}>
               Memorised

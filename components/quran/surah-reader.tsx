@@ -1,26 +1,23 @@
 "use client";
 
-import { AlignJustify, GraduationHat01, ArrowLeft, ArrowRight, PauseCircle, PlayCircle, Rows01 } from "@untitledui/icons";
-import { motion } from "motion/react";
-import Link from "next/link";
-import { useCallback, useEffect, useMemo } from "react";
-import { Button } from "@/components/base/buttons/button";
-import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
-import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
+import { Fragment, useCallback, useEffect, useMemo } from "react";
 import { scrollToElement, useLenis } from "@/components/providers/smooth-scroll";
 import { HifzPanel } from "@/components/quran/hifz-panel";
-import { ReaderSettings } from "@/components/quran/reader-settings";
-import { VerseDialogs } from "@/components/quran/verse-dialogs";
+import { JuzDivider } from "@/components/quran/juz-divider";
+import { ReaderBar } from "@/components/quran/reader-bar";
+import { ReaderTips } from "@/components/quran/reader-tips";
 import { ReadingView } from "@/components/quran/reading-view";
-import { TajweedLegend } from "@/components/quran/tajweed-legend";
+import { ResumeBanner } from "@/components/quran/resume-banner";
+import { SurahEnd } from "@/components/quran/surah-end";
 import { useTranslationText } from "@/components/quran/use-translation";
 import { VerseCard } from "@/components/quran/verse-card";
-import { player, playerStore, usePlayer } from "@/lib/audio-engine";
-import { TRANSLATIONS } from "@/lib/constants";
+import { VerseDialogs } from "@/components/quran/verse-dialogs";
+import { player, playerStore } from "@/lib/audio-engine";
+import { isSajdah, juzStartingAt, TRANSLATIONS } from "@/lib/constants";
 import { setLastRead } from "@/lib/library";
+import { positionStore } from "@/lib/reader-position";
 import { setSettings, settingsStore, useSettings } from "@/lib/settings";
 import type { AudioVerse, Chapter, Verse } from "@/lib/types";
-import { cx } from "@/utils/cx";
 
 interface SurahReaderProps {
   chapter: Chapter;
@@ -35,9 +32,6 @@ export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
   const lang = useSettings((s) => s.translation);
   const { texts } = useTranslationText(chapter.id, lang);
   const rtl = TRANSLATIONS.find((t) => t.id === lang)?.rtl ?? false;
-  const isThisSurah = usePlayer((s) => s.surah === chapter.id);
-  const isPlaying = usePlayer((s) => s.surah === chapter.id && (s.status === "playing" || s.status === "loading"));
-  const playerOpen = usePlayer((s) => s.surah != null);
 
   const audioVerses = useMemo<AudioVerse[]>(
     () => verses.map((v) => ({ n: v.n, g: v.g, t: v.w.map((w) => (w.s != null && w.f != null ? [w.s, w.f] : null)) })),
@@ -65,6 +59,24 @@ export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
     });
   }, [chapter.id, lenis]);
 
+  // Deep links (#v-N): re-align once fonts and translations have settled, since the browser's
+  // initial jump happens before the page finishes laying out.
+  useEffect(() => {
+    const m = window.location.hash.match(/^#v-(\d+)$/);
+    if (!m) return;
+    let cancelled = false;
+    const align = () => {
+      const el = document.getElementById(`v-${m[1]}`);
+      if (el && !cancelled) scrollToElement(lenis, el, -150);
+    };
+    void document.fonts.ready.then(() => window.setTimeout(align, 250));
+    const late = window.setTimeout(align, 1200);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(late);
+    };
+  }, [chapter.id, lenis]);
+
   // Keyboard: Space play/pause, J next ayah, K previous ayah.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -77,6 +89,7 @@ export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
         else playFrom(0);
       } else if (active && e.key.toLowerCase() === "j") player.next();
       else if (active && e.key.toLowerCase() === "k") player.prev();
+      else if (e.key.toLowerCase() === "t") setSettings({ tajweed: !settingsStore.get().tajweed });
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -93,6 +106,7 @@ export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
         for (const e of entries) {
           if (e.isIntersecting) {
             const ayah = Number(e.target.getAttribute("data-ayah"));
+            positionStore.set({ surah: chapter.id, ayah });
             timers.set(e.target, window.setTimeout(() => setLastRead(chapter.id, ayah), 1200));
           } else {
             window.clearTimeout(timers.get(e.target));
@@ -109,54 +123,17 @@ export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
     };
   }, [chapter.id, viewMode]);
 
+  const togglePlay = () => (playerStore.get().surah === chapter.id ? player.toggle() : playFrom(0));
+  const resume = (ayah: number) => {
+    const el = document.getElementById(`v-${ayah}`);
+    if (el) scrollToElement(lenis, el, -150);
+  };
+
   return (
     <div className="mx-auto max-w-5xl px-3 pb-40 sm:px-6 md:pb-24">
-      {/* Toolbar: thumb-reach bar at the bottom on phones, sticky at the top on larger screens. */}
-      <div
-        className={cx(
-          "fixed inset-x-0 z-30 px-3 transition-[bottom] duration-300 md:sticky md:top-4 md:bottom-auto md:mb-8 md:px-0",
-          playerOpen ? "bottom-[calc(env(safe-area-inset-bottom,0px)+9.5rem)]" : "bottom-[calc(env(safe-area-inset-bottom,0px)+0.75rem)]",
-        )}
-      >
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mx-auto flex max-w-max items-center justify-center gap-2 rounded-2xl bg-primary/80 p-2 shadow-lg ring-1 ring-secondary_alt backdrop-blur-xl"
-        >
-          <Button
-            size="sm"
-            iconLeading={isPlaying ? PauseCircle : PlayCircle}
-            onPress={() => (isThisSurah ? player.toggle() : playFrom(0))}
-          >
-            <span className="sm:hidden">{isPlaying ? "Pause" : "Play"}</span>
-            <span className="hidden sm:inline">{isPlaying ? "Pause" : isThisSurah ? "Resume" : "Play surah"}</span>
-          </Button>
-          <ButtonGroup
-            size="sm"
-            selectedKeys={[viewMode]}
-            disallowEmptySelection
-            onSelectionChange={(keys) => {
-              const k = [...keys][0];
-              if (k === "verse" || k === "reading" || k === "hifz") setSettings({ viewMode: k });
-            }}
-            aria-label="View mode"
-          >
-            <ButtonGroupItem id="verse" iconLeading={Rows01} aria-label="Verse by verse">
-              <span className="hidden sm:inline">Verse</span>
-            </ButtonGroupItem>
-            <ButtonGroupItem id="reading" iconLeading={AlignJustify} aria-label="Reading mode">
-              <span className="hidden sm:inline">Reading</span>
-            </ButtonGroupItem>
-            <ButtonGroupItem id="hifz" iconLeading={GraduationHat01} aria-label="Memorise">
-              <span className="hidden sm:inline">Memorise</span>
-            </ButtonGroupItem>
-          </ButtonGroup>
-          <div className="hidden sm:block">
-            <TajweedLegend compact />
-          </div>
-          <ReaderSettings />
-        </motion.div>
-      </div>
+      <ReaderBar chapter={chapter} onPlay={togglePlay} />
+      <ResumeBanner surah={chapter.id} total={chapter.versesCount} onResume={resume} />
+      <ReaderTips />
 
       {viewMode === "hifz" && (
         <HifzPanel chapter={chapter} onRepeat={(from, to, times) => player.playRange(chapter.id, chapter.nameSimple, audioVerses, from, to, times)} />
@@ -165,53 +142,30 @@ export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
       {viewMode === "reading" ? (
         <ReadingView verses={verses} surah={chapter.id} />
       ) : (
-        <div className="rounded-3xl border border-secondary bg-primary shadow-xs [&>article:first-child]:rounded-t-3xl [&>article:last-child]:rounded-b-3xl">
-          {verses.map((v, i) => (
-            <VerseCard
-              key={v.n}
-              verse={v}
-              index={i}
-              surah={chapter.id}
-              surahName={chapter.nameSimple}
-              translation={texts ? texts[i] : lang === "en" ? v.en : null}
-              translationRtl={rtl}
-              onPlay={playFrom}
-            />
-          ))}
+        <div className="rounded-3xl border border-secondary bg-primary shadow-xs [&>*:first-child]:rounded-t-3xl [&>*:last-child]:rounded-b-3xl">
+          {verses.map((v, i) => {
+            const juz = juzStartingAt(chapter.id, v.n);
+            return (
+              <Fragment key={v.n}>
+                {juz && <JuzDivider juz={juz} />}
+                <VerseCard
+                  verse={v}
+                  index={i}
+                  surah={chapter.id}
+                  surahName={chapter.nameSimple}
+                  translation={texts ? texts[i] : lang === "en" ? v.en : null}
+                  translationRtl={rtl}
+                  sajdah={isSajdah(chapter.id, v.n)}
+                  onPlay={playFrom}
+                />
+              </Fragment>
+            );
+          })}
         </div>
       )}
 
       <VerseDialogs />
-
-      <nav aria-label="Surah navigation" className="mt-16 grid gap-3 sm:grid-cols-2">
-        {prev ? (
-          <SurahNavLink chapter={prev} direction="prev" />
-        ) : (
-          <span />
-        )}
-        {next && <SurahNavLink chapter={next} direction="next" />}
-      </nav>
+      <SurahEnd chapter={chapter} prev={prev} next={next} />
     </div>
-  );
-}
-
-function SurahNavLink({ chapter, direction }: { chapter: Chapter; direction: "prev" | "next" }) {
-  const Icon = direction === "prev" ? ArrowLeft : ArrowRight;
-  return (
-    <Link
-      href={`/surah/${chapter.id}`}
-      className={`group flex items-center gap-4 rounded-2xl border border-secondary bg-primary p-5 outline-focus-ring transition hover:-translate-y-0.5 hover:border-brand hover:shadow-lg focus-visible:outline-2 ${direction === "next" ? "flex-row-reverse text-right sm:col-start-2" : ""}`}
-    >
-      <FeaturedIcon icon={Icon} color="brand" theme="light" size="md" className="transition group-hover:scale-110" />
-      <span className="min-w-0 flex-1">
-        <span className="block text-xs font-medium text-tertiary">{direction === "prev" ? "Previous" : "Next"} surah</span>
-        <span className="block truncate font-semibold text-primary">
-          {chapter.id}. {chapter.nameSimple}
-        </span>
-      </span>
-      <span lang="ar" dir="rtl" className="font-quran text-2xl text-secondary">
-        {chapter.nameArabic}
-      </span>
-    </Link>
   );
 }

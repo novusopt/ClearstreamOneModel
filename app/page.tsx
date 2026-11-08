@@ -13,7 +13,7 @@ export default async function Home() {
 
   return (
     <>
-      <Hero />
+      <Hero chapters={chapters} />
       <Stats />
       <BentoFeatures sample={ayatAlKursi} />
       <FatihahStory verses={fatihah.verses} />

@@ -60,7 +60,7 @@ function HomeView() {
   const home = useData<{ fatihah: Verse[]; sample: Verse }>("home.json");
   return (
     <>
-      <Hero />
+      <Hero chapters={chapters} />
       <Stats />
       {home ? <BentoFeatures sample={home.sample} /> : <Loading label="Preparing features" />}
       {home && <FatihahStory verses={home.fatihah} />}
@@ -80,11 +80,17 @@ function SurahView({ id, verse }: { id: number; verse: number | null }) {
 
   useEffect(() => {
     if (!data || verse == null) return;
-    const t = window.setTimeout(() => {
+    // Align twice: once the verses render, and again after late layout (fonts, tips, translations).
+    const align = () => {
       const el = document.getElementById(`v-${verse}`);
       if (el) scrollToElement(lenis, el, -150);
-    }, 350);
-    return () => window.clearTimeout(t);
+    };
+    const t1 = window.setTimeout(align, 350);
+    const t2 = window.setTimeout(align, 1200);
+    return () => {
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
   }, [data, verse, lenis]);
 
   return (

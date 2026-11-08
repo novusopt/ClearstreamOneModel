@@ -4,11 +4,15 @@ import { ArrowRight, BookOpen01, ChevronDown } from "@untitledui/icons";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { Button } from "@/components/base/buttons/button";
+import { useLibrary } from "@/lib/library";
+import type { Chapter } from "@/lib/types";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
 
 const HEADLINE = ["A", "lantern", "for", "the", "Qurʾān."];
 
-export function Hero() {
+export function Hero({ chapters }: { chapters: Chapter[] }) {
+  const lastRead = useLibrary((s) => s.lastRead);
+  const resume = lastRead ? chapters[lastRead.surah - 1] : null;
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [0, 220]);
@@ -92,9 +96,15 @@ export function Hero() {
           transition={{ delay: 1, duration: 0.7 }}
           className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"
         >
-          <Button size="xl" href="/surah/1" iconLeading={BookOpen01}>
-            Open Al-Fātiḥah
-          </Button>
+          {resume && lastRead ? (
+            <Button size="xl" href={`/surah/${resume.id}#v-${lastRead.ayah}`} iconLeading={BookOpen01}>
+              Continue {resume.nameSimple} · {resume.id}:{lastRead.ayah}
+            </Button>
+          ) : (
+            <Button size="xl" href="/surah/1" iconLeading={BookOpen01}>
+              Open Al-Fātiḥah
+            </Button>
+          )}
           <Button size="xl" color="secondary" href="#surahs" iconTrailing={ArrowRight}>
             Browse all 114 surahs
           </Button>

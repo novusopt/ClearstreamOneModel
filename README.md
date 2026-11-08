@@ -16,6 +16,8 @@ and Motion.
 - **Audio**: 5 reciters, continuous playback, repeat (ayah/surah), speed control, auto-scroll and a persistent mini-player. With Al-Husary, each word lights up as it is recited.
 - **Reading modes**: verse cards or a continuous mushaf-style page.
 - **Navigation**: surah search (Latin, Arabic or number), Meccan/Medinan filter, browse by juzʾ, deep links (`/surah/2#v-255`).
+- **Reader that keeps you oriented**: the reader bar shows surah · ayah · juzʾ as you scroll; juzʾ dividers and sajdah (۩) badges appear in the text; reopening a surah offers to continue from your ayah, and each surah ends with your progress and the next surah.
+- **Display presets**: Read (Arabic + translation), Study (word-by-word + transliteration), Arabic only, plus a tajweed toggle (<kbd>T</kbd>).
 - **Quick navigation**: ⌘K / Ctrl+K command palette to jump to any surah or ayah (type `2:255`), plus reader shortcuts: <kbd>Space</kbd> play/pause, <kbd>J</kbd>/<kbd>K</kbd> next/previous ayah.
 - **Search inside the Qurʾān**: the ⌘K palette also searches all 6,236 ayat in English or Arabic (diacritics ignored), with highlighted excerpts.
 - **Memorise (hifz) mode**: words are blurred until you tap them; reveal a whole ayah to check yourself, mark ayat as memorised, and loop a range of ayat 1–10 times.
