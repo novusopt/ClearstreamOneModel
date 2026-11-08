@@ -18,7 +18,7 @@ const NAV = [
   { href: "/#surahs", label: "Surahs", icon: Grid01 },
   { href: "/#juz", label: "Juzʾ", icon: LayersThree01 },
   { href: "/#features", label: "Features", icon: Stars02 },
-  { href: "/bookmarks", label: "Bookmarks", icon: Bookmark },
+  { href: "/library", label: "Library", icon: Bookmark },
 ];
 
 function MobileMenu() {

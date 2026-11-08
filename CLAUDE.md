@@ -25,7 +25,8 @@ npm install
 npm run dev      # http://localhost:3000
 npm run build    # static build of all 114 surahs (runs tsc)
 npm run lint
-npm run data     # regenerate data/quran + public/data from upstream sources
+npm run data     # regenerate data/quran + public/data (incl. search index) from upstream sources
+npm run build:artifact  # single-page build for the claude.ai-hosted version (dist-artifact/)
 ```
 
 ## Directory Layout
@@ -35,22 +36,27 @@ app/
   layout.tsx              # fonts (Inter, Amiri Quran — local), providers, header/footer, player bar
   page.tsx                # home: hero, stats, bento features, Al-Fātiḥah scroll story, surah/juz index
   surah/[id]/page.tsx     # reader (generateStaticParams → 114 static pages)
-  bookmarks/page.tsx
+  library/page.tsx        # progress & reading plan, bookmarks, notes, memorised (UUI Tabs)
+  bookmarks/page.tsx      # same view, Bookmarks tab
   globals.css             # Tailwind import, tajweed colour tokens (light + dark), Lenis CSS
 components/
   base/, application/, foundations/   # Untitled UI components (vendored, kebab-case files)
   providers/              # Providers (theme, router, MotionConfig), SmoothScroll (Lenis)
   site/                   # header, footer, logo, theme toggle, scroll progress
   home/                   # hero, bento-features, fatihah-story, stats, surah-index, continue-reading
-  quran/                  # surah-reader, verse-card, word, tajweed-text, reading-view,
-                          # reader-settings, tajweed-legend, audio-player-bar, bookmark-list
+  quran/                  # surah-reader, verse-card, word, tajweed-text, reading-view, hifz-panel,
+                          # verse-dialogs (note + share image), reader-settings, tajweed-legend,
+                          # audio-player-bar, bookmark-list
+  library/                # library-view (progress, plan, notes, memorised)
+  site/command-palette    # ⌘K: surah/ayah jump + full-text search (public/data/search.json)
 lib/
   quran.ts                # server-only data access (chapters, surah files)
   types.ts                # Verse / Word / Chapter types (compact JSON keys documented there)
   constants.ts            # reciters, translations, tajweed rules, juz starts
   audio.ts                # audio URL builders (ayah + per-word)
   audio-engine.ts         # client audio player + external stores (player, tick)
-  settings.ts, library.ts # persisted client stores (localStorage)
+  settings.ts             # persisted reader settings (view mode: verse | reading | hifz)
+  library.ts              # persisted bookmarks, notes, memorised, read ayat, daily log, plan, streak
   create-store.ts         # tiny useSyncExternalStore-based store
 data/quran/               # generated: chapters.json, surah/{n}.json
 public/data/translations/ # generated: {lang}/{n}.json, fetched on demand

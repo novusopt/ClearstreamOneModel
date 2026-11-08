@@ -7,9 +7,10 @@ import { TOTAL_AYAT, TOTAL_SURAHS, TOTAL_WORDS } from "@/lib/constants";
 function Counter({ to }: { to: number }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
-  const [value, setValue] = useState(0);
+  // Rest on the real number (thumbnails, no-JS, reduced motion); count up once when scrolled into view.
+  const [value, setValue] = useState(to);
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const controls = animate(0, to, { duration: 1.8, ease: [0.22, 1, 0.36, 1], onUpdate: (v) => setValue(Math.round(v)) });
     return () => controls.stop();
   }, [inView, to]);
@@ -34,8 +35,8 @@ export function Stats() {
         {STATS.map((s, i) => (
           <motion.div
             key={s.label}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ y: 20 }}
+            whileInView={{ y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
             className="text-center"

@@ -17,7 +17,7 @@ import { Stats } from "@/components/home/stats";
 import { JuzIndex, SurahIndex } from "@/components/home/surah-index";
 import { scrollToElement, SmoothScroll, useLenis } from "@/components/providers/smooth-scroll";
 import { AudioPlayerBar } from "@/components/quran/audio-player-bar";
-import { BookmarkList } from "@/components/quran/bookmark-list";
+import { LibraryView } from "@/components/library/library-view";
 import { SurahHero } from "@/components/quran/surah-hero";
 import { SurahReader } from "@/components/quran/surah-reader";
 import { CommandPalette } from "@/components/site/command-palette";
@@ -100,12 +100,13 @@ function SurahView({ id, verse }: { id: number; verse: number | null }) {
   );
 }
 
-function BookmarksView() {
+function LibraryPageView({ tab }: { tab: "progress" | "bookmarks" }) {
   return (
-    <div className="mx-auto max-w-3xl px-4 pt-32 pb-24">
+    <div className="mx-auto max-w-6xl px-4 pt-32 pb-24 md:px-8">
       <p className="text-sm font-semibold text-brand-secondary">Saved on this device</p>
-      <h1 className="mt-2 font-display text-display-sm font-medium tracking-tight text-primary">Bookmarks</h1>
-      <BookmarkList chapters={chapters} />
+      <h1 className="mt-2 font-display text-display-sm font-medium tracking-tight text-primary">Your library</h1>
+      <p className="mt-2 max-w-xl text-tertiary">Reading progress and plans, bookmarks, notes and the ayat you have memorised.</p>
+      <LibraryView key={tab} chapters={chapters} defaultTab={tab} />
     </div>
   );
 }
@@ -127,7 +128,7 @@ function useRoute(): [Route, number] {
 function App() {
   const [route, n] = useRoute();
   const lenis = useLenis();
-  const routeKey = route.view === "surah" ? `surah-${route.id}` : route.view;
+  const routeKey = route.view === "surah" ? `surah-${route.id}` : route.view === "library" ? `library-${route.tab}` : route.view;
 
   // Scroll on navigation: to a home section, or to the top of a new view.
   useEffect(() => {
@@ -148,7 +149,7 @@ function App() {
     <div key={routeKey}>
       {route.view === "home" && <HomeView />}
       {route.view === "surah" && <SurahView id={route.id} verse={route.verse} />}
-      {route.view === "bookmarks" && <BookmarksView />}
+      {route.view === "library" && <LibraryPageView tab={route.tab} />}
     </div>
   );
 }

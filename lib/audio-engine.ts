@@ -15,6 +15,8 @@ interface PlayerState {
   verses: AudioVerse[];
   index: number;
   status: PlayerStatus;
+  /** Memorisation loop: play ayat [from, to] (indexes) `times` times; `pass` is 1-based. */
+  range: { from: number; to: number; times: number; pass: number } | null;
 }
 
 interface TickState {
@@ -24,7 +26,7 @@ interface TickState {
   duration: number;
 }
 
-const PLAYER_INITIAL: PlayerState = { surah: null, surahName: "", verses: [], index: 0, status: "idle" };
+const PLAYER_INITIAL: PlayerState = { surah: null, surahName: "", verses: [], index: 0, status: "idle", range: null };
 const TICK_INITIAL: TickState = { word: -1, time: 0, duration: 0 };
 
 export const playerStore = createStore<PlayerState>(PLAYER_INITIAL);
@@ -136,7 +138,18 @@ function preloadNext(index: number) {
 }
 
 function onEnded() {
-  const { index, verses } = playerStore.get();
+  const { index, verses, range } = playerStore.get();
+  if (range) {
+    if (index < range.to) return loadIndex(index + 1, true);
+    if (range.pass < range.times) {
+      playerStore.set({ range: { ...range, pass: range.pass + 1 } });
+      return loadIndex(range.from, true);
+    }
+    playerStore.set({ status: "paused", range: null });
+    tickStore.set({ word: -1 });
+    toast.success("Repetition complete", { description: `${range.times}× ayat ${verses[range.from].n}–${verses[range.to].n}` });
+    return;
+  }
   const { repeat } = settingsStore.get();
   if (repeat === "ayah") return loadIndex(index, true);
   if (index < verses.length - 1) return loadIndex(index + 1, true);
@@ -159,8 +172,20 @@ export const player = {
   play(surah: number, surahName: string, verses: AudioVerse[], index = 0, seekMs?: number) {
     if (audioBlocked()) return;
     wordAudio?.pause();
-    playerStore.set({ surah, surahName, verses });
+    playerStore.set({ surah, surahName, verses, range: null });
     loadIndex(index, true, seekMs);
+  },
+  /** Loop a range of ayat (indexes, inclusive) for memorisation. */
+  playRange(surah: number, surahName: string, verses: AudioVerse[], from: number, to: number, times: number) {
+    if (audioBlocked()) return;
+    wordAudio?.pause();
+    const a = Math.min(from, to);
+    const b = Math.max(from, to);
+    playerStore.set({ surah, surahName, verses, range: { from: a, to: b, times: Math.max(1, times), pass: 1 } });
+    loadIndex(a, true);
+  },
+  clearRange() {
+    playerStore.set({ range: null });
   },
   toggle() {
     const el = ensureAudio();

@@ -17,7 +17,12 @@ and Motion.
 - **Reading modes**: verse cards or a continuous mushaf-style page.
 - **Navigation**: surah search (Latin, Arabic or number), Meccan/Medinan filter, browse by juzʾ, deep links (`/surah/2#v-255`).
 - **Quick navigation**: ⌘K / Ctrl+K command palette to jump to any surah or ayah (type `2:255`), plus reader shortcuts: <kbd>Space</kbd> play/pause, <kbd>J</kbd>/<kbd>K</kbd> next/previous ayah.
-- **Your library**: bookmarks and "continue reading", saved locally.
+- **Search inside the Qurʾān**: the ⌘K palette also searches all 6,236 ayat in English or Arabic (diacritics ignored), with highlighted excerpts.
+- **Memorise (hifz) mode**: words are blurred until you tap them; reveal a whole ayah to check yourself, mark ayat as memorised, and loop a range of ayat 1–10 times.
+- **Reading plans & progress**: complete the Qurʾān in a week, 30 days, 2 months or a year; daily goal, pace (ahead/behind), day streak, 14-day activity and per-surah progress on the index.
+- **Notes**: private reflections on any ayah, shown beneath it and collected in the Library.
+- **Share as image**: a 1080 × 1350 brand card of any ayah (Arabic + translation) to copy, download or share.
+- **Your library**: progress, bookmarks, notes and memorised ayat in one place, saved locally.
 - **Motion**: parallax hero, scroll-reveal bento grid, a sticky scroll-driven walk through Al-Fātiḥah, Lenis smooth scrolling. All of it honours reduced-motion.
 - Light and dark themes; responsive from 375 px up.
 

@@ -5,7 +5,7 @@ import { BRAND } from "@/lib/brand";
 import { createStore, useStore } from "@/lib/create-store";
 
 export interface ReaderSettings {
-  viewMode: "verse" | "reading";
+  viewMode: "verse" | "reading" | "hifz";
   translation: string;
   showTranslation: boolean;
   showTransliteration: boolean;

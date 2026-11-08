@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, BookOpen01, Bookmark, CornerDownLeft, Hash01, SearchLg } from "@untitledui/icons";
+import { ArrowRight, BookOpen01, Bookmark, CornerDownLeft, File06, Hash01, SearchLg } from "@untitledui/icons";
 import { useRouter } from "next/navigation";
 import { type FC, useEffect, useMemo, useState } from "react";
 import { Heading as AriaHeading, ListBox as AriaListBox, ListBoxItem as AriaListBoxItem } from "react-aria-components";
@@ -9,6 +9,7 @@ import { Badge } from "@/components/base/badges/badges";
 import { Input } from "@/components/base/input/input";
 import { createStore, useStore } from "@/lib/create-store";
 import { useLibrary } from "@/lib/library";
+import { DATA_BASE } from "@/lib/runtime";
 import type { Chapter } from "@/lib/types";
 import { normalizeArabic, normalizeLatin } from "@/lib/utils";
 import { cx } from "@/utils/cx";
@@ -16,6 +17,67 @@ import { cx } from "@/utils/cx";
 const paletteStore = createStore({ open: false });
 export const openCommandPalette = () => paletteStore.set({ open: true });
 const setOpen = (open: boolean) => paletteStore.set({ open });
+
+/** [surah, ayah, english, normalisedArabic] — built by scripts/build-search-index.mjs. */
+type IndexRow = [number, number, string, string];
+let indexPromise: Promise<IndexRow[]> | null = null;
+const loadIndex = () =>
+  (indexPromise ??= fetch(`${DATA_BASE}/search.json`)
+    .then((r) => (r.ok ? (r.json() as Promise<IndexRow[]>) : Promise.reject(new Error(r.statusText))))
+    .catch((e) => {
+      indexPromise = null;
+      throw e;
+    }));
+
+function useSearchIndex(enabled: boolean): IndexRow[] | null {
+  const [rows, setRows] = useState<IndexRow[] | null>(null);
+  useEffect(() => {
+    if (!enabled || rows) return;
+    let live = true;
+    loadIndex()
+      .then((r) => live && setRows(r))
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, [enabled, rows]);
+  return rows;
+}
+
+/** Short excerpt around the first match. */
+function excerpt(text: string, needle: string): { before: string; match: string; after: string } {
+  const i = text.toLowerCase().indexOf(needle.toLowerCase());
+  if (i < 0) return { before: text.slice(0, 110), match: "", after: text.length > 110 ? "…" : "" };
+  const start = Math.max(0, i - 50);
+  return {
+    before: (start > 0 ? "…" : "") + text.slice(start, i),
+    match: text.slice(i, i + needle.length),
+    after: text.slice(i + needle.length, i + needle.length + 70) + (i + needle.length + 70 < text.length ? "…" : ""),
+  };
+}
+
+function searchAyat(query: string, rows: IndexRow[], chapters: Chapter[]): Result[] {
+  const q = query.trim();
+  const isArabic = /[\u0600-\u06FF]/.test(q);
+  const needle = isArabic ? normalizeArabic(q) : q.toLowerCase();
+  const out: Result[] = [];
+  for (const [s, a, en, ar] of rows) {
+    const hit = isArabic ? ar.includes(needle) : en.toLowerCase().includes(needle);
+    if (!hit) continue;
+    const ch = chapters[s - 1];
+    out.push({
+      id: `t-${s}-${a}`,
+      href: `/surah/${s}#v-${a}`,
+      title: `${ch.nameSimple} ${s}:${a}`,
+      subtitle: "",
+      snippet: isArabic ? undefined : excerpt(en, q),
+      arabicSnippet: isArabic ? ar.slice(0, 90) : undefined,
+      icon: File06,
+    });
+    if (out.length >= 30) break;
+  }
+  return out;
+}
 
 interface Result {
   id: string;
@@ -25,6 +87,8 @@ interface Result {
   icon: FC<{ className?: string }>;
   arabic?: string;
   badge?: string;
+  snippet?: { before: string; match: string; after: string };
+  arabicSnippet?: string;
 }
 
 function search(query: string, chapters: Chapter[], lastRead: { surah: number; ayah: number } | null): Result[] {
@@ -46,7 +110,7 @@ function search(query: string, chapters: Chapter[], lastRead: { surah: number; a
       const ch = chapters[lastRead.surah - 1];
       out.push({ id: "continue", href: `/surah/${ch.id}#v-${lastRead.ayah}`, title: "Continue reading", subtitle: `${ch.nameSimple} ${ch.id}:${lastRead.ayah}`, icon: BookOpen01 });
     }
-    out.push({ id: "bookmarks", href: "/bookmarks", title: "Bookmarks", subtitle: "Your saved ayat", icon: Bookmark });
+    out.push({ id: "library", href: "/library", title: "Your library", subtitle: "Progress, reading plan, bookmarks, notes", icon: Bookmark });
   }
 
   const latin = normalizeLatin(q);
@@ -80,7 +144,14 @@ export function CommandPalette({ chapters }: { chapters: Chapter[] }) {
   const router = useRouter();
   const lastRead = useLibrary((s) => s.lastRead);
   const [query, setQuery] = useState("");
-  const results = useMemo(() => search(query, chapters, lastRead), [query, chapters, lastRead]);
+  const q = query.trim();
+  const wantsText = q.length >= 3 && !/^\d/.test(q);
+  const rows = useSearchIndex(open && wantsText);
+  const results = useMemo(() => {
+    const base = search(query, chapters, lastRead);
+    return wantsText && rows ? [...base, ...searchAyat(query, rows, chapters)] : base;
+  }, [query, chapters, lastRead, rows, wantsText]);
+  const textLoading = wantsText && !rows;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -119,8 +190,8 @@ export function CommandPalette({ chapters }: { chapters: Chapter[] }) {
               autoFocus
               size="md"
               icon={SearchLg}
-              aria-label="Search surahs or type a reference like 2:255"
-              placeholder="Search surahs or type 2:255"
+              aria-label="Search surahs and ayat, or type a reference like 2:255"
+              placeholder="Search surahs, ayat or type 2:255"
               value={query}
               onChange={setQuery}
               onKeyDown={(e) => {
@@ -132,6 +203,7 @@ export function CommandPalette({ chapters }: { chapters: Chapter[] }) {
               }}
             />
           </div>
+          {textLoading && <p className="px-6 pt-3 text-xs text-tertiary">Searching all 6,236 ayat…</p>}
           {results.length > 0 ? (
             <AriaListBox
               id="palette-results"
@@ -159,7 +231,19 @@ export function CommandPalette({ chapters }: { chapters: Chapter[] }) {
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-sm font-semibold text-primary">{r.title}</span>
-                        <span className="block truncate text-xs text-tertiary">{r.subtitle}</span>
+                        {r.snippet ? (
+                          <span className="line-clamp-2 text-xs text-tertiary">
+                            {r.snippet.before}
+                            <mark className="rounded bg-gold-200/70 px-0.5 text-primary dark:bg-gold-500/30">{r.snippet.match}</mark>
+                            {r.snippet.after}
+                          </span>
+                        ) : r.arabicSnippet ? (
+                          <span lang="ar" dir="rtl" className="block truncate font-quran text-lg text-tertiary">
+                            {r.arabicSnippet}
+                          </span>
+                        ) : (
+                          <span className="block truncate text-xs text-tertiary">{r.subtitle}</span>
+                        )}
                       </span>
                       {r.badge && (
                         <Badge type="modern" size="sm" color="gray" className="hidden sm:flex">
@@ -178,7 +262,9 @@ export function CommandPalette({ chapters }: { chapters: Chapter[] }) {
               )}
             </AriaListBox>
           ) : (
-            <p className="px-6 py-10 text-center text-sm text-tertiary">No surah matches “{query}”. Try a name, a number, or a reference like 18:10.</p>
+            <p className="px-6 py-10 text-center text-sm text-tertiary">
+              {textLoading ? "Searching…" : `Nothing matches “${query}”. Try a surah name, a reference like 18:10, or a word such as “patience” or “صبر”.`}
+            </p>
           )}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-secondary bg-secondary px-4 py-2.5 text-xs text-tertiary">
             <span>

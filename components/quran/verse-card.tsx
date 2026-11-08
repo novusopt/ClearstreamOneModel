@@ -1,16 +1,18 @@
 "use client";
 
-import { Bookmark, BookmarkCheck, Copy01, Link01, PauseCircle, PlayCircle, Share07, Type01 } from "@untitledui/icons";
+import { Bookmark, BookmarkCheck, CheckCircle, Copy01, Edit05, Eye, EyeOff, Image01, Link01, PauseCircle, PlayCircle, Share07, Type01 } from "@untitledui/icons";
 import { motion } from "motion/react";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { toast } from "sonner";
-import { Badge } from "@/components/base/badges/badges";
+import { Badge, BadgeWithIcon } from "@/components/base/badges/badges";
+import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { Dropdown } from "@/components/base/dropdown/dropdown";
 import { Word } from "@/components/quran/word";
 import { AyahMarker } from "@/components/quran/ayah-marker";
+import { openVerseDialog } from "@/components/quran/verse-dialogs";
 import { player, usePlayer, useTick } from "@/lib/audio-engine";
-import { toggleBookmark, useLibrary, verseKey } from "@/lib/library";
+import { toggleBookmark, toggleMemorised, useLibrary, verseKey } from "@/lib/library";
 import { ARABIC_SIZES, TRANSLATION_SIZES, useSettings } from "@/lib/settings";
 import type { Verse } from "@/lib/types";
 import { cx } from "@/utils/cx";
@@ -30,6 +32,13 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
   const isPlaying = usePlayer((s) => s.surah === surah && s.index === index && (s.status === "playing" || s.status === "loading"));
   const activeWord = useTick((s) => (isCurrent ? s.word : -1));
   const bookmarked = useLibrary((s) => s.bookmarks.includes(verseKey(surah, verse.n)));
+  const note = useLibrary((s) => s.notes[verseKey(surah, verse.n)]?.text ?? null);
+  const memorised = useLibrary((s) => s.memorised.includes(verseKey(surah, verse.n)));
+  const hifz = useSettings((s) => s.viewMode === "hifz");
+  // Memorisation mode: words stay hidden until revealed (one tap per word, or all at once).
+  const [revealed, setRevealed] = useState<Set<number>>(() => new Set());
+  const allRevealed = revealed.size >= verse.w.length;
+  const reveal = (i: number) => setRevealed((prev) => new Set(prev).add(i));
 
   const tajweed = useSettings((s) => s.tajweed);
   const wordByWord = useSettings((s) => s.wordByWord);
@@ -67,6 +76,13 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
     if (action === "copy-arabic") void copy(arabic, "Arabic text copied");
     if (action === "copy-link") void copy(link(), "Link copied");
     if (action === "share") void share();
+    const target = { surah, ayah: verse.n, surahName, arabic, translation: text };
+    if (action === "note") openVerseDialog(target, "note");
+    if (action === "image") openVerseDialog(target, "image");
+    if (action === "memorised") {
+      const added = toggleMemorised(surah, verse.n);
+      toast(added ? `Marked ${key} as memorised` : `Unmarked ${key}`);
+    }
   };
 
   return (
@@ -74,8 +90,8 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
       id={`v-${verse.n}`}
       data-ayah={verse.n}
       aria-label={`Ayah ${key}`}
-      initial={{ opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ y: 18 }}
+      whileInView={{ y: 0 }}
       viewport={{ once: true, margin: "0px 0px -60px 0px" }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       className={cx(
@@ -85,9 +101,16 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
     >
       {isCurrent && <motion.span layoutId={`verse-indicator-${surah}`} className="absolute inset-y-0 left-0 w-0.5 bg-brand-solid" />}
       <div className="mb-5 flex items-center justify-between gap-2">
-        <Badge type="pill-color" color="brand" size="lg" className="min-w-14 justify-center rounded-t-full rounded-b-md pt-2 font-display tabular-nums">
-          {key}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge type="pill-color" color="brand" size="lg" className="min-w-14 justify-center rounded-t-full rounded-b-md pt-2 font-display tabular-nums">
+            {key}
+          </Badge>
+          {memorised && (
+            <BadgeWithIcon type="pill-color" color="success" size="sm" iconLeading={CheckCircle}>
+              Memorised
+            </BadgeWithIcon>
+          )}
+        </div>
         <div className="flex items-center gap-0.5">
           <ButtonUtility
             size="sm"
@@ -118,7 +141,13 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
                 </Dropdown.Section>
                 <Dropdown.Separator />
                 <Dropdown.Section>
-                  <Dropdown.Item id="share" icon={Share07} label="Share…" />
+                  <Dropdown.Item id="note" icon={Edit05} label={note ? "Edit note" : "Add note"} />
+                  <Dropdown.Item id="memorised" icon={CheckCircle} label={memorised ? "Unmark memorised" : "Mark as memorised"} />
+                </Dropdown.Section>
+                <Dropdown.Separator />
+                <Dropdown.Section>
+                  <Dropdown.Item id="image" icon={Image01} label="Share as image" />
+                  <Dropdown.Item id="share" icon={Share07} label="Share link…" />
                 </Dropdown.Section>
               </Dropdown.Menu>
             </Dropdown.Popover>
@@ -140,20 +169,59 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
                 wbwTransliteration={wbwTransliteration}
                 active={activeWord === i}
                 sizeClass={arabicSize}
+                concealed={hifz && !revealed.has(i)}
+                onReveal={reveal}
               />
             ))}
             <AyahMarker n={verse.n} className={cx(arabicSize, "self-center")} />
           </div>
 
-          {showTransliteration && <p className="text-sm text-brand-tertiary italic md:text-md">{verse.tr}</p>}
+          {hifz && (
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                size="sm"
+                color="secondary"
+                iconLeading={allRevealed ? EyeOff : Eye}
+                onPress={() => setRevealed(allRevealed ? new Set() : new Set(verse.w.map((_, i) => i)))}
+              >
+                {allRevealed ? "Hide again" : "Reveal ayah"}
+              </Button>
+              <Button
+                size="sm"
+                color={memorised ? "secondary" : "tertiary"}
+                iconLeading={CheckCircle}
+                onPress={() => onMenu("memorised")}
+                className={cx(memorised && "text-success-primary")}
+              >
+                {memorised ? "Memorised" : "Mark memorised"}
+              </Button>
+              <span className="text-xs text-tertiary">Tap a blurred word to reveal it.</span>
+            </div>
+          )}
 
-          {showTranslation && (
+          {showTransliteration && (!hifz || allRevealed) && <p className="text-sm text-brand-tertiary italic md:text-md">{verse.tr}</p>}
+
+          {showTranslation && (!hifz || allRevealed) && (
             <p
               dir={translationRtl ? "rtl" : "ltr"}
               className={cx("leading-relaxed text-secondary", translationSize, translation == null && "animate-pulse")}
             >
               {translation ?? verse.en}
             </p>
+          )}
+
+          {note && (
+            <button
+              type="button"
+              onClick={() => onMenu("note")}
+              className="flex w-full cursor-pointer gap-3 rounded-xl border border-gold-400/40 bg-gold-100/40 px-4 py-3 text-left text-sm text-secondary outline-focus-ring transition hover:bg-gold-100/70 focus-visible:outline-2 dark:bg-gold-500/10 dark:hover:bg-gold-500/15"
+            >
+              <Edit05 aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-gold-600 dark:text-gold-400" />
+              <span className="min-w-0 flex-1 whitespace-pre-line">
+                <span className="sr-only">Your note: </span>
+                {note}
+              </span>
+            </button>
           )}
       </div>
     </motion.article>

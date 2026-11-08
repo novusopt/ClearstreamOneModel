@@ -18,14 +18,17 @@ interface WordProps {
   wbwTransliteration: boolean;
   active: boolean;
   sizeClass: string;
+  /** Memorisation mode: the word is hidden until tapped. */
+  concealed?: boolean;
+  onReveal?: (index: number) => void;
 }
 
-export const Word = memo(function Word({ word, surah, ayah, index, tajweed, wordByWord, wbwTransliteration, active, sizeClass }: WordProps) {
+export const Word = memo(function Word({ word, surah, ayah, index, tajweed, wordByWord, wbwTransliteration, active, sizeClass, concealed = false, onReveal }: WordProps) {
   return (
     <button
       type="button"
-      onClick={() => player.playWord(surah, ayah, index + 1)}
-      aria-label={`${word.t}: ${word.e}. Play pronunciation`}
+      onClick={() => (concealed ? onReveal?.(index) : player.playWord(surah, ayah, index + 1))}
+      aria-label={concealed ? `Hidden word ${index + 1}. Reveal` : `${word.t}: ${word.e}. Play pronunciation`}
       className={cx(
         "group/word relative inline-flex cursor-pointer flex-col items-center rounded-xl px-1.5 pt-1 pb-1.5 outline-focus-ring transition-colors duration-200",
         "hover:bg-brand-primary/70 focus-visible:outline-2 focus-visible:outline-offset-2",
@@ -39,10 +42,20 @@ export const Word = memo(function Word({ word, surah, ayah, index, tajweed, word
           transition={{ type: "spring", stiffness: 500, damping: 38 }}
         />
       )}
-      <span lang="ar" dir="rtl" className={cx("relative font-quran text-primary", sizeClass, active && "text-brand-primary")}>
+      <span
+        lang="ar"
+        dir="rtl"
+        aria-hidden={concealed || undefined}
+        className={cx(
+          "relative font-quran text-primary transition-[filter,opacity] duration-300",
+          sizeClass,
+          active && "text-brand-primary",
+          concealed && "opacity-40 blur-md select-none",
+        )}
+      >
         {tajweed ? <TajweedText value={word.j} /> : word.a}
       </span>
-      {wordByWord ? (
+      {concealed ? null : wordByWord ? (
         <span className="relative mt-1 flex max-w-36 flex-col items-center text-center leading-tight" dir="ltr">
           {wbwTransliteration && <span className="text-xs text-brand-tertiary italic">{word.t}</span>}
           <span className="text-xs text-tertiary">{word.e}</span>
@@ -52,8 +65,10 @@ export const Word = memo(function Word({ word, surah, ayah, index, tajweed, word
           role="presentation"
           dir="ltr"
           className={cx(
-            "pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 hidden w-max max-w-56 -translate-x-1/2 flex-col items-center rounded-t-2xl rounded-b-lg border border-gold-400/50 bg-brand-950 px-3.5 pt-2.5 pb-2 text-center shadow-xl",
-            "group-hover/word:flex group-focus-visible/word:flex",
+            "pointer-events-none invisible absolute bottom-full left-1/2 z-20 mb-2 flex w-max max-w-56 -translate-x-1/2 translate-y-1 flex-col items-center rounded-t-2xl rounded-b-lg border border-gold-400/50 bg-brand-950 px-3.5 pt-2.5 pb-2 text-center opacity-0 shadow-xl transition duration-150",
+            // Short hover delay so cards don't flash while the pointer sweeps across a line.
+            "group-hover/word:visible group-hover/word:translate-y-0 group-hover/word:opacity-100 group-hover/word:delay-200",
+            "group-focus-visible/word:visible group-focus-visible/word:translate-y-0 group-focus-visible/word:opacity-100",
           )}
         >
           <span className="font-display text-sm text-gold-300 italic">{word.t}</span>

@@ -5,7 +5,7 @@
 export type Route =
   | { view: "home"; section: string | null }
   | { view: "surah"; id: number; verse: number | null }
-  | { view: "bookmarks" };
+  | { view: "library"; tab: "progress" | "bookmarks" };
 
 export function pathToHash(href: string): string {
   if (href.startsWith("#")) return href;
@@ -18,6 +18,7 @@ export function pathToHash(href: string): string {
     return `#surah-${surah[1]}${v ? `-v-${v[1]}` : ""}`;
   }
   if (path === "/bookmarks") return "#bookmarks";
+  if (path === "/library") return "#library";
   return frag ? `#${frag}` : "#home";
 }
 
@@ -28,7 +29,8 @@ export function parseHash(hash: string): Route {
     const id = Number(surah[1]);
     if (id >= 1 && id <= 114) return { view: "surah", id, verse: surah[2] ? Number(surah[2]) : null };
   }
-  if (name === "bookmarks") return { view: "bookmarks" };
+  if (name === "bookmarks") return { view: "library", tab: "bookmarks" };
+  if (name === "library") return { view: "library", tab: "progress" };
   return { view: "home", section: name && name !== "home" ? name : null };
 }
 

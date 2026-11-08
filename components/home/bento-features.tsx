@@ -52,8 +52,8 @@ function BentoCard({
         mx.set(-400);
         my.set(-400);
       }}
-      initial={{ opacity: 0, y: 48, scale: 0.96 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      initial={{ y: 48, scale: 0.96 }}
+      whileInView={{ y: 0, scale: 1 }}
       viewport={{ once: true, margin: "0px 0px -80px 0px" }}
       transition={{ duration: 0.7, delay: (index % 3) * 0.08, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -4 }}
@@ -215,8 +215,8 @@ function ModesDemo() {
       {["Verse by verse", "Mushaf reading"].map((label, i) => (
         <motion.div
           key={label}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 20 }}
+          whileInView={{ y: 0 }}
           transition={{ delay: 0.2 + i * 0.15 }}
           className="rounded-2xl bg-secondary p-3 ring-1 ring-secondary"
         >
@@ -237,8 +237,8 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
     <section id="features" className="relative scroll-mt-24 py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 24 }}
+          whileInView={{ y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
           className="mx-auto max-w-2xl text-center"

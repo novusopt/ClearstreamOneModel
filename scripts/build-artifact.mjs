@@ -73,6 +73,7 @@ for (const l of LANGS) {
 const fatihah = JSON.parse(readFileSync(join(ROOT, "data/quran/surah/1.json"), "utf8")).verses;
 const sample = JSON.parse(readFileSync(join(ROOT, "data/quran/surah/2.json"), "utf8")).verses[254];
 writeFileSync(join(DATA, "home.json"), JSON.stringify({ fatihah, sample }));
+writeFileSync(join(DATA, "search.json"), readFileSync(join(ROOT, "public/data/search.json")));
 
 // 4. Page (no <html>/<head>/<body>: the host wraps it)
 const html = `<title>Mishkah</title>

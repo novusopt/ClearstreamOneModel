@@ -9,7 +9,9 @@ import { Tabs } from "@/components/application/tabs/tabs";
 import { Badge } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
 import { Input } from "@/components/base/input/input";
+import { ProgressBarBase } from "@/components/base/progress-indicators/progress-indicators";
 import { JUZ_STARTS } from "@/lib/constants";
+import { useLibrary } from "@/lib/library";
 import type { Chapter } from "@/lib/types";
 import { normalizeArabic, normalizeLatin, toArabicNumber } from "@/lib/utils";
 import { cx } from "@/utils/cx";
@@ -17,11 +19,13 @@ import { cx } from "@/utils/cx";
 type Filter = "all" | "meccan" | "medinan";
 
 function SurahCard({ chapter, i }: { chapter: Chapter; i: number }) {
+  const readCount = useLibrary((st) => st.read[chapter.id]?.length ?? 0);
+  const pct = Math.round((readCount / chapter.versesCount) * 100);
   return (
     <motion.li
       layout
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ y: 24 }}
+      whileInView={{ y: 0 }}
       exit={{ opacity: 0, scale: 0.96 }}
       viewport={{ once: true, margin: "0px 0px -40px 0px" }}
       transition={{ duration: 0.45, delay: (i % 3) * 0.05, ease: [0.22, 1, 0.36, 1] }}
@@ -51,6 +55,12 @@ function SurahCard({ chapter, i }: { chapter: Chapter; i: number }) {
             </Badge>
           </span>
         </span>
+        {readCount > 0 && (
+          <span className="absolute inset-x-4 bottom-0" title={`${pct}% read`}>
+            <ProgressBarBase value={pct} className="h-0.5 rounded-none bg-transparent" progressClassName="rounded-none bg-gold-500" />
+            <span className="sr-only">{pct}% read</span>
+          </span>
+        )}
       </Link>
     </motion.li>
   );
@@ -81,7 +91,7 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
     <section id="surahs" className="scroll-mt-24 py-24">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+          <motion.div initial={{ x: -24 }} whileInView={{ x: 0 }} viewport={{ once: true }}>
             <p className="text-sm font-semibold text-brand-secondary">The Noble Qurʾān</p>
             <h2 className="mt-2 text-display-sm font-display font-medium tracking-tight text-primary">All 114 surahs</h2>
           </motion.div>
@@ -118,7 +128,7 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
           </AnimatePresence>
         </ul>
         {results.length === 0 && (
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="py-12">
+          <motion.div initial={{ y: 12 }} animate={{ opacity: 1, y: 0 }} className="py-12">
             <EmptyState size="sm">
               <EmptyState.Header pattern="circle">
                 <EmptyState.FeaturedIcon icon={SearchLg} color="gray" theme="modern" />
@@ -152,7 +162,7 @@ export function JuzIndex({ chapters }: { chapters: Chapter[] }) {
   return (
     <section id="juz" className="scroll-mt-24 pb-24">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
-        <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+        <motion.div initial={{ x: -24 }} whileInView={{ x: 0 }} viewport={{ once: true }}>
           <p className="text-sm font-semibold text-brand-secondary">Thirty parts</p>
           <h2 className="mt-2 text-display-sm font-display font-medium tracking-tight text-primary">Browse by juzʾ</h2>
         </motion.div>
@@ -160,8 +170,8 @@ export function JuzIndex({ chapters }: { chapters: Chapter[] }) {
           {JUZ_STARTS.map(([s, a], i) => (
             <motion.li
               key={i}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ scale: 0.9 }}
+              whileInView={{ scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: (i % 6) * 0.04 }}
             >

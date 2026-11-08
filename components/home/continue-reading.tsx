@@ -33,7 +33,7 @@ export function ContinueReading({ chapters }: { chapters: Chapter[] }) {
         )}
         {bookmarks.length > 0 && (
           <Link
-            href="/bookmarks"
+            href="/library"
             className="group flex items-center gap-4 rounded-2xl border border-secondary bg-primary p-5 outline-focus-ring transition hover:-translate-y-0.5 hover:border-brand focus-visible:outline-2"
           >
             <FeaturedIcon icon={Bookmark} color="brand" theme="light" size="lg" />

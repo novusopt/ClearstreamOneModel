@@ -1,6 +1,6 @@
 "use client";
 
-import { AlignJustify, ArrowLeft, ArrowRight, PauseCircle, PlayCircle, Rows01 } from "@untitledui/icons";
+import { AlignJustify, GraduationHat01, ArrowLeft, ArrowRight, PauseCircle, PlayCircle, Rows01 } from "@untitledui/icons";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo } from "react";
@@ -8,7 +8,9 @@ import { Button } from "@/components/base/buttons/button";
 import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
 import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
 import { scrollToElement, useLenis } from "@/components/providers/smooth-scroll";
+import { HifzPanel } from "@/components/quran/hifz-panel";
 import { ReaderSettings } from "@/components/quran/reader-settings";
+import { VerseDialogs } from "@/components/quran/verse-dialogs";
 import { ReadingView } from "@/components/quran/reading-view";
 import { TajweedLegend } from "@/components/quran/tajweed-legend";
 import { useTranslationText } from "@/components/quran/use-translation";
@@ -18,6 +20,7 @@ import { TRANSLATIONS } from "@/lib/constants";
 import { setLastRead } from "@/lib/library";
 import { setSettings, settingsStore, useSettings } from "@/lib/settings";
 import type { AudioVerse, Chapter, Verse } from "@/lib/types";
+import { cx } from "@/utils/cx";
 
 interface SurahReaderProps {
   chapter: Chapter;
@@ -34,6 +37,7 @@ export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
   const rtl = TRANSLATIONS.find((t) => t.id === lang)?.rtl ?? false;
   const isThisSurah = usePlayer((s) => s.surah === chapter.id);
   const isPlaying = usePlayer((s) => s.surah === chapter.id && (s.status === "playing" || s.status === "loading"));
+  const playerOpen = usePlayer((s) => s.surah != null);
 
   const audioVerses = useMemo<AudioVerse[]>(
     () => verses.map((v) => ({ n: v.n, g: v.g, t: v.w.map((w) => (w.s != null && w.f != null ? [w.s, w.f] : null)) })),
@@ -80,21 +84,40 @@ export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
 
   // Remember the ayah the reader is looking at.
   useEffect(() => {
+    // An ayah counts as read once it has sat on the reading line for a moment, so fast scrolling
+    // doesn't inflate progress.
     const els = document.querySelectorAll<HTMLElement>("[data-ayah]");
+    const timers = new Map<Element, number>();
     const io = new IntersectionObserver(
       (entries) => {
-        const visible = entries.find((e) => e.isIntersecting);
-        if (visible) setLastRead(chapter.id, Number(visible.target.getAttribute("data-ayah")));
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            const ayah = Number(e.target.getAttribute("data-ayah"));
+            timers.set(e.target, window.setTimeout(() => setLastRead(chapter.id, ayah), 1200));
+          } else {
+            window.clearTimeout(timers.get(e.target));
+            timers.delete(e.target);
+          }
+        }
       },
-      { rootMargin: "-35% 0px -60% 0px" },
+      { rootMargin: "-35% 0px -55% 0px" },
     );
     els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    return () => {
+      io.disconnect();
+      timers.forEach((t) => window.clearTimeout(t));
+    };
   }, [chapter.id, viewMode]);
 
   return (
-    <div className="mx-auto max-w-5xl px-3 pb-24 sm:px-6">
-      <div className="sticky top-3 z-30 mb-8 md:top-4">
+    <div className="mx-auto max-w-5xl px-3 pb-40 sm:px-6 md:pb-24">
+      {/* Toolbar: thumb-reach bar at the bottom on phones, sticky at the top on larger screens. */}
+      <div
+        className={cx(
+          "fixed inset-x-0 z-30 px-3 transition-[bottom] duration-300 md:sticky md:top-4 md:bottom-auto md:mb-8 md:px-0",
+          playerOpen ? "bottom-[calc(env(safe-area-inset-bottom,0px)+9.5rem)]" : "bottom-[calc(env(safe-area-inset-bottom,0px)+0.75rem)]",
+        )}
+      >
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -114,7 +137,7 @@ export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
             disallowEmptySelection
             onSelectionChange={(keys) => {
               const k = [...keys][0];
-              if (k === "verse" || k === "reading") setSettings({ viewMode: k });
+              if (k === "verse" || k === "reading" || k === "hifz") setSettings({ viewMode: k });
             }}
             aria-label="View mode"
           >
@@ -124,6 +147,9 @@ export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
             <ButtonGroupItem id="reading" iconLeading={AlignJustify} aria-label="Reading mode">
               <span className="hidden sm:inline">Reading</span>
             </ButtonGroupItem>
+            <ButtonGroupItem id="hifz" iconLeading={GraduationHat01} aria-label="Memorise">
+              <span className="hidden sm:inline">Memorise</span>
+            </ButtonGroupItem>
           </ButtonGroup>
           <div className="hidden sm:block">
             <TajweedLegend compact />
@@ -131,6 +157,10 @@ export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
           <ReaderSettings />
         </motion.div>
       </div>
+
+      {viewMode === "hifz" && (
+        <HifzPanel chapter={chapter} onRepeat={(from, to, times) => player.playRange(chapter.id, chapter.nameSimple, audioVerses, from, to, times)} />
+      )}
 
       {viewMode === "reading" ? (
         <ReadingView verses={verses} surah={chapter.id} />
@@ -150,6 +180,8 @@ export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
           ))}
         </div>
       )}
+
+      <VerseDialogs />
 
       <nav aria-label="Surah navigation" className="mt-16 grid gap-3 sm:grid-cols-2">
         {prev ? (
