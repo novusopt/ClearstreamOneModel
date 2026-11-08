@@ -124,6 +124,8 @@ bento-grid demos and scroll story. Vendored components keep Untitled UI conventi
 - Prefer presets (Read / Study / Arabic only) over exposing every switch; detailed toggles live in Settings.
 - The Basmala is Qurʾān text, not a page title: it opens the reading (verse and mushaf views) using the words
   of 1:1 (tajweed, meanings, word audio), is absent for Al-Fātiḥah (it is ayah 1) and replaced by a note for At-Tawbah.
+- The surah index is Mishkah's own: arched niches (Meccan = gold, Medinan = indigo) where reading
+  progress rises as lantern light, plus a book-style Contents view. Don't revert to generic list cards.
 - Respect continuity: offer to resume, end each surah with progress and the next surah.
 
 ## Accessibility
