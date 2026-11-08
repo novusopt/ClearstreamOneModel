@@ -26,13 +26,19 @@ export default async function SurahPage({ params }: PageProps<"/surah/[id]">) {
   const id = Number(raw);
   if (!isValidSurahId(id)) notFound();
   const chapter = getChapter(id)!;
-  const { verses } = await getSurah(id);
+  const [{ verses }, fatihah] = await Promise.all([getSurah(id), getSurah(1)]);
 
   return (
     <>
       <ScrollProgress />
       <SurahHero chapter={chapter} />
-      <SurahReader chapter={chapter} verses={verses} prev={getChapter(id - 1) ?? null} next={getChapter(id + 1) ?? null} />
+      <SurahReader
+        chapter={chapter}
+        verses={verses}
+        prev={getChapter(id - 1) ?? null}
+        next={getChapter(id + 1) ?? null}
+        basmala={fatihah.verses[0]}
+      />
     </>
   );
 }

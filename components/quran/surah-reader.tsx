@@ -2,6 +2,7 @@
 
 import { Fragment, useCallback, useEffect, useMemo } from "react";
 import { scrollToElement, useLenis } from "@/components/providers/smooth-scroll";
+import { Basmala } from "@/components/quran/basmala";
 import { HifzPanel } from "@/components/quran/hifz-panel";
 import { JuzDivider } from "@/components/quran/juz-divider";
 import { ReaderBar } from "@/components/quran/reader-bar";
@@ -24,9 +25,11 @@ interface SurahReaderProps {
   verses: Verse[];
   prev: Chapter | null;
   next: Chapter | null;
+  /** Ayah 1:1 — the Basmala shown at the top of every surah except 1 and 9. */
+  basmala: Verse;
 }
 
-export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
+export function SurahReader({ chapter, verses, prev, next, basmala }: SurahReaderProps) {
   const lenis = useLenis();
   const viewMode = useSettings((s) => s.viewMode);
   const lang = useSettings((s) => s.translation);
@@ -140,8 +143,10 @@ export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
       )}
 
       {viewMode === "reading" ? (
-        <ReadingView verses={verses} surah={chapter.id} />
+        <ReadingView verses={verses} surah={chapter.id} basmala={<Basmala basmala={basmala} surah={chapter.id} variant="page" />} />
       ) : (
+        <>
+        <Basmala basmala={basmala} surah={chapter.id} />
         <div className="rounded-3xl border border-secondary bg-primary shadow-xs [&>*:first-child]:rounded-t-3xl [&>*:last-child]:rounded-b-3xl">
           {verses.map((v, i) => {
             const juz = juzStartingAt(chapter.id, v.n);
@@ -162,6 +167,7 @@ export function SurahReader({ chapter, verses, prev, next }: SurahReaderProps) {
             );
           })}
         </div>
+        </>
       )}
 
       <VerseDialogs />

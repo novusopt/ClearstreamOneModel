@@ -45,7 +45,7 @@ components/
   site/                   # header, footer, logo, theme toggle, scroll progress
   home/                   # hero, bento-features, fatihah-story, stats, surah-index, continue-reading
   quran/                  # surah-reader, reader-bar (position + Display presets), resume-banner,
-                          # reader-tips, juz-divider, surah-end, verse-card, word, tajweed-text, reading-view, hifz-panel,
+                          # reader-tips, juz-divider, surah-end, basmala (opening of each surah), verse-card, word, tajweed-text, reading-view, hifz-panel,
                           # verse-dialogs (note + share image), reader-settings, tajweed-legend,
                           # audio-player-bar, bookmark-list
   library/                # library-view (progress, plan, notes, memorised)
@@ -122,6 +122,8 @@ bento-grid demos and scroll story. Vendored components keep Untitled UI conventi
 - The Arabic text leads; everything else (translation, glosses, controls) is quieter and optional.
 - Always show where the reader is: surah, ayah and juzʾ in the reader bar; juzʾ dividers and sajdah (۩) badges in the text.
 - Prefer presets (Read / Study / Arabic only) over exposing every switch; detailed toggles live in Settings.
+- The Basmala is Qurʾān text, not a page title: it opens the reading (verse and mushaf views) using the words
+  of 1:1 (tajweed, meanings, word audio), is absent for Al-Fātiḥah (it is ayah 1) and replaced by a note for At-Tawbah.
 - Respect continuity: offer to resume, end each surah with progress and the next surah.
 
 ## Accessibility

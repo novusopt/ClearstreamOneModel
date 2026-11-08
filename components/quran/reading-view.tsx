@@ -38,7 +38,7 @@ function ReadingVerse({ verse, index, surah }: { verse: Verse; index: number; su
 }
 
 /** Mushaf-style continuous reading view. */
-export function ReadingView({ verses, surah }: { verses: Verse[]; surah: number }) {
+export function ReadingView({ verses, surah, basmala }: { verses: Verse[]; surah: number; basmala?: React.ReactNode }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -47,6 +47,7 @@ export function ReadingView({ verses, surah }: { verses: Verse[]; surah: number 
       className="relative mx-auto max-w-4xl overflow-hidden rounded-[2rem] border border-secondary bg-primary_alt p-5 shadow-xs sm:p-10"
     >
       <div aria-hidden="true" className="pointer-events-none absolute inset-3 rounded-[1.5rem] border border-dashed border-gold-400/40" />
+      {basmala}
       <div dir="rtl" lang="ar" className="relative flex flex-wrap items-center justify-center gap-y-4 text-center">
         {verses.map((v, i) => (
           <ReadingVerse key={v.n} verse={v} index={i} surah={surah} />

@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { Badge } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
-import { BISMILLAH, JUZ_STARTS } from "@/lib/constants";
+import { JUZ_STARTS } from "@/lib/constants";
 import type { Chapter } from "@/lib/types";
 import { toArabicNumber } from "@/lib/utils";
 
@@ -23,7 +23,6 @@ export function SurahHero({ chapter }: { chapter: Chapter }) {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const opacity = useTransform(scrollYProgress, [0, 0.9], [1, 0.2]);
   const y = useTransform(scrollYProgress, [0, 1], [0, 40]);
-  const showBismillah = chapter.id !== 1 && chapter.id !== 9;
 
   return (
     <div ref={ref} className="relative overflow-hidden pt-28 pb-8 md:pt-32 md:pb-10">
@@ -81,18 +80,6 @@ export function SurahHero({ chapter }: { chapter: Chapter }) {
           </motion.p>
         </div>
 
-        {showBismillah && (
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            lang="ar"
-            dir="rtl"
-            className="mt-8 text-center font-quran text-3xl text-secondary md:text-4xl"
-          >
-            {BISMILLAH}
-          </motion.p>
-        )}
       </motion.div>
     </div>
   );

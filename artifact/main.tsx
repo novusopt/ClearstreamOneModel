@@ -75,6 +75,7 @@ function HomeView() {
 
 function SurahView({ id, verse }: { id: number; verse: number | null }) {
   const data = useData<SurahData>(`surah-${id}.json`);
+  const home = useData<{ fatihah: Verse[] }>("home.json");
   const lenis = useLenis();
   const chapter = chapters[id - 1];
 
@@ -97,8 +98,8 @@ function SurahView({ id, verse }: { id: number; verse: number | null }) {
     <>
       <ScrollProgress />
       <SurahHero chapter={chapter} />
-      {data ? (
-        <SurahReader key={id} chapter={chapter} verses={data.verses} prev={chapters[id - 2] ?? null} next={chapters[id] ?? null} />
+      {data && home ? (
+        <SurahReader key={id} chapter={chapter} verses={data.verses} prev={chapters[id - 2] ?? null} next={chapters[id] ?? null} basmala={home.fatihah[0]} />
       ) : (
         <Loading label={`Opening ${chapter.nameSimple}`} />
       )}
