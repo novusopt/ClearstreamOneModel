@@ -30,7 +30,7 @@ function ReadingVerse({ verse, index, surah }: { verse: Verse; index: number; su
           sizeClass={size}
         />
       ))}
-      <AyahMarker n={verse.n} active={isCurrent} className={size} />
+      <AyahMarker n={verse.n} active={isCurrent} className={cx(size, "align-top mt-[calc(0.25rem+0.56em)]")} />
     </span>
   );
 }

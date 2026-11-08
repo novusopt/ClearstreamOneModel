@@ -179,7 +179,7 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
       </div>
 
       <div className="space-y-5">
-          <div dir="rtl" lang="ar" className="flex flex-wrap items-end gap-x-1 gap-y-3">
+          <div dir="rtl" lang="ar" className="flex flex-wrap items-start gap-x-1 gap-y-3">
             {verse.w.map((w, i) => (
               <Word
                 key={i}
@@ -196,7 +196,8 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
                 onReveal={reveal}
               />
             ))}
-            <AyahMarker n={verse.n} active={isPlaying} className={cx(arabicSize, "self-center")} />
+            {/* Centre on the letter bodies: word top padding (4px) + ~0.56em (line box middle, shifted down past the diacritic space). */}
+            <AyahMarker n={verse.n} active={isPlaying} className={cx(arabicSize, "mt-[calc(0.25rem+0.56em)]")} />
           </div>
 
           {hifz && (
