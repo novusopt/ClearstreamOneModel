@@ -24,6 +24,8 @@ interface WordProps {
   /** With `concealed`: keep the first letter visible as a memory cue. */
   hint?: boolean;
   onReveal?: (index: number) => void;
+  /** Mushaf view: tight padding so words sit in continuous, justified lines. */
+  dense?: boolean;
 }
 
 const RULE_BY_CLASS = new Map(TAJWEED_RULES.flatMap((r) => r.classes.map((c) => [c, r] as const)));
@@ -38,7 +40,7 @@ export function rulesIn(segments: TajweedSegment[]) {
   return [...seen.values()];
 }
 
-export const Word = memo(function Word({ word, surah, ayah, index, tajweed, wordByWord, wbwTransliteration, active, sizeClass, concealed = false, hint = false, onReveal }: WordProps) {
+export const Word = memo(function Word({ word, surah, ayah, index, tajweed, wordByWord, wbwTransliteration, active, sizeClass, concealed = false, hint = false, onReveal, dense = false }: WordProps) {
   // Tajweed rules present in this word, named in the hover card (learn the colours in context).
   const rules = tajweed && typeof word.j !== "string" ? rulesIn(word.j) : [];
   // First letter plus its vowel marks, for the "first letter" memorisation cue.
@@ -49,7 +51,8 @@ export const Word = memo(function Word({ word, surah, ayah, index, tajweed, word
       onClick={() => (concealed ? onReveal?.(index) : player.playWord(surah, ayah, index + 1))}
       aria-label={concealed ? `Hidden word ${index + 1}. Reveal` : `${word.t}: ${word.e}. Play pronunciation`}
       className={cx(
-        "group/word relative inline-flex cursor-pointer flex-col items-center rounded-xl px-1.5 pt-1 pb-1.5 outline-focus-ring transition-colors duration-200",
+        "group/word relative inline-flex cursor-pointer flex-col items-center outline-focus-ring transition-colors duration-200",
+        dense ? "rounded-lg px-0.5 align-middle" : "rounded-xl px-1.5 pt-1 pb-1.5",
         "hover:bg-brand-primary/70 focus-visible:outline-2 focus-visible:outline-offset-2",
         active && "text-brand-secondary",
       )}
