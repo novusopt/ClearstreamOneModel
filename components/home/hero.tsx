@@ -82,7 +82,7 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
             </Fragment>
           ))}
         </h1>
-        <p className="enter-visible mx-auto mt-6 max-w-2xl text-lg text-tertiary md:text-xl" style={{ animationDelay: "0.3s" }}>
+        <p className="enter-visible mx-auto mt-6 max-w-2xl text-lg text-tertiary md:max-w-[34rem] md:text-xl" style={{ animationDelay: "0.3s" }}>
           {t.hero.intro}
         </p>
         <div className="enter mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row" style={{ animationDelay: "0.65s" }}>

@@ -8,16 +8,16 @@ import { type MotionValue, m } from "motion/react";
  * band and a cusped inner edge, as on mihrab niches) with a khātam star-pattern hood, a rosette at the
  * apex and a hanging mosque lamp. The frame is gilded at the apex and fades out towards the page below.
  *
- * Geometry (viewBox 400 × 520, axis x = 200, springing line y = 220): an arch at offset `o` from the outer
- * edge has half-width w = 160 − o and apex y = 8 + 1.25·o. Each half is a circular arc centred on the
+ * Geometry (viewBox 480 × 520, axis x = 240, springing line y = 260): an arch at offset `o` from the outer
+ * edge has half-width w = 200 − o and apex y = 8 + 1.25·o. Each half is a circular arc centred on the
  * springing line past the axis (r = (w² + h²) / 2w), which is what makes it pointed.
  */
-const AXIS = 200;
-const SPRING = 220;
+const AXIS = 240;
+const SPRING = 260;
 const BOTTOM = 520;
 
 function archGeometry(o: number) {
-  const w = 160 - o;
+  const w = 200 - o;
   const apex = 8 + 1.25 * o;
   const h = SPRING - apex;
   const r = (w * w + h * h) / (2 * w);
@@ -61,19 +61,19 @@ const PEARLS = arch(7.5);
 const RULE_IN = arch(15);
 
 /** Eight-pointed rosette at the apex, from which the lamp hangs. */
-const ROSETTE = "M200 0.5 L202.6 4.4 L207.2 3.5 L206.3 8.1 L210.2 10.7 L206.3 13.3 L207.2 17.9 L202.6 17 L200 20.9 L197.4 17 L192.8 17.9 L193.7 13.3 L189.8 10.7 L193.7 8.1 L192.8 3.5 L197.4 4.4 Z";
+const ROSETTE = "M240 0.5 L242.6 4.4 L247.2 3.5 L246.3 8.1 L250.2 10.7 L246.3 13.3 L247.2 17.9 L242.6 17 L240 20.9 L237.4 17 L232.8 17.9 L233.7 13.3 L229.8 10.7 L233.7 8.1 L232.8 3.5 L237.4 4.4 Z";
 
 export function HeroNiche({ scale }: { scale: MotionValue<number> }) {
   return (
     <m.svg
       aria-hidden="true"
-      viewBox="0 0 400 520"
+      viewBox="0 0 480 520"
       style={{ scale }}
       className="pointer-events-none absolute top-0 left-1/2 -z-10 h-[52rem] origin-top -translate-x-1/2 overflow-visible text-brand-600/30 [--niche-gild:var(--color-gold-500)] [--niche-ink:var(--color-brand-500)] dark:text-brand-300/20 dark:[--niche-gild:var(--color-gold-300)] dark:[--niche-ink:var(--color-brand-300)]"
     >
       <defs>
         {/* Eight-pointed star (khātam) lattice with small diamonds where the tiles meet. */}
-        <pattern id="niche-khatam" width="32" height="32" patternUnits="userSpaceOnUse" x="8" y="0">
+        <pattern id="niche-khatam" width="32" height="32" patternUnits="userSpaceOnUse" x="0" y="0">
           <g fill="none" stroke="currentColor" strokeWidth="0.6">
             <rect x="9" y="9" width="14" height="14" />
             <rect x="9" y="9" width="14" height="14" transform="rotate(45 16 16)" />
@@ -88,13 +88,13 @@ export function HeroNiche({ scale }: { scale: MotionValue<number> }) {
           <stop offset="0.22" stopColor="white" stopOpacity="0" />
         </linearGradient>
         <mask id="niche-hood">
-          <rect width="400" height="520" fill="url(#niche-fade)" />
+          <rect width="480" height="520" fill="url(#niche-fade)" />
         </mask>
         <clipPath id="niche-inner">
           <path d={INNER} />
         </clipPath>
         {/* Lantern light pooling in the niche. */}
-        <radialGradient id="niche-light" cx="200" cy="96" r="190" gradientUnits="userSpaceOnUse">
+        <radialGradient id="niche-light" cx="240" cy="96" r="210" gradientUnits="userSpaceOnUse">
           <stop offset="0" stopColor="var(--color-gold-300)" stopOpacity="0.55" />
           <stop offset="0.45" stopColor="var(--color-gold-200)" stopOpacity="0.18" />
           <stop offset="1" stopColor="var(--color-gold-200)" stopOpacity="0" />
@@ -117,7 +117,7 @@ export function HeroNiche({ scale }: { scale: MotionValue<number> }) {
       {/* Glass of the niche: warm light, then the star hood on top of it. */}
       <path d={INNER} fill="url(#niche-light)" className="dark:opacity-60" />
       <g clipPath="url(#niche-inner)" mask="url(#niche-hood)">
-        <rect width="400" height="520" fill="url(#niche-khatam)" />
+        <rect width="480" height="520" fill="url(#niche-khatam)" />
       </g>
 
       {/* Frame: a tinted carved band, then layered mouldings of different weights. */}
@@ -130,7 +130,7 @@ export function HeroNiche({ scale }: { scale: MotionValue<number> }) {
         <path d={INNER} strokeWidth="0.8" />
       </g>
       <path d={ROSETTE} style={{ fill: "var(--niche-gild)" }} fillOpacity="0.9" />
-      <circle cx="200" cy="10.7" r="2.6" className="fill-bg-primary" />
+      <circle cx="240" cy="10.7" r="2.6" className="fill-bg-primary" />
     </m.svg>
   );
 }
