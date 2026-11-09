@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { Fragment, useCallback, useEffect, useMemo } from "react";
 import { scrollToElement, useLenis } from "@/components/providers/smooth-scroll";
+import { AyahMarker } from "@/components/quran/ayah-marker";
 import { Basmala } from "@/components/quran/basmala";
 import { HifzPanel } from "@/components/quran/hifz-panel";
 import { JuzDivider } from "@/components/quran/juz-divider";
@@ -20,8 +22,27 @@ import { positionStore } from "@/lib/reader-position";
 import { setSettings, settingsStore, useSettings } from "@/lib/settings";
 import { dataUrl, pickSurah } from "@/lib/data-urls";
 import type { AudioVerse, Chapter, SimilarRef, Verse } from "@/lib/types";
+import { ayahPath } from "@/lib/site";
 import { useProgressiveCount } from "@/lib/use-progressive";
 import { useRemote } from "@/lib/use-remote";
+
+/** Lightweight, non-interactive ayah: Arabic, translation and a link to the ayah's page. */
+function PlainVerse({ verse, surah }: { verse: Verse; surah: number }) {
+  return (
+    <article id={`v-${verse.n}`} data-ayah={verse.n} aria-label={`Ayah ${surah}:${verse.n}`} className="scroll-mt-36 border-b border-secondary px-4 py-7 last:border-b-0 sm:px-8 sm:py-9">
+      <Link href={ayahPath(surah, verse.n)} className="font-display text-sm font-medium text-secondary tabular-nums hover:text-brand-secondary">
+        {surah}:{verse.n}
+      </Link>
+      <p dir="rtl" lang="ar" className="mt-5 font-quran text-4xl leading-[2.2] text-primary sm:text-5xl">
+        {verse.w.map((w) => w.a).join(" ")}
+        <span className="font-quran">
+          <AyahMarker n={verse.n} />
+        </span>
+      </p>
+      <p className="mt-5 text-lg text-secondary">{verse.en}</p>
+    </article>
+  );
+}
 
 interface SurahReaderProps {
   chapter: Chapter;
@@ -40,7 +61,7 @@ export function SurahReader({ chapter, verses, prev, next, basmala }: SurahReade
   const similarRaw = useRemote<unknown>(dataUrl.similar(chapter.id));
   const similar = similarRaw ? pickSurah<Record<string, SimilarRef[]>>("similar", similarRaw, chapter.id) : null;
   const rtl = TRANSLATIONS.find((t) => t.id === lang)?.rtl ?? false;
-  const { count, ensure, done } = useProgressiveCount(verses.length);
+  const { count, ensure } = useProgressiveCount(verses.length);
   const shown = useMemo(() => verses.slice(0, count), [verses, count]);
   /** Render up to ayah `n`, then run `then` once it is in the DOM. */
   const reveal = useCallback(
@@ -197,17 +218,17 @@ export function SurahReader({ chapter, verses, prev, next, basmala }: SurahReade
               </Fragment>
             );
           })}
+          {/* Ayat not yet upgraded to interactive cards: full text in the server HTML (search engines,
+              no-JS readers, find-in-page), replaced batch by batch as the cards render. */}
+          {verses.slice(count).map((v) => (
+            <PlainVerse key={v.n} verse={v} surah={chapter.id} />
+          ))}
         </div>
         </>
       )}
 
-      {!done && (
-        <div className="flex justify-center py-8" aria-live="polite">
-          <span className="text-sm text-tertiary">Loading ayat {count + 1}–{verses.length}…</span>
-        </div>
-      )}
       <VerseDialogs />
-      {done && <SurahEnd chapter={chapter} prev={prev} next={next} />}
+      <SurahEnd chapter={chapter} prev={prev} next={next} />
     </div>
   );
 }

@@ -2,6 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Ayah pages and share images not prebuilt at build time render on first request, so the
+  // files they read from disk must ship with those server functions.
+  outputFileTracingIncludes: {
+    "/surah/[id]/[ayah]": ["./data/quran/**", "./public/data/tafsir/en/**", "./public/data/similar/**"],
+    "/surah/[id]/[ayah]/opengraph-image": ["./data/quran/**", "./lib/og/fonts/**"],
+    "/surah/[id]/opengraph-image": ["./data/quran/**", "./lib/og/fonts/**"],
+    "/opengraph-image": ["./lib/og/fonts/**"],
+  },
   experimental: {
     // Import only the icons/helpers actually used from these barrel packages.
     optimizePackageImports: ["@untitledui/icons", "motion"],

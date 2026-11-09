@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { cx } from "@/utils/cx";
 
 interface VerseNumberProps {
@@ -7,13 +8,15 @@ interface VerseNumberProps {
   active?: boolean;
   /** Audio is playing this ayah right now. */
   playing?: boolean;
+  /** Link the reference to the ayah's own page (internal linking for search and sharing). */
+  href?: string;
 }
 
 /**
  * Header medallion for an ayah: the number set in a small rub el hizb (two layered squares),
  * with the surah:ayah reference beside it.
  */
-export function VerseNumber({ surah, ayah, active = false, playing = false }: VerseNumberProps) {
+export function VerseNumber({ surah, ayah, active = false, playing = false, href }: VerseNumberProps) {
   const digits = String(ayah).length;
   return (
     <div className="flex items-center gap-3">
@@ -45,11 +48,23 @@ export function VerseNumber({ surah, ayah, active = false, playing = false }: Ve
       </span>
       <span className="flex flex-col leading-tight">
         <span className="text-[11px] font-semibold tracking-[0.08em] text-quaternary uppercase">Ayah</span>
-        <span className="font-display text-sm font-medium text-secondary tabular-nums">
-          {surah}
-          <span className="mx-0.5 text-gold-500">:</span>
-          {ayah}
-        </span>
+        {href ? (
+          <Link
+            href={href}
+            title={`Open ayah ${surah}:${ayah} on its own page`}
+            className="rounded font-display text-sm font-medium text-secondary tabular-nums underline-offset-4 outline-focus-ring hover:text-brand-secondary hover:underline focus-visible:outline-2"
+          >
+            {surah}
+            <span className="mx-0.5 text-gold-500">:</span>
+            {ayah}
+          </Link>
+        ) : (
+          <span className="font-display text-sm font-medium text-secondary tabular-nums">
+            {surah}
+            <span className="mx-0.5 text-gold-500">:</span>
+            {ayah}
+          </span>
+        )}
       </span>
     </div>
   );

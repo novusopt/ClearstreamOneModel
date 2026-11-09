@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { BentoFeatures } from "@/components/home/bento-features";
 import { ContinueReading } from "@/components/home/continue-reading";
 import { Faq } from "@/components/home/faq";
@@ -9,7 +10,15 @@ import { Principles } from "@/components/home/principles";
 import { SourcesMarquee } from "@/components/home/sources-marquee";
 import { Stats } from "@/components/home/stats";
 import { JuzIndex, SurahIndex } from "@/components/home/surah-index";
+import { JsonLd } from "@/components/seo/json-ld";
+import { FAQS } from "@/lib/faq";
 import { getChapters, getSurah } from "@/lib/quran";
+import { faqLd, websiteLd } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { url: "/" },
+};
 
 export default async function Home() {
   const chapters = getChapters();
@@ -18,6 +27,7 @@ export default async function Home() {
 
   return (
     <>
+      <JsonLd data={[websiteLd(), faqLd(FAQS.map((f) => ({ q: f.q, a: f.a })))]} />
       <Hero chapters={chapters} fatihah={fatihah.verses} />
       <SourcesMarquee />
       <BentoFeatures sample={ayatAlKursi} />

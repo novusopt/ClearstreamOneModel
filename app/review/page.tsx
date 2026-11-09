@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { ReviewSession } from "@/components/library/review-session";
 import { getChapters } from "@/lib/quran";
 
-export const metadata: Metadata = { title: "Review" };
+// Personal, device-local page: keep it out of search results.
+export const metadata: Metadata = { title: "Review", robots: { index: false, follow: true } };
 
 export default function ReviewPage() {
   return (

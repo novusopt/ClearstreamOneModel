@@ -8,6 +8,7 @@ import { CommandPalette } from "@/components/site/command-palette";
 import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
 import { BRAND } from "@/lib/brand";
+import { SITE_URL } from "@/lib/site";
 import { getChapters } from "@/lib/quran";
 import "./globals.css";
 
@@ -61,8 +62,13 @@ const amiriQuranLatin = localFont({
 });
 
 export const metadata: Metadata = {
-  title: { default: `${BRAND.name} — ${BRAND.tagline}`, template: `%s · ${BRAND.name}` },
+  metadataBase: new URL(SITE_URL),
+  title: { default: `${BRAND.name}: Read the Qurʾān with Translation, Tafsir & Audio`, template: `%s · ${BRAND.name}` },
   description: BRAND.description,
+  // Canonical and og:url are set per page (layout values would be inherited by every page).
+  openGraph: { type: "website", siteName: BRAND.name, locale: "en_GB" },
+  twitter: { card: "summary_large_image" },
+  formatDetection: { telephone: false, address: false, email: false },
   applicationName: BRAND.name,
   appleWebApp: { capable: true, title: BRAND.name, statusBarStyle: "default" },
   icons: { icon: "/icons/icon-192.png", apple: "/icons/apple-touch-icon.png" },

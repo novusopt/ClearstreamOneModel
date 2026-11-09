@@ -39,6 +39,10 @@ app/
   page.tsx                # landing: hero + live reader preview, sources marquee, bento, journey (sticky steps),
                           # Al-Fātiḥah scroll story, stats, surah/juz index, principles, FAQ, closing CTA
   surah/[id]/page.tsx     # reader (generateStaticParams → 114 static pages)
+  surah/[id]/[ayah]/page.tsx  # ayah page (SEO): Arabic + tajweed, translation, word by word, tafsir, similar ayat,
+                          # prev/next; ~90 popular ayat prebuilt, the rest generated on first request (ISR)
+  robots.ts, sitemap.ts   # robots + sitemap (home, 114 surahs, 6,236 ayat)
+  **/opengraph-image.tsx  # share cards via lib/og/og-card.tsx (Satori; Latin only, it cannot shape Arabic)
   library/page.tsx        # progress & reading plan, bookmarks, notes, memorised (UUI Tabs)
   bookmarks/page.tsx      # same view, Bookmarks tab
   globals.css             # Tailwind import, tajweed colour tokens (light + dark), Lenis CSS
@@ -128,6 +132,17 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
   re-renders during playback. Keep it that way.
 - Scroll-linked `useTransform` input ranges must be strictly increasing and within [0, 1]
   (motion accelerates them with WAAPI, which throws otherwise).
+
+## SEO rules
+
+- Every indexable page sets `alternates.canonical` itself (never in the root layout: it would be inherited);
+  personal pages (library, review, bookmarks) are `robots: { index: false }` and disallowed in robots.ts.
+- Site origin comes from `lib/site.ts` (`NEXT_PUBLIC_SITE_URL`, else Vercel's production domain).
+- JSON-LD via `components/seo/json-ld.tsx` + builders in `lib/seo.ts`: WebSite + FAQPage (home), BreadcrumbList + Chapter
+  (surah), BreadcrumbList + Quotation (ayah).
+- The surah HTML must contain every ayah: verses not yet upgraded to interactive cards render as `PlainVerse`.
+- Ayah references link to `/surah/{s}/{a}`; famous ayah names live in `lib/ayah-names.ts` (established names only).
+- Files read at request time by ISR pages/OG images are listed in `outputFileTracingIncludes` (next.config.ts).
 
 ## Performance rules
 

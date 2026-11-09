@@ -26,6 +26,7 @@ and Motion.
 - **Look-alike ayat (mutashābihāt)**: a “Similar wording” badge on 1,550 ayat opens a comparison with the differing words highlighted; review warns you when an ayah is easy to confuse.
 - **Teaching recitation**: pause after each ayah (5 s, 10 s or as long as the ayah) so you can recite it back.
 - **Mushaf pages**: the reading view follows the 604-page Madani mushaf, with page numbers, ḥizb quarter marks (۞) and page/juzʾ in the reader bar.
+- **Ayah pages & SEO**: every ayah has its own page (`/surah/2/255`) with Arabic, translation, word-by-word meanings, tafsir and similar ayat; sitemap, robots, canonical URLs, Open Graph cards and schema.org structured data.
 - **Installable & offline**: a PWA with a service worker; “Read offline” in the Library saves every surah with your translation and tafsir.
 - **Reading plans & progress**: complete the Qurʾān in a week, 30 days, 2 months or a year; daily goal, pace (ahead/behind), day streak, 14-day activity and per-surah progress on the index.
 - **Notes**: private reflections on any ayah, shown beneath it and collected in the Library.

@@ -20,6 +20,7 @@ import { player, usePlayer, useTick } from "@/lib/audio-engine";
 import { toggleBookmark, toggleMemorised, useLibrary, verseKey } from "@/lib/library";
 import { ARABIC_SIZES, TRANSLATION_SIZES, useSettings } from "@/lib/settings";
 import type { SimilarRef, Verse } from "@/lib/types";
+import { ayahPath } from "@/lib/site";
 import { cx } from "@/utils/cx";
 
 interface VerseCardProps {
@@ -118,7 +119,7 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
       {isCurrent && <m.span layoutId={`verse-indicator-${surah}`} className="absolute inset-y-0 left-0 w-0.5 bg-brand-solid" />}
       <div className="mb-5 flex items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <VerseNumber surah={surah} ayah={verse.n} active={isCurrent} playing={isPlaying} />
+          <VerseNumber surah={surah} ayah={verse.n} active={isCurrent} playing={isPlaying} href={ayahPath(surah, verse.n)} />
           {verse.q && (
             <Badge type="pill-color" color="warning" size="sm" className="gap-1">
               <span aria-hidden="true">۞</span> {quarterLabel(verse.q)}

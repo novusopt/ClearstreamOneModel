@@ -3,7 +3,10 @@ import { notFound } from "next/navigation";
 import { SurahHero } from "@/components/quran/surah-hero";
 import { SurahReader } from "@/components/quran/surah-reader";
 import { ScrollProgress } from "@/components/site/scroll-progress";
+import { JsonLd } from "@/components/seo/json-ld";
 import { getChapter, getChapters, getSurah, isValidSurahId } from "@/lib/quran";
+import { breadcrumbLd, surahLd } from "@/lib/seo";
+import { surahPath } from "@/lib/site";
 
 export const dynamicParams = false;
 
@@ -15,9 +18,13 @@ export async function generateMetadata({ params }: PageProps<"/surah/[id]">): Pr
   const { id } = await params;
   const chapter = getChapter(Number(id));
   if (!chapter) return {};
+  const title = `Surah ${chapter.nameSimple} (${chapter.nameTranslation}): Arabic, Translation & Audio`;
+  const description = `Read Surah ${chapter.nameSimple} (${chapter.nameArabic}, “${chapter.nameTranslation}”): ${chapter.versesCount} ayat in Arabic with English translation, word-by-word meanings, colour-coded tajweed, tafsir and recitation.`;
   return {
-    title: `${chapter.nameSimple} (${chapter.nameTranslation})`,
-    description: `Read Surah ${chapter.nameSimple} — ${chapter.versesCount} ayat with translation, word-by-word meanings, tajweed and audio.`,
+    title,
+    description,
+    alternates: { canonical: surahPath(chapter.id) },
+    openGraph: { type: "article", url: surahPath(chapter.id), title: `Surah ${chapter.nameSimple} (${chapter.nameTranslation})`, description },
   };
 }
 
@@ -30,6 +37,15 @@ export default async function SurahPage({ params }: PageProps<"/surah/[id]">) {
 
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbLd([
+            { name: "Mishkah", path: "/" },
+            { name: `Surah ${chapter.nameSimple}`, path: surahPath(chapter.id) },
+          ]),
+          surahLd(chapter),
+        ]}
+      />
       <ScrollProgress />
       <SurahHero chapter={chapter} />
       <SurahReader

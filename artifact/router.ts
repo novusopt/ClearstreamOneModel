@@ -13,6 +13,9 @@ export function pathToHash(href: string): string {
   const url = new URL(href, "https://app.local/");
   const path = url.pathname.replace(/\/+$/, "");
   const frag = url.hash.slice(1);
+  // Ayah pages (/surah/2/255) are server-rendered in the full app; here they open the ayah in the reader.
+  const ayahPage = path.match(/^\/surah\/(\d+)\/(\d+)$/);
+  if (ayahPage) return `#surah-${ayahPage[1]}-v-${ayahPage[2]}`;
   const surah = path.match(/^\/surah\/(\d+)$/);
   if (surah) {
     const v = frag.match(/^v-(\d+)$/);

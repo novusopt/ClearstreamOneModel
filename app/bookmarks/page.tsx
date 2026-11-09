@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { LibraryView } from "@/components/library/library-view";
 import { getChapters } from "@/lib/quran";
 
-export const metadata: Metadata = { title: "Bookmarks" };
+// Personal, device-local page: keep it out of search results.
+export const metadata: Metadata = { title: "Bookmarks", robots: { index: false, follow: true } };
 
 export default function BookmarksPage() {
   return (
