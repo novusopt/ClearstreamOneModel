@@ -27,6 +27,13 @@
   --animate-flicker: flicker 4s ease-in-out infinite;
   --animate-marquee: marquee 48s linear infinite;
   --animate-sway: sway 7s ease-in-out infinite;
+  --animate-glow: glow 4s ease-in-out infinite;
+
+  @keyframes glow {
+    0%, 100% { opacity: 0.85; }
+    45% { opacity: 1; }
+    60% { opacity: 0.9; }
+  }
 
   @keyframes sway {
     0%, 100% { transform: rotate(-1.6deg); }

@@ -6,7 +6,7 @@ import { Fragment, useRef } from "react";
 import { Badge } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
 import Link from "next/link";
-import { HeroLamp, HeroNiche } from "@/components/home/hero-niche";
+import { HeroNiche } from "@/components/home/hero-niche";
 import { HeroShowcase } from "@/components/home/hero-showcase";
 import { useUi } from "@/components/providers/ui-messages";
 import { fmt } from "@/lib/ui-format";
@@ -23,10 +23,9 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const arabicY = useTransform(scrollYProgress, [0, 1], [0, -80]);
-  const archScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
 
   return (
-    <section ref={ref} className="relative isolate overflow-hidden pt-32 pb-16 md:pt-44 md:pb-24">
+    <section ref={ref} className="relative isolate overflow-hidden pt-40 pb-16 md:pt-52 md:pb-24">
       {/* Aurora backdrop */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-brand-50/60 via-transparent to-transparent dark:from-brand-950/80" />
@@ -38,8 +37,7 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
         <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-bg-primary" />
       </div>
 
-      <HeroNiche scale={archScale} />
-      <HeroLamp />
+      <HeroNiche />
 
       <div className="mx-auto w-full max-w-7xl px-4 text-center md:px-8">
         <m.p
@@ -82,7 +80,7 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
             </Fragment>
           ))}
         </h1>
-        <p className="enter-visible mx-auto mt-6 max-w-2xl text-lg text-tertiary md:max-w-[34rem] md:text-xl" style={{ animationDelay: "0.3s" }}>
+        <p className="enter-visible mx-auto mt-6 max-w-2xl text-lg text-tertiary md:max-w-[32rem] md:text-xl" style={{ animationDelay: "0.3s" }}>
           {t.hero.intro}
         </p>
         <div className="enter mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row" style={{ animationDelay: "0.65s" }}>
