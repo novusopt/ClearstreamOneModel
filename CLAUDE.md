@@ -61,7 +61,7 @@ components/
   quran/                  # surah-reader, reader-bar (position + Display presets), resume-banner,
                           # reader-tips, juz-divider, surah-end, basmala (opening of each surah), verse-card, word, tajweed-text, reading-view, hifz-panel,
                           # verse-dialogs (note, share image, similar), tafsir-section, similar-ayat, hizb-mark, reader-settings, tajweed-legend,
-                          # audio-player-bar, bookmark-list
+                          # audio-player-bar, bookmark-list, reciter-avatar (Arabic-initial emblem; `photo` when licensed)
   library/                # library-view (progress, plan, notes, memorised), review-session (/review), offline-card
   site/command-palette    # ⌘K: surah/ayah jump + full-text search (public/data/search.json)
 lib/
