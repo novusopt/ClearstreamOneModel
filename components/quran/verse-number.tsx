@@ -51,6 +51,7 @@ export function VerseNumber({ surah, ayah, active = false, playing = false, href
         {href ? (
           <Link
             href={href}
+            prefetch={false}
             title={`Open ayah ${surah}:${ayah} on its own page`}
             className="rounded font-display text-sm font-medium text-secondary tabular-nums underline-offset-4 outline-focus-ring hover:text-brand-secondary hover:underline focus-visible:outline-2"
           >

@@ -19,10 +19,9 @@ const inter = localFont({
   display: "swap",
 });
 
-// Display face: the Latin set is preloaded (headings above the fold); the Latin-Extended set
-// (ā, ḥ, ʾ in transliterations) is a separate, non-preloaded face the browser fetches only when a
-// page uses one of those characters. No synthetic fallback on the first face, so the second one
-// is reached in the font stack.
+// Display face, split by unicode-range: Latin plus Latin-Extended (ā, ḥ, ʾ in transliterations).
+// Both are preloaded: headings use them above the fold, and a late swap shifts the layout.
+// No synthetic fallback on the first face, so the second one is reached in the font stack.
 const fraunces = localFont({
   src: "./fonts/fraunces-latin.woff2",
   weight: "100 900",
@@ -37,12 +36,12 @@ const frauncesExt = localFont({
   weight: "100 900",
   variable: "--font-display-ext",
   display: "swap",
-  preload: false,
   adjustFontFallback: false,
   declarations: [{ prop: "unicode-range", value: "U+0100-02AF, U+02BB-02BC, U+02BE-02BF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF" }],
 });
 
-// Qurʾān face: the Arabic set is preloaded; its Latin set is rarely needed, so it loads on demand.
+// Qurʾān face: Arabic plus its Latin set (the spaces inside Arabic text come from it), both preloaded
+// so the large Arabic text does not re-flow when the font arrives.
 const amiriQuran = localFont({
   src: "./fonts/amiri-quran-arabic.woff2",
   weight: "400",
@@ -57,7 +56,6 @@ const amiriQuranLatin = localFont({
   weight: "400",
   variable: "--font-amiri-latin",
   display: "swap",
-  preload: false,
   adjustFontFallback: false,
 });
 

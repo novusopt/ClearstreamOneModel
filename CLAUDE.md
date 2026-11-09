@@ -155,8 +155,8 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
 - Animations use `m.*` under `<LazyMotion features={loadMotionFeatures} strict>` — never import `motion` components.
 - Above-the-fold entrances are CSS (`.enter*` in `globals.css`); LCP text (hero headline/intro, surah names) must not
   start at opacity 0 — use `.enter-visible` / `.enter-word-visible` / `.enter-sharpen`.
-- Fonts: only Latin Fraunces, Arabic Amiri and Inter are preloaded; extended/Latin subsets are on-demand faces with
-  `unicode-range`.
+- Fonts: Fraunces and Amiri are split by `unicode-range` and all subsets are preloaded (a late swap of the
+  Latin-Extended or Amiri-Latin face shifted the layout, CLS 0.39). Lists of many links use `prefetch={false}`.
 
 ## Reading experience principles
 

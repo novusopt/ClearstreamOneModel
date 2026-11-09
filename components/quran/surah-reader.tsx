@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Fragment, useCallback, useEffect, useMemo } from "react";
+import { Fragment, memo, useCallback, useEffect, useMemo } from "react";
 import { scrollToElement, useLenis } from "@/components/providers/smooth-scroll";
 import { AyahMarker } from "@/components/quran/ayah-marker";
 import { Basmala } from "@/components/quran/basmala";
@@ -26,11 +26,15 @@ import { ayahPath } from "@/lib/site";
 import { useProgressiveCount } from "@/lib/use-progressive";
 import { useRemote } from "@/lib/use-remote";
 
-/** Lightweight, non-interactive ayah: Arabic, translation and a link to the ayah's page. */
-function PlainVerse({ verse, surah }: { verse: Verse; surah: number }) {
+/**
+ * Lightweight, non-interactive ayah: Arabic, translation and a link to the ayah's page.
+ * `content-visibility: auto` lets the browser skip layout/paint while it is off screen (it has no
+ * overflowing hover cards, unlike the interactive cards).
+ */
+const PlainVerse = memo(function PlainVerse({ verse, surah }: { verse: Verse; surah: number }) {
   return (
-    <article id={`v-${verse.n}`} data-ayah={verse.n} aria-label={`Ayah ${surah}:${verse.n}`} className="scroll-mt-36 border-b border-secondary px-4 py-7 last:border-b-0 sm:px-8 sm:py-9">
-      <Link href={ayahPath(surah, verse.n)} className="font-display text-sm font-medium text-secondary tabular-nums hover:text-brand-secondary">
+    <article id={`v-${verse.n}`} data-ayah={verse.n} aria-label={`Ayah ${surah}:${verse.n}`} className="scroll-mt-36 border-b border-secondary px-4 py-7 [contain-intrinsic-size:auto_22rem] [content-visibility:auto] last:border-b-0 sm:px-8 sm:py-9">
+      <Link href={ayahPath(surah, verse.n)} prefetch={false} className="font-display text-sm font-medium text-secondary tabular-nums hover:text-brand-secondary">
         {surah}:{verse.n}
       </Link>
       <p dir="rtl" lang="ar" className="mt-5 font-quran text-4xl leading-[2.2] text-primary sm:text-5xl">
@@ -42,7 +46,7 @@ function PlainVerse({ verse, surah }: { verse: Verse; surah: number }) {
       <p className="mt-5 text-lg text-secondary">{verse.en}</p>
     </article>
   );
-}
+});
 
 interface SurahReaderProps {
   chapter: Chapter;
