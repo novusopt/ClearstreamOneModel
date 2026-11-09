@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeft, CheckCircle, Copy07, Eye, GraduationHat01, RefreshCw01 } from "@untitledui/icons";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { Alert } from "@/components/application/alerts/alert";
 import { EmptyState } from "@/components/application/empty-state/empty-state";
@@ -69,7 +69,7 @@ function ReviewCard({ refKey, chapters, onGraded }: { refKey: string; chapters: 
   });
 
   return (
-    <motion.article
+    <m.article
       key={refKey}
       initial={{ opacity: 0, x: 40 }}
       animate={{ opacity: 1, x: 0 }}
@@ -118,7 +118,7 @@ function ReviewCard({ refKey, chapters, onGraded }: { refKey: string; chapters: 
 
       <AnimatePresence initial={false}>
         {shown && verse && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
+          <m.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
             <p className="mx-auto mt-5 max-w-2xl text-center text-md text-secondary">{verse.en}</p>
             {similar && similar.length > 0 && (
               <Alert
@@ -143,7 +143,7 @@ function ReviewCard({ refKey, chapters, onGraded }: { refKey: string; chapters: 
                 }
               />
             )}
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
@@ -169,7 +169,7 @@ function ReviewCard({ refKey, chapters, onGraded }: { refKey: string; chapters: 
           </div>
         )}
       </div>
-    </motion.article>
+    </m.article>
   );
 }
 
@@ -197,7 +197,7 @@ export function ReviewSession({ chapters }: { chapters: Chapter[] }) {
   if (!current) {
     const reviewedToday = done > 0;
     return (
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-10 rounded-3xl border border-secondary bg-primary px-6 py-14">
+      <m.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-10 rounded-3xl border border-secondary bg-primary px-6 py-14">
         <EmptyState size="md">
           <EmptyState.Header pattern="circle">
             <EmptyState.FeaturedIcon icon={memorisedCount ? CheckCircle : GraduationHat01} color={memorisedCount ? "success" : "brand"} theme="light" />
@@ -219,7 +219,7 @@ export function ReviewSession({ chapters }: { chapters: Chapter[] }) {
             </Button>
           </EmptyState.Footer>
         </EmptyState>
-      </motion.div>
+      </m.div>
     );
   }
 

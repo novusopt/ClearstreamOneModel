@@ -1,7 +1,7 @@
 "use client";
 
 import { GraduationHat01, RefreshCw01, Repeat01, StopCircle } from "@untitledui/icons";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { useState } from "react";
 import { Badge } from "@/components/base/badges/badges";
 import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
@@ -32,7 +32,7 @@ export function HifzPanel({ chapter, onRepeat }: { chapter: Chapter; onRepeat: (
   const pct = Math.round((memorised / chapter.versesCount) * 100);
 
   return (
-    <motion.section
+    <m.section
       initial={{ y: 12 }}
       animate={{ y: 0 }}
       aria-label="Memorisation tools"
@@ -122,6 +122,6 @@ export function HifzPanel({ chapter, onRepeat }: { chapter: Chapter; onRepeat: (
           <span className="text-tertiary">Now reciting ayah {current}</span>
         </div>
       )}
-    </motion.section>
+    </m.section>
   );
 }

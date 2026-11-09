@@ -1,7 +1,7 @@
 "use client";
 
 import { BookOpen02, ChevronDown } from "@untitledui/icons";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { useState } from "react";
 import { Button } from "@/components/base/buttons/button";
 import { tafsirLangFor, TAFSIR_SOURCE } from "@/lib/constants";
@@ -73,7 +73,7 @@ export function TafsirSection({ surah, ayah }: { surah: number; ayah: number }) 
       </Button>
       <AnimatePresence initial={false}>
         {open && (
-          <motion.div
+          <m.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -81,7 +81,7 @@ export function TafsirSection({ surah, ayah }: { surah: number; ayah: number }) 
             className="overflow-hidden"
           >
             <TafsirBody text={text} lang={lang} className="mt-3" />
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

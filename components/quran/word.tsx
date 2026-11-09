@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
-import { memo } from "react";
+import { m } from "motion/react";
+import { memo, useState } from "react";
 import { TajweedText } from "@/components/quran/tajweed-text";
 import { player } from "@/lib/audio-engine";
 import { TAJWEED_RULES } from "@/lib/constants";
@@ -41,24 +41,26 @@ export function rulesIn(segments: TajweedSegment[]) {
 }
 
 export const Word = memo(function Word({ word, surah, ayah, index, tajweed, wordByWord, wbwTransliteration, active, sizeClass, concealed = false, hint = false, onReveal, dense = false }: WordProps) {
+  // The meaning card is only created once the word is hovered or focused: a long surah would
+  // otherwise ship (and hydrate) thousands of hidden cards.
+  const [card, setCard] = useState(false);
+  const showCard = !concealed && !wordByWord;
   // Tajweed rules present in this word, named in the hover card (learn the colours in context).
-  const rules = tajweed && typeof word.j !== "string" ? rulesIn(word.j) : [];
+  const rules = card && tajweed && typeof word.j !== "string" ? rulesIn(word.j) : [];
   // First letter plus its vowel marks, for the "first letter" memorisation cue.
   const cue = hint && concealed ? (word.a.match(/^[\u0621-\u064A\u0671-\u06D3][\u064B-\u065F\u0670\u06D6-\u06ED]*/u)?.[0] ?? "") : "";
+  const wake = showCard && !card ? () => setCard(true) : undefined;
   return (
     <button
       type="button"
       onClick={() => (concealed ? onReveal?.(index) : player.playWord(surah, ayah, index + 1))}
+      onPointerEnter={wake}
+      onFocus={wake}
       aria-label={concealed ? `Hidden word ${index + 1}. Reveal` : `${word.t}: ${word.e}. Play pronunciation`}
-      className={cx(
-        "group/word relative inline-flex cursor-pointer flex-col items-center outline-focus-ring transition-colors duration-200",
-        dense ? "rounded-lg px-0.5 align-middle" : "rounded-xl px-1.5 pt-1 pb-1.5",
-        "hover:bg-brand-primary/70 focus-visible:outline-2 focus-visible:outline-offset-2",
-        active && "text-brand-secondary",
-      )}
+      className={cx("qw", dense ? "qw-dense" : "qw-pad", active && "qw-on")}
     >
       {active && (
-        <motion.span
+        <m.span
           layoutId={`word-highlight-${surah}-${ayah}`}
           className="absolute inset-0 -z-0 rounded-xl bg-brand-primary ring-1 ring-brand"
           transition={{ type: "spring", stiffness: 500, damping: 38 }}
@@ -68,17 +70,12 @@ export const Word = memo(function Word({ word, surah, ayah, index, tajweed, word
         lang="ar"
         dir="rtl"
         aria-hidden={concealed || undefined}
-        className={cx(
-          "relative font-quran text-primary transition-[filter,opacity] duration-300",
-          sizeClass,
-          active && "text-brand-primary",
-          concealed && !cue && "opacity-40 blur-md select-none",
-        )}
+        className={cx("qw-text", sizeClass, active && "text-brand-primary", concealed && !cue && "qw-hide")}
       >
         {cue ? (
           <>
             <span className="text-brand-secondary">{cue}</span>
-            <span className="opacity-40 blur-md select-none">{word.a.slice(cue.length)}</span>
+            <span className="qw-hide">{word.a.slice(cue.length)}</span>
           </>
         ) : tajweed ? (
           <TajweedText value={word.j} />
@@ -87,27 +84,18 @@ export const Word = memo(function Word({ word, surah, ayah, index, tajweed, word
         )}
       </span>
       {concealed ? null : wordByWord ? (
-        <span className="relative mt-1 flex max-w-36 flex-col items-center text-center leading-tight" dir="ltr">
+        <span className="qw-gloss" dir="ltr">
           {wbwTransliteration && <span className="text-xs text-brand-tertiary italic">{word.t}</span>}
           <span className="text-xs text-tertiary">{word.e}</span>
         </span>
-      ) : (
-        <span
-          role="presentation"
-          dir="ltr"
-          className={cx(
-            "pointer-events-none invisible absolute bottom-full left-1/2 z-20 mb-2 flex w-max max-w-56 -translate-x-1/2 translate-y-1 flex-col items-center rounded-t-2xl rounded-b-lg border border-gold-400/50 bg-brand-950 px-3.5 pt-2.5 pb-2 text-center opacity-0 shadow-xl transition duration-150",
-            // Short hover delay so cards don't flash while the pointer sweeps across a line.
-            "group-hover/word:visible group-hover/word:translate-y-0 group-hover/word:opacity-100 group-hover/word:delay-200",
-            "group-focus-visible/word:visible group-focus-visible/word:translate-y-0 group-focus-visible/word:opacity-100",
-          )}
-        >
+      ) : card ? (
+        <span role="presentation" dir="ltr" className="qw-card">
           <span className="font-display text-sm text-gold-300 italic">{word.t}</span>
           <span className="text-xs font-medium text-white">{word.e}</span>
-          {tajweed && rules.length > 0 && (
+          {rules.length > 0 && (
             <span className="mt-1.5 flex flex-wrap justify-center gap-1 border-t border-white/10 pt-1.5">
               {rules.map((r) => (
-                <span key={r.id} className="inline-flex items-center gap-1 rounded-full bg-white/10 px-1.5 py-0.5 text-[10px] font-medium text-white/85">
+                <span key={r.id} className="qw-chip">
                   <span className={`tj-${r.classes[0]} size-1.5 rounded-full bg-current`} />
                   {r.name}
                 </span>
@@ -115,7 +103,7 @@ export const Word = memo(function Word({ word, surah, ayah, index, tajweed, word
             </span>
           )}
         </span>
-      )}
+      ) : null}
     </button>
   );
 });

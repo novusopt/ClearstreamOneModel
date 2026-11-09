@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRight } from "@untitledui/icons";
-import { motion, useScroll, useTransform } from "motion/react";
+import { m, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { Badge } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
@@ -22,7 +22,7 @@ export function SurahHero({ chapter }: { chapter: Chapter }) {
   return (
     <div ref={ref} className="relative overflow-hidden pt-28 pb-8 md:pt-32 md:pb-10">
       <div aria-hidden="true" className="absolute inset-x-0 top-0 -z-10 h-80 bg-gradient-to-b from-brand-50/70 to-transparent dark:from-brand-950/60" />
-      <motion.div style={{ opacity, y }} className="mx-auto max-w-5xl px-4 sm:px-6">
+      <m.div style={{ opacity, y }} className="mx-auto max-w-5xl px-4 sm:px-6">
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm">
           <Button href="/#surahs" color="link-gray" size="sm">
             Surahs
@@ -40,14 +40,11 @@ export function SurahHero({ chapter }: { chapter: Chapter }) {
               <span className="relative font-display text-xl font-medium text-white tabular-nums">{chapter.id}</span>
             </span>
             <div>
-              <motion.h1
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="font-display text-display-sm font-medium tracking-tight text-primary md:text-display-md"
+              <h1
+                className="enter-visible font-display text-display-sm font-medium tracking-tight text-primary md:text-display-md"
               >
                 {chapter.nameSimple}
-              </motion.h1>
+              </h1>
               <p className="mt-1 text-md text-tertiary">{chapter.nameTranslation}</p>
               <div className="mt-3 flex flex-wrap gap-1.5">
                 <Badge type="pill-color" color={chapter.revelation === "meccan" ? "warning" : "brand"} size="sm">
@@ -77,20 +74,17 @@ export function SurahHero({ chapter }: { chapter: Chapter }) {
               </div>
             </div>
           </div>
-          <motion.p
-            initial={{ opacity: 0, filter: "blur(8px)" }}
-            animate={{ opacity: 1, filter: "blur(0px)" }}
-            transition={{ duration: 0.9, delay: 0.1 }}
+          <p
             lang="ar"
             dir="rtl"
-            className="font-quran text-6xl leading-none text-brand-secondary md:text-7xl"
+            className="enter-sharpen font-quran text-6xl leading-none text-brand-secondary md:text-7xl"
           >
             {chapter.nameArabic}
             <span className="sr-only"> — surah {toArabicNumber(chapter.id)}</span>
-          </motion.p>
+          </p>
         </div>
 
-      </motion.div>
+      </m.div>
     </div>
   );
 }

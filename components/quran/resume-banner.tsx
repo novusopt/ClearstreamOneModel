@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight, BookOpen01 } from "@untitledui/icons";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { useState, useSyncExternalStore } from "react";
 import { Button } from "@/components/base/buttons/button";
 import { Alert } from "@/components/application/alerts/alert";
@@ -30,7 +30,7 @@ export function ResumeBanner({ surah, total, onResume }: { surah: number; total:
   return (
     <AnimatePresence>
       {show && entry && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -8, height: 0 }}
           animate={{ opacity: 1, y: 0, height: "auto" }}
           exit={{ opacity: 0, y: -8, height: 0 }}
@@ -63,7 +63,7 @@ export function ResumeBanner({ surah, total, onResume }: { surah: number; total:
               </>
             }
           />
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

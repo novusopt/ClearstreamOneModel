@@ -1,7 +1,7 @@
 "use client";
 
 import { AlignJustify, ChevronDown, Eye, GraduationHat01, PauseCircle, PlayCircle, Rows01, Settings04 } from "@untitledui/icons";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
 import { Button } from "@/components/base/buttons/button";
 import { Dropdown } from "@/components/base/dropdown/dropdown";
@@ -26,7 +26,7 @@ function Position({ chapter, pages }: { chapter: Chapter; pages?: Array<number |
         <span className="block truncate text-sm font-semibold text-primary">{chapter.nameSimple}</span>
         <span className="block h-4 overflow-hidden text-xs text-tertiary tabular-nums">
           <AnimatePresence mode="popLayout" initial={false}>
-            <motion.span key={ayah} initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -10, opacity: 0 }} className="block whitespace-nowrap">
+            <m.span key={ayah} initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -10, opacity: 0 }} className="block whitespace-nowrap">
               {ayah ? (
                 <>
                   Ayah {ayah} of {chapter.versesCount}
@@ -35,7 +35,7 @@ function Position({ chapter, pages }: { chapter: Chapter; pages?: Array<number |
               ) : (
                 `${chapter.versesCount} ayat · ${chapter.nameTranslation}`
               )}
-            </motion.span>
+            </m.span>
           </AnimatePresence>
         </span>
       </span>
@@ -116,7 +116,7 @@ export function ReaderBar({ chapter, onPlay, pages }: ReaderBarProps) {
         playerOpen ? "bottom-[calc(env(safe-area-inset-bottom,0px)+9.5rem)]" : "bottom-[calc(env(safe-area-inset-bottom,0px)+0.75rem)]",
       )}
     >
-      <motion.div
+      <m.div
         initial={{ y: -8 }}
         animate={{ y: 0 }}
         className="mx-auto flex max-w-max items-center justify-between gap-2 rounded-2xl bg-primary/85 p-2 shadow-lg ring-1 ring-secondary_alt backdrop-blur-xl md:max-w-none"
@@ -150,7 +150,7 @@ export function ReaderBar({ chapter, onPlay, pages }: ReaderBarProps) {
           <DisplayMenu />
           <ReaderSettings className="hidden sm:inline-flex" />
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

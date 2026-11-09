@@ -1,7 +1,7 @@
 "use client";
 
 import { BookOpen01, CheckCircle, GraduationHat01, Lightbulb02, Microphone01, RefreshCw01 } from "@untitledui/icons";
-import { AnimatePresence, motion, useInView } from "motion/react";
+import { AnimatePresence, m, useInView } from "motion/react";
 import { type FC, useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/base/badges/badges";
 import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
@@ -155,10 +155,10 @@ function MemorisePanel({ verse }: { verse: Verse }) {
         aria-label="Hide"
         className="max-w-full overflow-x-auto"
       >
-        {HIDE_MODES.map((m) => (
-          <ButtonGroupItem key={m.id} id={m.id} aria-label={m.label}>
-            <span className="sm:hidden">{m.short}</span>
-            <span className="hidden sm:inline">{m.label}</span>
+        {HIDE_MODES.map((mode) => (
+          <ButtonGroupItem key={mode.id} id={mode.id} aria-label={mode.label}>
+            <span className="sm:hidden">{mode.short}</span>
+            <span className="hidden sm:inline">{mode.label}</span>
           </ButtonGroupItem>
         ))}
       </ButtonGroup>
@@ -321,7 +321,7 @@ export function Journey({ verse }: { verse: Verse }) {
                 ))}
               </div>
               <AnimatePresence mode="wait">
-                <motion.div
+                <m.div
                   key={active}
                   initial={{ opacity: 0, y: 24, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -333,7 +333,7 @@ export function Journey({ verse }: { verse: Verse }) {
                     {STEPS[active].eyebrow}
                   </p>
                   <StepPanel index={active} verse={verse} load={near} />
-                </motion.div>
+                </m.div>
               </AnimatePresence>
             </div>
           </div>

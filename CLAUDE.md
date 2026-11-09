@@ -129,6 +129,20 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
 - Scroll-linked `useTransform` input ranges must be strictly increasing and within [0, 1]
   (motion accelerates them with WAAPI, which throws otherwise).
 
+## Performance rules
+
+- Long surahs render progressively (`lib/use-progressive.ts`: 24 ayat up front, then idle batches as a
+  transition). Anything that scrolls to an ayah must `ensure(n)` first (deep links, hashchange, resume, audio follow).
+- `Word` keeps its styling in the `.qw*` classes in `globals.css` and mounts its meaning card on first hover/focus;
+  don't move long utility lists back onto it or pre-render cards.
+- On-demand UI is code-split with `React.lazy` and mounted on first use: ⌘K dialog, verse dialogs, reader-settings
+  panel, audio player bar. Keep the light host (store + trigger) separate from the heavy content file.
+- Animations use `m.*` under `<LazyMotion features={loadMotionFeatures} strict>` — never import `motion` components.
+- Above-the-fold entrances are CSS (`.enter*` in `globals.css`); LCP text (hero headline/intro, surah names) must not
+  start at opacity 0 — use `.enter-visible` / `.enter-word-visible` / `.enter-sharpen`.
+- Fonts: only Latin Fraunces, Arabic Amiri and Inter are preloaded; extended/Latin subsets are on-demand faces with
+  `unicode-range`.
+
 ## Reading experience principles
 
 - The Arabic text leads; everything else (translation, glosses, controls) is quieter and optional.

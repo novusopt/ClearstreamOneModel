@@ -1,7 +1,7 @@
 "use client";
 
 import { LayoutGrid01, List, SearchLg } from "@untitledui/icons";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import Link from "next/link";
 import { useDeferredValue, useMemo, useState } from "react";
 import { EmptyState } from "@/components/application/empty-state/empty-state";
@@ -55,7 +55,7 @@ function SurahNiche({ chapter, i }: { chapter: Chapter; i: number }) {
   const pct = useReadPct(chapter);
   const meccan = chapter.revelation === "meccan";
   return (
-    <motion.li
+    <m.li
       layout
       initial={{ y: 28, scale: 0.97 }}
       whileInView={{ y: 0, scale: 1 }}
@@ -87,7 +87,7 @@ function SurahNiche({ chapter, i }: { chapter: Chapter; i: number }) {
         />
         {/* Reading progress as rising light. */}
         {pct > 0 && (
-          <motion.span
+          <m.span
             aria-hidden="true"
             initial={{ height: 0 }}
             whileInView={{ height: `${Math.max(pct, 6)}%` }}
@@ -116,7 +116,7 @@ function SurahNiche({ chapter, i }: { chapter: Chapter; i: number }) {
           {pct > 0 && <span className="text-gold-600 dark:text-gold-400">· {pct}%</span>}
         </span>
       </Link>
-    </motion.li>
+    </m.li>
   );
 }
 
@@ -125,7 +125,7 @@ function SurahIndexRow({ chapter, i }: { chapter: Chapter; i: number }) {
   const pct = useReadPct(chapter);
   const meccan = chapter.revelation === "meccan";
   return (
-    <motion.li
+    <m.li
       layout
       initial={{ x: -12 }}
       whileInView={{ x: 0 }}
@@ -158,7 +158,7 @@ function SurahIndexRow({ chapter, i }: { chapter: Chapter; i: number }) {
           </span>
         )}
       </Link>
-    </motion.li>
+    </m.li>
   );
 }
 
@@ -188,10 +188,10 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
     <section id="surahs" className="scroll-mt-24 py-24">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <motion.div initial={{ x: -24 }} whileInView={{ x: 0 }} viewport={{ once: true }}>
+          <m.div initial={{ x: -24 }} whileInView={{ x: 0 }} viewport={{ once: true }}>
             <p className="text-sm font-semibold text-brand-secondary">The Noble Qurʾān</p>
             <h2 className="mt-2 text-display-sm font-display font-medium tracking-tight text-primary">All 114 surahs</h2>
-          </motion.div>
+          </m.div>
           <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center md:w-auto">
             <Tabs selectedKey={filter} onSelectionChange={(k) => setFilter(k as Filter)} className="w-auto">
               <Tabs.List
@@ -242,7 +242,7 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
 
         <AnimatePresence mode="wait" initial={false}>
           {view === "niches" ? (
-            <motion.ul
+            <m.ul
               key="niches"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -254,9 +254,9 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
                   <SurahNiche key={c.id} chapter={c} i={i} />
                 ))}
               </AnimatePresence>
-            </motion.ul>
+            </m.ul>
           ) : (
-            <motion.ol
+            <m.ol
               key="index"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -268,11 +268,11 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
                   <SurahIndexRow key={c.id} chapter={c} i={i} />
                 ))}
               </AnimatePresence>
-            </motion.ol>
+            </m.ol>
           )}
         </AnimatePresence>
         {results.length === 0 && (
-          <motion.div initial={{ y: 12 }} animate={{ opacity: 1, y: 0 }} className="py-12">
+          <m.div initial={{ y: 12 }} animate={{ opacity: 1, y: 0 }} className="py-12">
             <EmptyState size="sm">
               <EmptyState.Header pattern="circle">
                 <EmptyState.FeaturedIcon icon={SearchLg} color="gray" theme="modern" />
@@ -295,7 +295,7 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
                 </Button>
               </EmptyState.Footer>
             </EmptyState>
-          </motion.div>
+          </m.div>
         )}
       </div>
     </section>
@@ -306,13 +306,13 @@ export function JuzIndex({ chapters }: { chapters: Chapter[] }) {
   return (
     <section id="juz" className="scroll-mt-24 pb-24">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
-        <motion.div initial={{ x: -24 }} whileInView={{ x: 0 }} viewport={{ once: true }}>
+        <m.div initial={{ x: -24 }} whileInView={{ x: 0 }} viewport={{ once: true }}>
           <p className="text-sm font-semibold text-brand-secondary">Thirty parts</p>
           <h2 className="mt-2 text-display-sm font-display font-medium tracking-tight text-primary">Browse by juzʾ</h2>
-        </motion.div>
+        </m.div>
         <ol className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6">
           {JUZ_STARTS.map(([s, a], i) => (
-            <motion.li
+            <m.li
               key={i}
               initial={{ scale: 0.9 }}
               whileInView={{ scale: 1 }}
@@ -338,7 +338,7 @@ export function JuzIndex({ chapters }: { chapters: Chapter[] }) {
                   from {s}:{a}
                 </span>
               </Link>
-            </motion.li>
+            </m.li>
           ))}
         </ol>
       </div>

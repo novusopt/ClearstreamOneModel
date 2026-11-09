@@ -1,7 +1,7 @@
 "use client";
 
 import { Headphones02, Palette, PlayCircle } from "@untitledui/icons";
-import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { AnimatePresence, m, useInView, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Badge, BadgeWithIcon } from "@/components/base/badges/badges";
 import { ProgressBarBase } from "@/components/base/progress-indicators/progress-indicators";
@@ -56,7 +56,7 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
       {/* Lantern glow under the window */}
       <div aria-hidden="true" className="absolute inset-x-[12%] top-[8%] bottom-0 -z-10 rounded-full bg-gold-400/30 blur-3xl dark:bg-gold-500/15" />
       <p className="sr-only">Preview of the Mishkah reader playing Al-Fātiḥah, with each word lighting up as it is recited.</p>
-      <motion.div
+      <m.div
         aria-hidden="true"
         style={{ rotateX, scale, transformOrigin: "50% 0%" }}
         className="overflow-hidden rounded-2xl border border-secondary bg-primary text-left shadow-3xl ring-1 ring-black/5 md:rounded-3xl dark:ring-white/5"
@@ -122,7 +122,7 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
 
             <div className="min-h-16 px-4 pb-5 text-center md:px-10">
               <AnimatePresence mode="wait">
-                <motion.p
+                <m.p
                   key={verse?.n}
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -131,7 +131,7 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
                   className="mx-auto max-w-xl text-sm text-tertiary md:text-md"
                 >
                   {verse?.en}
-                </motion.p>
+                </m.p>
               </AnimatePresence>
             </div>
           </div>
@@ -140,13 +140,13 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
           <div className="hidden flex-col gap-3 border-l border-secondary bg-secondary/50 p-4 lg:flex">
             <p className="text-xs font-semibold tracking-wide text-quaternary uppercase">Now reciting</p>
             <div className="rounded-xl border border-secondary bg-primary p-4 text-center shadow-xs">
-              <motion.div key={`${cur.vi}-${cur.wi}`} initial={{ opacity: 0.4, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.25 }}>
+              <m.div key={`${cur.vi}-${cur.wi}`} initial={{ opacity: 0.4, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.25 }}>
                   <p lang="ar" dir="rtl" className="font-quran text-4xl leading-[1.8] text-primary">
                     {word && <TajweedText value={word.j} />}
                   </p>
                   <p className="font-display text-md text-gold-700 italic dark:text-gold-300">{word?.t}</p>
                   <p className="mt-0.5 text-sm text-secondary">{word?.e}</p>
-              </motion.div>
+              </m.div>
             </div>
             <div className="rounded-xl border border-secondary bg-primary p-3">
               <p className="flex items-center gap-1.5 text-xs font-semibold text-gold-700 dark:text-gold-300">
@@ -193,7 +193,7 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
             ))}
           </span>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { BookOpen01, Bookmark, Trash01 } from "@untitledui/icons";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import Link from "next/link";
 import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
@@ -15,7 +15,7 @@ export function BookmarkList({ chapters }: { chapters: Chapter[] }) {
 
   if (bookmarks.length === 0) {
     return (
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mt-12 rounded-3xl border border-dashed border-secondary px-6 py-14">
+      <m.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mt-12 rounded-3xl border border-dashed border-secondary px-6 py-14">
         <EmptyState size="md">
           <EmptyState.Header pattern="circle">
             <EmptyState.FeaturedIcon icon={Bookmark} color="brand" theme="light" />
@@ -30,7 +30,7 @@ export function BookmarkList({ chapters }: { chapters: Chapter[] }) {
             </Button>
           </EmptyState.Footer>
         </EmptyState>
-      </motion.div>
+      </m.div>
     );
   }
 
@@ -42,7 +42,7 @@ export function BookmarkList({ chapters }: { chapters: Chapter[] }) {
           const ch = chapters[s - 1];
           if (!ch) return null;
           return (
-            <motion.li
+            <m.li
               key={key}
               layout
               initial={{ opacity: 0, y: 16 }}
@@ -61,7 +61,7 @@ export function BookmarkList({ chapters }: { chapters: Chapter[] }) {
                 </span>
               </Link>
               <ButtonUtility size="sm" color="tertiary" tooltip="Remove" icon={Trash01} onPress={() => toggleBookmark(s, a)} />
-            </motion.li>
+            </m.li>
           );
         })}
       </AnimatePresence>

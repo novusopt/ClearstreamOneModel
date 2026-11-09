@@ -1,7 +1,7 @@
 "use client";
 
 import { BookOpen01, Bookmark, Command, Grid01, LayersThree01, Menu02, SearchLg } from "@untitledui/icons";
-import { motion, useMotionValueEvent, useScroll } from "motion/react";
+import { m, useMotionValueEvent, useScroll } from "motion/react";
 import Link from "next/link";
 import { useState } from "react";
 import { NavItemBase } from "@/components/application/app-navigation/base-components/nav-item";
@@ -68,7 +68,7 @@ export function Header() {
   });
 
   return (
-    <motion.header
+    <m.header
       animate={{ y: hidden ? -96 : 0 }}
       transition={{ type: "spring", stiffness: 400, damping: 40 }}
       className="fixed inset-x-0 top-0 z-40 px-3 pt-3 md:px-6"
@@ -105,6 +105,6 @@ export function Header() {
           </Button>
         </div>
       </div>
-    </motion.header>
+    </m.header>
   );
 }

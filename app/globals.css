@@ -9,7 +9,7 @@
 @custom-variant focus-input-within (&:has(input:focus));
 
 @theme {
-  --font-quran: var(--font-amiri-quran), "Amiri Quran", "KFGQPC Uthmanic Script HAFS", serif;
+  --font-quran: var(--font-amiri-quran), var(--font-amiri-latin), "Amiri Quran", "KFGQPC Uthmanic Script HAFS", serif;
 
     /* Lantern amber — the brand's light. */
   --color-gold-50: rgb(254 250 240);
@@ -185,4 +185,65 @@ input[type="search"]::-webkit-search-cancel-button {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/*
+ * Qurʾān word token (components/quran/word.tsx). Styles live here rather than as utility lists so
+ * each of the 6,000+ words in Al-Baqarah carries a few short class names instead of ~1 KB of them.
+ */
+@layer components {
+  .qw {
+    @apply relative inline-flex cursor-pointer flex-col items-center outline-focus-ring transition-colors duration-200 hover:bg-brand-primary/70 focus-visible:outline-2 focus-visible:outline-offset-2;
+  }
+  .qw-pad { @apply rounded-xl px-1.5 pt-1 pb-1.5; }
+  .qw-dense { @apply rounded-lg px-0.5 align-middle; }
+  .qw-on { @apply text-brand-secondary; }
+  .qw-text { @apply relative font-quran text-primary transition-[filter,opacity] duration-300; }
+  .qw-hide { @apply opacity-40 blur-md select-none; }
+  .qw-gloss { @apply relative mt-1 flex max-w-36 flex-col items-center text-center leading-tight; }
+  /* Meaning card: mounted on first hover/focus, shown after a short delay so it doesn't flash. */
+  .qw-card {
+    @apply pointer-events-none invisible absolute bottom-full left-1/2 z-20 mb-2 flex w-max max-w-56 -translate-x-1/2 flex-col items-center rounded-t-2xl rounded-b-lg border border-gold-400/50 bg-brand-950 px-3.5 pt-2.5 pb-2 text-center shadow-xl;
+  }
+  .qw:hover .qw-card,
+  .qw:focus-visible .qw-card {
+    visibility: visible;
+    animation: qw-card-in 150ms ease-out 200ms both;
+  }
+  .qw:focus-visible .qw-card { animation-delay: 0ms; }
+  .qw-chip { @apply inline-flex items-center gap-1 rounded-full bg-white/10 px-1.5 py-0.5 text-[10px] font-medium text-white/85; }
+}
+
+@keyframes qw-card-in {
+  from { opacity: 0; transform: translate(-50%, 4px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qw:hover .qw-card, .qw:focus-visible .qw-card { animation-duration: 1ms; }
+}
+
+/*
+ * Above-the-fold entrance animations in CSS, not JS: they start from the server HTML, so the
+ * hero text is painted (and counted for LCP) without waiting for hydration. `backwards` fill keeps
+ * the end state free for scroll-linked transforms set inline by motion.
+ */
+@keyframes enter-rise { from { opacity: 0; transform: translateY(16px); } }
+@keyframes enter-rise-far { from { opacity: 0; transform: translateY(60px); } }
+@keyframes enter-word { from { opacity: 0; transform: translateY(0.45em); } }
+@keyframes enter-blur { from { opacity: 0; transform: scale(0.94); filter: blur(12px); } }
+.enter { animation: enter-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.enter-up { animation: enter-rise-far 1.1s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.enter-word { animation: enter-word 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.enter-blur { animation: enter-blur 1.2s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+/* LCP candidates (hero headline and intro, surah names): move without starting invisible, so the
+   browser counts them as painted on the first frame. */
+@keyframes enter-visible { from { transform: translateY(14px); } }
+@keyframes enter-word-visible { from { transform: translateY(0.35em); } }
+@keyframes enter-sharpen { from { filter: blur(8px); transform: scale(0.97); } }
+.enter-visible { animation: enter-visible 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.enter-word-visible { animation: enter-word-visible 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.enter-sharpen { animation: enter-sharpen 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+@media (prefers-reduced-motion: reduce) {
+  .enter, .enter-up, .enter-word, .enter-blur, .enter-visible, .enter-word-visible, .enter-sharpen { animation: none; }
 }

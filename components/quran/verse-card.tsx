@@ -1,7 +1,7 @@
 "use client";
 
 import { Bookmark, BookmarkCheck, CheckCircle, Copy01, Copy07, Edit05, Eye, EyeOff, Image01, Link01, PauseCircle, PlayCircle, Share07, Type01 } from "@untitledui/icons";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { memo, useState } from "react";
 import { Button as AriaButton } from "react-aria-components";
 import { notify } from "@/components/application/notifications/notification";
@@ -102,7 +102,7 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
   };
 
   return (
-    <motion.article
+    <m.article
       id={`v-${verse.n}`}
       data-ayah={verse.n}
       aria-label={`Ayah ${key}`}
@@ -115,7 +115,7 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
         isCurrent ? "bg-brand-primary/50 dark:bg-brand-900/25" : "hover:bg-secondary/40",
       )}
     >
-      {isCurrent && <motion.span layoutId={`verse-indicator-${surah}`} className="absolute inset-y-0 left-0 w-0.5 bg-brand-solid" />}
+      {isCurrent && <m.span layoutId={`verse-indicator-${surah}`} className="absolute inset-y-0 left-0 w-0.5 bg-brand-solid" />}
       <div className="mb-5 flex items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <VerseNumber surah={surah} ayah={verse.n} active={isCurrent} playing={isPlaying} />
@@ -280,6 +280,6 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
             </AriaButton>
           )}
       </div>
-    </motion.article>
+    </m.article>
   );
 });

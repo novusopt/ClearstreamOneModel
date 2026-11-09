@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeft, ArrowRight, Grid01 } from "@untitledui/icons";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { Button } from "@/components/base/buttons/button";
 import { ProgressBar } from "@/components/base/progress-indicators/progress-indicators";
 import { useLibrary } from "@/lib/library";
@@ -13,7 +13,7 @@ export function SurahEnd({ chapter, prev, next }: { chapter: Chapter; prev: Chap
   const complete = read >= chapter.versesCount;
 
   return (
-    <motion.section
+    <m.section
       initial={{ y: 24 }}
       whileInView={{ y: 0 }}
       viewport={{ once: true }}
@@ -50,6 +50,6 @@ export function SurahEnd({ chapter, prev, next }: { chapter: Chapter; prev: Chap
           Previous: {prev.id}. {prev.nameSimple}
         </Button>
       )}
-    </motion.section>
+    </m.section>
   );
 }

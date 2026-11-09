@@ -1,7 +1,7 @@
 "use client";
 
 import { Palette } from "@untitledui/icons";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { Heading as AriaHeading } from "react-aria-components";
 import { Button } from "@/components/base/buttons/button";
 import { CloseButton } from "@/components/base/buttons/close-button";
@@ -30,7 +30,7 @@ export function TajweedLegend({ compact = false }: { compact?: boolean }) {
                 </div>
                 <ul className="grid gap-3 sm:grid-cols-2">
                   {TAJWEED_RULES.map((r, i) => (
-                    <motion.li
+                    <m.li
                       key={r.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -47,7 +47,7 @@ export function TajweedLegend({ compact = false }: { compact?: boolean }) {
                         </p>
                         <p className="mt-0.5 text-xs text-tertiary">{r.description}</p>
                       </div>
-                    </motion.li>
+                    </m.li>
                   ))}
                 </ul>
               </div>

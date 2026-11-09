@@ -2,7 +2,8 @@
  * Single-page entry for the claude.ai-hosted build of Mishkah. It renders the same components
  * as the Next.js app, with a hash router and data fetched from files published beside the page.
  */
-import { MotionConfig } from "motion/react";
+import { LazyMotion, MotionConfig } from "motion/react";
+import { loadMotionFeatures } from "@/components/providers/providers";
 import { ThemeProvider } from "next-themes";
 import { type ReactNode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
@@ -183,9 +184,11 @@ function Shell({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider attribute="class" value={{ light: "light-mode", dark: "dark-mode" }} defaultTheme="system" enableSystem disableTransitionOnChange>
       <RouterProvider navigate={navigate} useHref={pathToHash}>
+        <LazyMotion features={loadMotionFeatures} strict>
         <MotionConfig reducedMotion="user">
           <SmoothScroll>{children}</SmoothScroll>
         </MotionConfig>
+        </LazyMotion>
       </RouterProvider>
     </ThemeProvider>
   );

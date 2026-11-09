@@ -1,7 +1,7 @@
 "use client";
 
 import { BookOpen01, Headphones02, LayersThree01, Palette, Translate01, Type01 } from "@untitledui/icons";
-import { AnimatePresence, motion, useMotionTemplate, useMotionValue, useScroll, useTransform } from "motion/react";
+import { AnimatePresence, m, useMotionTemplate, useMotionValue, useScroll, useTransform } from "motion/react";
 import { type FC, type MouseEvent, type ReactNode, useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/base/badges/badges";
 import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
@@ -46,7 +46,7 @@ function BentoCard({
   };
 
   return (
-    <motion.div
+    <m.div
       onMouseMove={onMove}
       onMouseLeave={() => {
         mx.set(-400);
@@ -62,7 +62,7 @@ function BentoCard({
         className,
       )}
     >
-      <motion.div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: spotlight }} />
+      <m.div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: spotlight }} />
       <div className="relative flex items-center gap-2 text-sm font-semibold text-brand-secondary">
         <FeaturedIcon icon={Icon} color="brand" theme="light" size="sm" />
         {eyebrow}
@@ -70,7 +70,7 @@ function BentoCard({
       <h3 className="relative mt-4 text-xl font-display font-medium tracking-tight text-primary md:text-display-xs">{title}</h3>
       <p className="relative mt-2 max-w-md text-md text-tertiary">{description}</p>
       <div className="relative mt-6 flex flex-1 items-end">{children}</div>
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -84,9 +84,9 @@ function ScrollRevealArabic({ text }: { text: string }) {
       <p lang="ar" dir="rtl" className="font-quran text-4xl text-quaternary/40 sm:text-5xl md:text-6xl" aria-hidden="true">
         {text}
       </p>
-      <motion.p lang="ar" dir="rtl" style={{ clipPath: clip }} className="absolute inset-0 font-quran text-4xl text-primary sm:text-5xl md:text-6xl">
+      <m.p lang="ar" dir="rtl" style={{ clipPath: clip }} className="absolute inset-0 font-quran text-4xl text-primary sm:text-5xl md:text-6xl">
         {text}
-      </motion.p>
+      </m.p>
     </div>
   );
 }
@@ -99,13 +99,13 @@ function TajweedDemo({ verse }: { verse: Verse }) {
   const words = verse.w.slice(0, 9);
   return (
     <div ref={ref} className="w-full space-y-5">
-      <motion.p lang="ar" dir="rtl" style={{ filter }} className="font-quran text-3xl leading-[2.2] text-primary md:text-4xl">
+      <m.p lang="ar" dir="rtl" style={{ filter }} className="font-quran text-3xl leading-[2.2] text-primary md:text-4xl">
         {words.map((w, i) => (
           <span key={i}>
             <TajweedText value={w.j} />{" "}
           </span>
         ))}
-      </motion.p>
+      </m.p>
       <div className="flex flex-wrap gap-1.5">
         {TAJWEED_RULES.slice(0, 7).map((r) => (
           <Badge key={r.id} type="modern" size="sm" color="gray" className="gap-1.5">
@@ -136,7 +136,7 @@ function WordByWordDemo({ verse }: { verse: Verse }) {
           className="relative flex min-w-20 flex-col items-center rounded-2xl px-3 py-2 outline-focus-ring focus-visible:outline-2"
         >
           {active === i && (
-            <motion.span layoutId="bento-wbw" className="absolute inset-0 rounded-2xl bg-brand-primary ring-1 ring-brand" transition={{ type: "spring", stiffness: 400, damping: 32 }} />
+            <m.span layoutId="bento-wbw" className="absolute inset-0 rounded-2xl bg-brand-primary ring-1 ring-brand" transition={{ type: "spring", stiffness: 400, damping: 32 }} />
           )}
           <span lang="ar" className={cx("relative font-quran text-3xl transition-colors", active === i ? "text-brand-primary" : "text-primary")}>
             {w.a}
@@ -159,7 +159,7 @@ function AudioDemo() {
     <div className="w-full">
       <div className="flex h-24 items-center justify-between gap-1" aria-hidden="true">
         {Array.from({ length: bars }).map((_, i) => (
-          <motion.span
+          <m.span
             key={i}
             className="w-full rounded-full bg-gradient-to-t from-brand-600 to-brand-300"
             initial={{ height: "15%" }}
@@ -171,7 +171,7 @@ function AudioDemo() {
       <div className="mt-4 flex items-center gap-3 text-xs text-tertiary">
         <span className="font-semibold text-secondary">Al-Husary</span>
         <span className="h-1 flex-1 overflow-hidden rounded-full bg-quaternary">
-          <motion.span
+          <m.span
             className="block h-full rounded-full bg-brand-solid"
             initial={{ width: "0%" }}
             whileInView={{ width: "100%" }}
@@ -194,7 +194,7 @@ function TranslationDemo() {
   return (
     <div className="relative min-h-36 w-full overflow-hidden rounded-2xl bg-secondary p-4 ring-1 ring-secondary">
       <AnimatePresence mode="wait">
-        <motion.div
+        <m.div
           key={item.lang}
           initial={{ opacity: 0, y: 16, filter: "blur(6px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -203,7 +203,7 @@ function TranslationDemo() {
         >
           <span className="text-xs font-semibold text-brand-secondary">{item.lang}</span>
           <p className="mt-1 text-sm text-secondary">{item.text}</p>
-        </motion.div>
+        </m.div>
       </AnimatePresence>
     </div>
   );
@@ -213,7 +213,7 @@ function ModesDemo() {
   return (
     <div className="grid w-full grid-cols-2 gap-3">
       {["Verse by verse", "Mushaf reading"].map((label, i) => (
-        <motion.div
+        <m.div
           key={label}
           initial={{ y: 20 }}
           whileInView={{ y: 0 }}
@@ -226,7 +226,7 @@ function ModesDemo() {
             ))}
           </div>
           <p className="mt-3 text-xs font-medium text-tertiary">{label}</p>
-        </motion.div>
+        </m.div>
       ))}
     </div>
   );
@@ -236,7 +236,7 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
   return (
     <section id="features" className="relative scroll-mt-24 py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
-        <motion.div
+        <m.div
           initial={{ y: 24 }}
           whileInView={{ y: 0 }}
           viewport={{ once: true }}
@@ -246,7 +246,7 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
           <p className="text-sm font-semibold text-brand-secondary">Everything in one reader</p>
           <h2 className="mt-3 text-display-sm font-display font-medium tracking-tight text-primary md:text-display-md">Built for reciting, reflecting & learning</h2>
           <p className="mt-4 text-lg text-tertiary">Each layer can be switched on or off, so the page stays as quiet or as rich as you need.</p>
-        </motion.div>
+        </m.div>
 
         <div className="mt-16 grid auto-rows-[minmax(0,auto)] grid-cols-1 gap-4 md:grid-cols-6 md:gap-5">
           <BentoCard
@@ -318,14 +318,14 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
             description="Your last ayah and bookmarks are remembered on this device — no account needed."
           >
             <div className="flex w-full items-center gap-3 rounded-2xl bg-secondary p-4 ring-1 ring-secondary">
-              <motion.span
+              <m.span
                 initial={{ scale: 0 }}
                 whileInView={{ scale: 1 }}
                 transition={{ type: "spring", stiffness: 300, damping: 15, delay: 0.3 }}
                 className="flex size-10 items-center justify-center rounded-full bg-brand-solid text-white"
               >
                 <BookOpen01 className="size-5" />
-              </motion.span>
+              </m.span>
               <div className="text-sm">
                 <p className="font-semibold text-primary">Al-Kahf · 18:10</p>
                 <p className="text-tertiary">Continue reading</p>

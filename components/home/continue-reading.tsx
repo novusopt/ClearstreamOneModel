@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight, BookOpen01, Bookmark, RefreshCw01 } from "@untitledui/icons";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import Link from "next/link";
 import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
 import { dueReviews, useLibrary } from "@/lib/library";
@@ -16,7 +16,7 @@ export function ContinueReading({ chapters }: { chapters: Chapter[] }) {
 
   return (
     <AnimatePresence>
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-10 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <m.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-10 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {ch && lastRead && (
           <Link
             href={`/surah/${ch.id}#v-${lastRead.ayah}`}
@@ -62,7 +62,7 @@ export function ContinueReading({ chapters }: { chapters: Chapter[] }) {
             <ArrowRight className="size-5 text-fg-quaternary transition group-hover:translate-x-1" />
           </Link>
         )}
-      </motion.div>
+      </m.div>
     </AnimatePresence>
   );
 }

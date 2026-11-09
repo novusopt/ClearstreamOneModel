@@ -18,23 +18,46 @@ const inter = localFont({
   display: "swap",
 });
 
+// Display face: the Latin set is preloaded (headings above the fold); the Latin-Extended set
+// (ā, ḥ, ʾ in transliterations) is a separate, non-preloaded face the browser fetches only when a
+// page uses one of those characters. No synthetic fallback on the first face, so the second one
+// is reached in the font stack.
 const fraunces = localFont({
-  src: [
-    { path: "./fonts/fraunces-latin.woff2", weight: "100 900" },
-    { path: "./fonts/fraunces-latin-ext.woff2", weight: "100 900" },
-  ],
+  src: "./fonts/fraunces-latin.woff2",
+  weight: "100 900",
   variable: "--font-display-face",
   display: "swap",
+  adjustFontFallback: false,
+  declarations: [{ prop: "unicode-range", value: "U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD" }],
 });
 
+const frauncesExt = localFont({
+  src: "./fonts/fraunces-latin-ext.woff2",
+  weight: "100 900",
+  variable: "--font-display-ext",
+  display: "swap",
+  preload: false,
+  adjustFontFallback: false,
+  declarations: [{ prop: "unicode-range", value: "U+0100-02AF, U+02BB-02BC, U+02BE-02BF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF" }],
+});
+
+// Qurʾān face: the Arabic set is preloaded; its Latin set is rarely needed, so it loads on demand.
 const amiriQuran = localFont({
-  src: [
-    { path: "./fonts/amiri-quran-arabic.woff2", weight: "400" },
-    { path: "./fonts/amiri-quran-latin.woff2", weight: "400" },
-  ],
+  src: "./fonts/amiri-quran-arabic.woff2",
+  weight: "400",
   variable: "--font-amiri-quran",
   display: "swap",
-  preload: true,
+  adjustFontFallback: false,
+  declarations: [{ prop: "unicode-range", value: "U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0898-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC" }],
+});
+
+const amiriQuranLatin = localFont({
+  src: "./fonts/amiri-quran-latin.woff2",
+  weight: "400",
+  variable: "--font-amiri-latin",
+  display: "swap",
+  preload: false,
+  adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {
@@ -54,7 +77,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${fraunces.variable} ${amiriQuran.variable} antialiased`}>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${fraunces.variable} ${frauncesExt.variable} ${amiriQuran.variable} ${amiriQuranLatin.variable} antialiased`}>
       <body className="flex min-h-dvh flex-col bg-primary text-primary">
         <Providers>
           <a

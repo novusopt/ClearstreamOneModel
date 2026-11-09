@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight, BookOpen01, CheckCircle, RefreshCw01, Edit05, Flag05, Target04, Trash01, TrendUp01, Zap } from "@untitledui/icons";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import Link from "next/link";
 import { type FC, useState } from "react";
 import { Alert } from "@/components/application/alerts/alert";
@@ -60,7 +60,7 @@ function Activity({ log }: { log: Record<string, number> }) {
       <div className="mt-4 flex h-28 items-end gap-1.5" role="img" aria-label={`Ayat read per day: ${days.map((d) => d.count).join(", ")}`}>
         {days.map((d, i) => (
           <div key={d.key} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
-            <motion.span
+            <m.span
               initial={{ height: 0 }}
               animate={{ height: `${Math.max(4, (d.count / max) * 100)}%` }}
               transition={{ delay: i * 0.03, duration: 0.5 }}

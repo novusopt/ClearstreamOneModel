@@ -1,6 +1,6 @@
 "use client";
 
-import { MotionConfig } from "motion/react";
+import { LazyMotion, MotionConfig } from "motion/react";
 import { ThemeProvider } from "next-themes";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
@@ -13,14 +13,19 @@ declare module "react-aria-components" {
   }
 }
 
+/** Motion features (layout animations included) load in a separate chunk; components use `m.*`. */
+export const loadMotionFeatures = () => import("@/lib/motion-features").then((mod) => mod.default);
+
 export function Providers({ children }: { children: ReactNode }) {
   const router = useRouter();
   return (
     <ThemeProvider attribute="class" value={{ light: "light-mode", dark: "dark-mode" }} defaultTheme="system" enableSystem disableTransitionOnChange>
       <RouterProvider navigate={router.push}>
-        <MotionConfig reducedMotion="user">
-          <SmoothScroll>{children}</SmoothScroll>
-        </MotionConfig>
+        <LazyMotion features={loadMotionFeatures} strict>
+          <MotionConfig reducedMotion="user">
+            <SmoothScroll>{children}</SmoothScroll>
+          </MotionConfig>
+        </LazyMotion>
       </RouterProvider>
     </ThemeProvider>
   );

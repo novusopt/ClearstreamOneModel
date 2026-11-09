@@ -1,7 +1,7 @@
 "use client";
 
 import { InfoCircle } from "@untitledui/icons";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { useTranslationText } from "@/components/quran/use-translation";
 import { Word } from "@/components/quran/word";
 import { TRANSLATIONS } from "@/lib/constants";
@@ -103,7 +103,7 @@ export function Basmala({ basmala, surah, variant = "panel" }: BasmalaProps) {
   }
 
   return (
-    <motion.section
+    <m.section
       aria-label="Basmala"
       initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -132,6 +132,6 @@ export function Basmala({ basmala, surah, variant = "panel" }: BasmalaProps) {
           {meaning}
         </p>
       )}
-    </motion.section>
+    </m.section>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { Code02, Globe02, Lock01, WifiOff } from "@untitledui/icons";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
 
 const PRINCIPLES = [
@@ -24,7 +24,7 @@ export function Principles() {
         </div>
         <ul className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {PRINCIPLES.map((p, i) => (
-            <motion.li
+            <m.li
               key={p.title}
               initial={{ y: 24 }}
               whileInView={{ y: 0 }}
@@ -35,7 +35,7 @@ export function Principles() {
               <FeaturedIcon icon={p.icon} color="gray" theme="modern" size="lg" />
               <h3 className="mt-5 text-lg font-semibold text-primary">{p.title}</h3>
               <p className="mt-2 text-md text-tertiary">{p.text}</p>
-            </motion.li>
+            </m.li>
           ))}
         </ul>
       </div>

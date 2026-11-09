@@ -1,13 +1,14 @@
 "use client";
 
 import { ArrowRight, BookOpen01, CheckCircle } from "@untitledui/icons";
-import { motion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
+import { m, useScroll, useTransform } from "motion/react";
+import { Fragment, useRef } from "react";
 import { Badge } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
 import Link from "next/link";
 import { HeroShowcase } from "@/components/home/hero-showcase";
 import { useLibrary } from "@/lib/library";
+import { cx } from "@/utils/cx";
 import type { Chapter, Verse } from "@/lib/types";
 
 const HEADLINE = ["A", "lantern", "for", "the", "Qurʾān."];
@@ -36,7 +37,7 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
         <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-bg-primary" />
       </div>
 
-      <motion.svg
+      <m.svg
         aria-hidden="true"
         viewBox="0 0 200 260"
         style={{ scale: starScale }}
@@ -45,34 +46,26 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
         <g fill="none" stroke="currentColor">
           <path d="M20 258 V110 C20 60 60 22 100 4 C140 22 180 60 180 110 V258" strokeWidth="0.8" />
           <path d="M36 258 V114 C36 72 68 40 100 26 C132 40 164 72 164 114 V258" strokeWidth="0.5" strokeDasharray="2 3" />
-          <motion.path style={{ rotate: starRotate }} d="M100 70 l8 14 16 -2 -2 16 14 8 -14 8 2 16 -16 -2 -8 14 -8 -14 -16 2 2 -16 -14 -8 14 -8 -2 -16 16 2 Z" strokeWidth="0.6" />
+          <m.path style={{ rotate: starRotate }} d="M100 70 l8 14 16 -2 -2 16 14 8 -14 8 2 16 -16 -2 -8 14 -8 -14 -16 2 2 -16 -14 -8 14 -8 -2 -16 16 2 Z" strokeWidth="0.6" />
         </g>
-      </motion.svg>
+      </m.svg>
 
       <div className="mx-auto w-full max-w-7xl px-4 text-center md:px-8">
-        <motion.p
+        <m.p
           style={{ y: arabicY }}
-          initial={{ opacity: 0, scale: 0.9, filter: "blur(16px)" }}
-          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-          transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
           lang="ar"
           dir="rtl"
           className="font-quran text-3xl leading-tight sm:text-4xl"
         >
-          <span className="bg-gradient-to-br from-brand-700 via-brand-500 to-gold-500 bg-clip-text text-transparent dark:from-gold-200 dark:via-gold-300 dark:to-brand-300">
+          <span className="enter-blur inline-block bg-gradient-to-br from-brand-700 via-brand-500 to-gold-500 bg-clip-text text-transparent dark:from-gold-200 dark:via-gold-300 dark:to-brand-300">
             ٱللَّهُ نُورُ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ
           </span>
-        </motion.p>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="mt-2 text-sm text-tertiary italic"
-        >
+        </m.p>
+        <p className="enter mt-2 text-sm text-tertiary italic" style={{ animationDelay: "0.6s" }}>
           “Allah is the Light of the heavens and the earth” — An-Nūr 24:35
-        </motion.p>
+        </p>
 
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.6 }} className="mt-8 flex justify-center">
+        <div className="enter mt-8 flex justify-center" style={{ animationDelay: "0.25s" }}>
           <Link
             href="/#journey"
             className="group inline-flex items-center gap-3 rounded-full border border-secondary bg-primary/80 py-1 pr-3 pl-1 text-sm font-medium text-secondary shadow-xs backdrop-blur transition hover:border-brand hover:text-primary outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2"
@@ -83,36 +76,25 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
             Tafsir in 9 languages and memorisation review
             <ArrowRight aria-hidden="true" className="size-4 text-fg-quaternary transition group-hover:translate-x-0.5 group-hover:text-fg-brand-secondary" />
           </Link>
-        </motion.div>
+        </div>
 
         <h1 className="mt-6 text-display-md font-display font-medium tracking-tight text-primary sm:text-display-lg md:text-display-2xl">
           {HEADLINE.map((word, i) => (
-            <motion.span
-              key={word}
-              initial={{ opacity: 0, y: 40, rotateX: -60 }}
-              animate={{ opacity: 1, y: 0, rotateX: 0 }}
-              transition={{ delay: 0.35 + i * 0.14, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              className={i >= 3 ? "mr-3 inline-block bg-gradient-to-r from-gold-600 to-gold-400 bg-clip-text pr-1 text-transparent italic" : "mr-3 inline-block"}
-            >
-              {word}
-            </motion.span>
+            <Fragment key={word}>
+              <span
+                style={{ animationDelay: `${0.1 + i * 0.1}s` }}
+                className={cx("enter-word-visible mr-[0.15em] inline-block", i >= 3 && "bg-gradient-to-r from-gold-600 to-gold-400 bg-clip-text pr-1 text-transparent italic")}
+              >
+                {word}
+              </span>{" "}
+            </Fragment>
           ))}
         </h1>
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.7 }}
-          className="mx-auto mt-6 max-w-2xl text-lg text-tertiary md:text-xl"
-        >
+        <p className="enter-visible mx-auto mt-6 max-w-2xl text-lg text-tertiary md:text-xl" style={{ animationDelay: "0.3s" }}>
           Read the Uthmani text, listen as every word lights up with the recitation, and understand it word by word, in ten languages,
           with tajweed in colour.
-        </motion.p>
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 0.7 }}
-          className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"
-        >
+        </p>
+        <div className="enter mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row" style={{ animationDelay: "0.65s" }}>
           {resume && lastRead ? (
             <Button size="xl" href={`/surah/${resume.id}#v-${lastRead.ayah}`} iconLeading={BookOpen01}>
               Continue {resume.nameSimple} · {resume.id}:{lastRead.ayah}
@@ -125,12 +107,10 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
           <Button size="xl" color="secondary" href="#surahs" iconTrailing={ArrowRight}>
             Browse all 114 surahs
           </Button>
-        </motion.div>
-        <motion.ul
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.7 }}
-          className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-tertiary"
+        </div>
+        <ul
+          style={{ animationDelay: "0.8s" }}
+          className="enter mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-tertiary"
         >
           {TRUST.map((t) => (
             <li key={t} className="flex items-center gap-1.5">
@@ -138,12 +118,12 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
               {t}
             </li>
           ))}
-        </motion.ul>
+        </ul>
 
         {fatihah && fatihah.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9, duration: 1.1, ease: [0.22, 1, 0.36, 1] }}>
+          <div className="enter-up" style={{ animationDelay: "0.7s" }}>
             <HeroShowcase verses={fatihah} />
-          </motion.div>
+          </div>
         )}
       </div>
     </section>

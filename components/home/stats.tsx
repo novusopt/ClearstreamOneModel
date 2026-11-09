@@ -1,6 +1,6 @@
 "use client";
 
-import { animate, motion, useInView } from "motion/react";
+import { animate, m, useInView } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { TOTAL_AYAT, TOTAL_SURAHS, TOTAL_WORDS } from "@/lib/constants";
 
@@ -33,7 +33,7 @@ export function Stats() {
     <section className="border-y border-secondary bg-secondary/50">
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-4 py-14 md:grid-cols-4 md:px-8">
         {STATS.map((s, i) => (
-          <motion.div
+          <m.div
             key={s.label}
             initial={{ y: 20 }}
             whileInView={{ y: 0 }}
@@ -45,7 +45,7 @@ export function Stats() {
               <Counter to={s.value} />
             </p>
             <p className="mt-1 text-sm font-medium text-tertiary">{s.label}</p>
-          </motion.div>
+          </m.div>
         ))}
       </div>
     </section>

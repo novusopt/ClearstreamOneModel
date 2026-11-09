@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { Word } from "@/components/quran/word";
 import { AyahMarker } from "@/components/quran/ayah-marker";
 import { HizbMark, quarterLabel } from "@/components/quran/hizb-mark";
@@ -96,7 +96,7 @@ function MushafPage({ page, verses, surah, startIndex, basmala, delay, className
   const first = verses[0];
   const size = useSettings(mushafSize);
   return (
-    <motion.section
+    <m.section
       aria-label={`Page ${page}`}
       dir="ltr"
       initial={{ y: 28 }}
@@ -116,7 +116,7 @@ function MushafPage({ page, verses, surah, startIndex, basmala, delay, className
         ))}
       </div>
       <PageNumber page={page} />
-    </motion.section>
+    </m.section>
   );
 }
 

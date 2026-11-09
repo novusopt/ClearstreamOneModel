@@ -1,7 +1,7 @@
 "use client";
 
 import { Command, CursorClick02, Headphones02, SearchLg } from "@untitledui/icons";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import type { FC } from "react";
 import { Button } from "@/components/base/buttons/button";
 import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
@@ -20,7 +20,7 @@ export function ReaderTips() {
   return (
     <AnimatePresence>
       {!seen && (
-        <motion.section
+        <m.section
           aria-label="How to use the reader"
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -43,7 +43,7 @@ export function ReaderTips() {
               Got it
             </Button>
           </div>
-        </motion.section>
+        </m.section>
       )}
     </AnimatePresence>
   );

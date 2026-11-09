@@ -1,14 +1,14 @@
 "use client";
 
 import { ArrowRight, BookOpen01 } from "@untitledui/icons";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { Button } from "@/components/base/buttons/button";
 
 /** Closing call to action: a midnight niche with the lantern lit. */
 export function FinalCta() {
   return (
     <section className="px-4 pb-24 md:px-8">
-      <motion.div
+      <m.div
         initial={{ y: 40, scale: 0.97 }}
         whileInView={{ y: 0, scale: 1 }}
         viewport={{ once: true, margin: "-80px" }}
@@ -42,7 +42,7 @@ export function FinalCta() {
             </Button>
           </div>
         </div>
-      </motion.div>
+      </m.div>
     </section>
   );
 }
