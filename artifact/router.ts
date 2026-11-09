@@ -1,3 +1,5 @@
+import { JUZ_STARTS } from "@/lib/constants";
+
 /**
  * Hash router for the single-page build. claude.ai pages only carry plain `#name` hashes,
  * so app paths are mapped to names: /surah/2#v-255 → #surah-2-v-255.
@@ -14,6 +16,12 @@ export function pathToHash(href: string): string {
   const path = url.pathname.replace(/\/+$/, "");
   const frag = url.hash.slice(1);
   // Ayah pages (/surah/2/255) are server-rendered in the full app; here they open the ayah in the reader.
+  // Juz landing pages are server-rendered in the full app; here a juz opens at its first ayah.
+  const juz = path.match(/^\/juz\/(\d+)$/);
+  if (juz) {
+    const start = JUZ_STARTS[Number(juz[1]) - 1];
+    if (start) return `#surah-${start[0]}-v-${start[1]}`;
+  }
   const ayahPage = path.match(/^\/surah\/(\d+)\/(\d+)$/);
   if (ayahPage) return `#surah-${ayahPage[1]}-v-${ayahPage[2]}`;
   const surah = path.match(/^\/surah\/(\d+)$/);

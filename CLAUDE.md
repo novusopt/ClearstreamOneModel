@@ -41,7 +41,9 @@ app/
   surah/[id]/page.tsx     # reader (generateStaticParams → 114 static pages)
   surah/[id]/[ayah]/page.tsx  # ayah page (SEO): Arabic + tajweed, translation, word by word, tafsir, similar ayat,
                           # prev/next; ~90 popular ayat prebuilt, the rest generated on first request (ISR)
-  robots.ts, sitemap.ts   # robots + sitemap (home, 114 surahs, 6,236 ayat)
+  juz/[n]/page.tsx        # juzʾ landing (30, static): surahs, ḥizb quarters, page grid, opening words
+  page/[n]/page.tsx       # mushaf page landing (604): StaticMushafPage + translation; popular pages prebuilt, rest ISR
+  robots.ts, sitemap.ts   # robots + sitemap (home, 114 surahs, 30 juzʾ, 604 pages, 6,236 ayat)
   **/opengraph-image.tsx  # share cards via lib/og/og-card.tsx (Satori; Latin only, it cannot shape Arabic)
   library/page.tsx        # progress & reading plan, bookmarks, notes, memorised (UUI Tabs)
   bookmarks/page.tsx      # same view, Bookmarks tab
@@ -141,7 +143,7 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
 - JSON-LD via `components/seo/json-ld.tsx` + builders in `lib/seo.ts`: WebSite + FAQPage (home), BreadcrumbList + Chapter
   (surah), BreadcrumbList + Quotation (ayah).
 - The surah HTML must contain every ayah: verses not yet upgraded to interactive cards render as `PlainVerse`.
-- Ayah references link to `/surah/{s}/{a}`; famous ayah names live in `lib/ayah-names.ts` (established names only).
+- Ayah references link to `/surah/{s}/{a}`; juzʾ dividers/index link to `/juz/{n}`; mushaf page numbers link to `/page/{n}`; famous ayah names live in `lib/ayah-names.ts` (established names only).
 - Files read at request time by ISR pages/OG images are listed in `outputFileTracingIncludes` (next.config.ts).
 
 ## Performance rules

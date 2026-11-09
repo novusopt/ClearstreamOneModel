@@ -2,7 +2,8 @@ import "server-only";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import chaptersJson from "@/data/quran/chapters.json";
-import type { Chapter, SimilarRef, SurahData } from "@/lib/types";
+import { juzOf } from "@/lib/constants";
+import type { Chapter, SimilarRef, SurahData, Verse } from "@/lib/types";
 
 const chapters = chaptersJson as Chapter[];
 
@@ -34,4 +35,28 @@ export async function getTafsir(lang: string, id: number): Promise<string[]> {
 export async function getSimilar(id: number): Promise<Record<string, SimilarRef[]>> {
   const file = join(process.cwd(), "public", "data", "similar", `${id}.json`);
   return JSON.parse(await readFile(file, "utf8")) as Record<string, SimilarRef[]>;
+}
+
+export interface VerseRef {
+  /** Surah number. */
+  s: number;
+  verse: Verse;
+}
+
+let allVerses: Promise<VerseRef[]> | null = null;
+/** Every ayah in mushaf order (loaded once per server process; used by juz and page landing pages). */
+export function getAllVerses(): Promise<VerseRef[]> {
+  return (allVerses ??= Promise.all(chapters.map((c) => getSurah(c.id))).then((all) =>
+    all.flatMap((d, i) => d.verses.map((verse) => ({ s: i + 1, verse }))),
+  ));
+}
+
+/** The ayat printed on one page (1–604) of the Madani mushaf. */
+export async function getMushafPage(page: number): Promise<VerseRef[]> {
+  return (await getAllVerses()).filter((r) => r.verse.p === page);
+}
+
+/** The ayat of one juzʾ (1–30). */
+export async function getJuz(juz: number): Promise<VerseRef[]> {
+  return (await getAllVerses()).filter((r) => juzOf(r.s, r.verse.n) === juz);
 }

@@ -320,7 +320,7 @@ export function JuzIndex({ chapters }: { chapters: Chapter[] }) {
               transition={{ delay: (i % 6) * 0.04 }}
             >
               <Link
-                href={`/surah/${s}#v-${a}`}
+                href={`/juz/${i + 1}`}
                 className={cx(
                   "group flex h-full flex-col rounded-2xl border border-secondary bg-primary p-4 outline-focus-ring transition hover:-translate-y-0.5 hover:border-brand hover:bg-brand-primary/40 focus-visible:outline-2",
                 )}

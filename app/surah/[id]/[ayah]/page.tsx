@@ -146,13 +146,17 @@ export default async function AyahPage({ params }: { params: Params }) {
             <Badge type="pill-color" size="sm" color={chapter.revelation === "meccan" ? "warning" : "brand"}>
               {chapter.revelation === "meccan" ? "Meccan" : "Medinan"}
             </Badge>
-            <Badge type="modern" size="sm">
-              Juzʾ {juzOf(id, ayah)}
-            </Badge>
-            {verse.p && (
+            <Link href={`/juz/${juzOf(id, ayah)}`} prefetch={false} className="rounded-md outline-focus-ring focus-visible:outline-2">
               <Badge type="modern" size="sm">
-                Page {verse.p}
+                Juzʾ {juzOf(id, ayah)}
               </Badge>
+            </Link>
+            {verse.p && (
+              <Link href={`/page/${verse.p}`} prefetch={false} className="rounded-md outline-focus-ring focus-visible:outline-2">
+                <Badge type="modern" size="sm">
+                  Page {verse.p}
+                </Badge>
+              </Link>
             )}
             {verse.q && (
               <Badge type="pill-color" size="sm" color="warning">
