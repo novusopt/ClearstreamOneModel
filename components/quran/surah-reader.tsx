@@ -1,6 +1,5 @@
 "use client";
 
-import { cx } from "@/utils/cx";
 import { Fragment, useCallback, useEffect, useMemo } from "react";
 import { scrollToElement, useLenis } from "@/components/providers/smooth-scroll";
 import { Basmala } from "@/components/quran/basmala";
@@ -139,7 +138,7 @@ export function SurahReader({ chapter, verses, prev, next, basmala }: SurahReade
   };
 
   return (
-    <div className={cx("mx-auto max-w-5xl px-3 pb-40 sm:px-6 md:pb-24", viewMode === "reading" && "xl:max-w-7xl")}>
+    <div className="mx-auto max-w-5xl px-3 pb-40 sm:px-6 md:pb-24">
       <ReaderBar chapter={chapter} onPlay={togglePlay} pages={pageList} />
       <ResumeBanner surah={chapter.id} total={chapter.versesCount} onResume={resume} />
       <ReaderTips />

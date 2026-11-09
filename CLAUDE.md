@@ -140,7 +140,8 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
   progress rises as lantern light, plus a book-style Contents view. Don't revert to generic list cards.
 - Respect continuity: offer to resume, end each surah with progress and the next surah.
 - Mushaf view = printed-page density: ayat run on in justified lines (last line centred), dense `Word`s one size below
-  verse cards, slim page frames, and from `xl` a two-page spread (odd page right, even left). Don't go back to one block per ayah.
+  verse cards, one page sheet per row (no side-by-side spread) with the arch page-number medallion at the foot.
+  Don't go back to one block per ayah.
 
 ## Accessibility
 
