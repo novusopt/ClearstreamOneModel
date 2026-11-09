@@ -5,6 +5,7 @@ import { Word } from "@/components/quran/word";
 import { AyahMarker } from "@/components/quran/ayah-marker";
 import { HizbMark, quarterLabel } from "@/components/quran/hizb-mark";
 import { usePlayer, useTick } from "@/lib/audio-engine";
+import { useReaderPosition } from "@/lib/reader-position";
 import { juzOf } from "@/lib/constants";
 import { ARABIC_SIZES, useSettings } from "@/lib/settings";
 import type { Verse } from "@/lib/types";
@@ -20,9 +21,19 @@ function ReadingVerse({ verse, index, surah }: { verse: Verse; index: number; su
   const activeWord = useTick((s) => (isCurrent ? s.word : -1));
   const tajweed = useSettings((s) => s.tajweed);
   const size = useSettings(mushafSize);
+  // Only the ayah on the reading line re-renders when the reader scrolls.
+  const onLine = useReaderPosition((s) => s.surah === surah && s.ayah === verse.n);
 
   return (
-    <span id={`v-${verse.n}`} data-ayah={verse.n} className={cx("group/ayah scroll-mt-40 rounded-lg transition-colors duration-500 [box-decoration-break:clone]", isCurrent && "bg-brand-primary/50")}>
+    <span
+      id={`v-${verse.n}`}
+      data-ayah={verse.n}
+      className={cx(
+        "group/ayah scroll-mt-40 rounded-lg transition-colors duration-500 [box-decoration-break:clone]",
+        onLine && !isCurrent && "bg-gold-400/12",
+        isCurrent && "bg-brand-primary/50",
+      )}
+    >
       {verse.q && <HizbMark q={verse.q} className={size} />}
       {verse.w.map((w, i) => (
         <span key={i}>
@@ -47,6 +58,12 @@ function ReadingVerse({ verse, index, surah }: { verse: Verse; index: number; su
   );
 }
 
+/** "Surah:ayah" of the ayah on the reading line, so the header always says where the reader is. */
+function ReadingLineLabel({ surah }: { surah: number }) {
+  const ayah = useReaderPosition((s) => (s.surah === surah ? s.ayah : 0));
+  return <span className="tabular-nums normal-case">{ayah ? `${surah}:${ayah}` : ""}</span>;
+}
+
 /** One printed page: juz header, justified text that runs ayah into ayah, and the page number at the foot. */
 function MushafPage({ page, verses, surah, startIndex, basmala, delay, className }: { page: number; verses: Verse[]; surah: number; startIndex: number; basmala?: React.ReactNode; delay: number; className?: string }) {
   const first = verses[0];
@@ -61,8 +78,10 @@ function MushafPage({ page, verses, surah, startIndex, basmala, delay, className
       transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
       className={cx("relative mx-auto flex w-full max-w-4xl flex-col rounded-3xl border border-secondary bg-primary_alt px-3 pt-3 pb-4 shadow-xs ring-1 ring-gold-400/15 ring-inset sm:px-8 sm:pt-4 sm:pb-5", className)}
     >
-      <header className="flex items-center justify-between border-b border-gold-400/25 pb-2 text-[11px] font-semibold tracking-[0.08em] text-quaternary uppercase">
+      {/* Sticky so the reader always sees the juzʾ and where they are while a long page scrolls. */}
+      <header className="sticky top-16 z-10 -mx-3 flex items-center justify-between border-b border-gold-400/25 bg-primary_alt/90 px-3 pt-3 pb-2 text-[11px] font-semibold tracking-[0.08em] text-quaternary uppercase backdrop-blur-md sm:-mx-8 sm:px-8">
         <span>Juzʾ {juzOf(surah, first.n)}</span>
+        <ReadingLineLabel surah={surah} />
         {first.q ? <span className="text-gold-600 normal-case dark:text-gold-400">{quarterLabel(first.q)}</span> : <span />}
       </header>
       {basmala}
