@@ -61,7 +61,7 @@ const STEPS: Step[] = [
 ];
 
 function Panel({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cx("rounded-3xl border border-secondary bg-primary p-5 shadow-xl sm:p-7", className)}>{children}</div>;
+  return <div className={cx("min-w-0 rounded-3xl border border-secondary bg-primary p-5 shadow-xl sm:p-7", className)}>{children}</div>;
 }
 
 function ReadPanel({ verse }: { verse: Verse }) {
@@ -115,11 +115,11 @@ function UnderstandPanel({ verse, load }: { verse: Verse; load: boolean }) {
 }
 
 type HideMode = "all" | "alternate" | "half" | "first-letter";
-const HIDE_MODES: Array<{ id: HideMode; label: string }> = [
-  { id: "all", label: "All words" },
-  { id: "alternate", label: "Every other" },
-  { id: "half", label: "Second half" },
-  { id: "first-letter", label: "First letters" },
+const HIDE_MODES: Array<{ id: HideMode; label: string; short: string }> = [
+  { id: "all", label: "All words", short: "All" },
+  { id: "alternate", label: "Every other", short: "Alternate" },
+  { id: "half", label: "Second half", short: "½" },
+  { id: "first-letter", label: "First letters", short: "1st letters" },
 ];
 
 function hiddenBy(mode: HideMode, i: number, count: number) {
@@ -156,8 +156,9 @@ function MemorisePanel({ verse }: { verse: Verse }) {
         className="max-w-full overflow-x-auto"
       >
         {HIDE_MODES.map((m) => (
-          <ButtonGroupItem key={m.id} id={m.id}>
-            {m.label}
+          <ButtonGroupItem key={m.id} id={m.id} aria-label={m.label}>
+            <span className="sm:hidden">{m.short}</span>
+            <span className="hidden sm:inline">{m.label}</span>
           </ButtonGroupItem>
         ))}
       </ButtonGroup>
@@ -307,12 +308,12 @@ export function Journey({ verse }: { verse: Verse }) {
         </div>
 
         <div className="mt-12 grid gap-x-16 lg:mt-4 lg:grid-cols-2">
-          <div>
+          <div className="min-w-0">
             {STEPS.map((s, i) => (
               <StepBlock key={s.id} step={s} index={i} active={active === i} onActive={setActive} verse={verse} load={near} />
             ))}
           </div>
-          <div className="hidden lg:block">
+          <div className="hidden min-w-0 lg:block">
             <div className="sticky top-[calc(50vh-15rem)]">
               <div className="mb-4 flex items-center gap-2">
                 {STEPS.map((s, i) => (

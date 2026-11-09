@@ -57,6 +57,8 @@ npm run dev        # http://localhost:3000
 npm run build      # pre-renders all 114 surahs
 ```
 
+Live: https://mishkah-livid.vercel.app (Vercel project `mishkah`; deploy with `vercel deploy --prod`, `.vercelignore` keeps build output and caches out of the upload).
+
 The dataset is committed. To regenerate it from upstream run `npm run data`, which needs network access to GitHub and npm.
 
 ## Credits & licences
