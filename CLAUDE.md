@@ -190,8 +190,7 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
 - Mushaf view = printed-page density: ayat run on in justified lines (last line centred), dense `Word`s one size below
   verse cards, one page sheet per row (no side-by-side spread) with the arch page-number medallion at the foot.
   Don't go back to one block per ayah.
-- Mushaf pages turn in like a book leaf as they scroll into view (scroll-linked `rotateY` hinged on the right,
-  the bound edge of an Arabic mushaf; shade + sheen overlays; off under reduced motion). The page header is not sticky.
+- The mushaf page header is not sticky, and pages don't animate in.
 
 ## Accessibility
 

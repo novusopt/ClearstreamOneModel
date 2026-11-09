@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  m,
-  useMotionTemplate,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "motion/react";
+import { m, useScroll } from "motion/react";
 import { useRef } from "react";
 import { Word } from "@/components/quran/word";
 import { AyahMarker } from "@/components/quran/ayah-marker";
@@ -107,54 +101,24 @@ function MushafPage({
   const first = verses[0];
   const size = useSettings(mushafSize);
   const ref = useRef<HTMLElement>(null);
-  const reduce = useReducedMotion();
   // Page-by-page walk: the gold line under the header fills as this page moves through the reading line.
   const { scrollYProgress: walk } = useScroll({
     target: ref,
     offset: ["start 0.6", "end 0.6"],
   });
-  // Page turn: as a page rises into view it swings in from the spine like a turned leaf. The mushaf is
-  // bound on the right (Arabic), so the hinge is the right edge and the free edge lifts towards the reader.
-  const { scrollYProgress: turn } = useScroll({
-    target: ref,
-    offset: ["start end", "start 0.35"],
-  });
-  const rotateY = useTransform(
-    turn,
-    [0, 0.55, 1],
-    reduce ? [0, 0, 0] : [78, 22, 0],
-  );
-  const shade = useTransform(
-    turn,
-    [0, 0.7, 1],
-    reduce ? [0, 0, 0] : [0.55, 0.12, 0],
-  );
-  const sheen = useTransform(
-    turn,
-    [0, 0.45, 1],
-    reduce ? ["-120%", "-120%", "-120%"] : ["-120%", "60%", "220%"],
-  );
-  const lift = useTransform(turn, [0, 1], reduce ? [0, 0] : [0.28, 0]);
-  const shadow = useMotionTemplate`0 30px 60px -20px rgb(0 0 0 / ${lift})`;
 
   return (
     <div>
-      <m.section
+      <section
         ref={ref}
         aria-label={`Page ${page}`}
         dir="ltr"
-        style={{
-          rotateY,
-          transformPerspective: 1800,
-          boxShadow: shadow,
-          transformOrigin: "100% 12%",
-        }}
         className={cx(
           "relative mx-auto flex w-full max-w-4xl flex-col rounded-3xl border border-secondary bg-primary_alt px-3 pt-3 pb-4 shadow-xs ring-1 ring-gold-400/15 ring-inset sm:px-8 sm:pt-4 sm:pb-5",
           className,
         )}
       >
-        {/* Effects live in a clipped layer so the page itself never clips a word's meaning card. */}
+        {/* Clipped decoration layer, so the page itself never clips a word's meaning card. */}
         <span
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-20 overflow-hidden rounded-[inherit]"
@@ -163,17 +127,6 @@ function MushafPage({
           <span
             aria-hidden="true"
             className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-linear-to-l from-black/[0.06] to-transparent dark:from-black/30"
-          />
-          {/* While turning: the lifted leaf darkens towards its free edge and a light sheen sweeps across it. */}
-          <m.span
-            aria-hidden="true"
-            style={{ opacity: shade }}
-            className="pointer-events-none absolute inset-0 z-20 bg-linear-to-r from-black/45 via-black/10 to-transparent"
-          />
-          <m.span
-            aria-hidden="true"
-            style={{ x: sheen }}
-            className="pointer-events-none absolute inset-y-0 left-0 z-20 w-1/2 -skew-x-12 bg-linear-to-r from-transparent via-white/30 to-transparent mix-blend-soft-light dark:via-white/[0.06] dark:mix-blend-normal"
           />
         </span>
 
@@ -215,7 +168,7 @@ function MushafPage({
           page={page}
           href={IS_ARTIFACT ? undefined : `/page/${page}`}
         />
-      </m.section>
+      </section>
     </div>
   );
 }
