@@ -139,6 +139,8 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
 - The surah index is Mishkah's own: arched niches (Meccan = gold, Medinan = indigo) where reading
   progress rises as lantern light, plus a book-style Contents view. Don't revert to generic list cards.
 - Respect continuity: offer to resume, end each surah with progress and the next surah.
+- Mushaf view = printed-page density: ayat run on in justified lines (last line centred), dense `Word`s one size below
+  verse cards, slim page frames, and from `xl` a two-page spread (odd page right, even left). Don't go back to one block per ayah.
 
 ## Accessibility
 
