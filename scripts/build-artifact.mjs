@@ -40,6 +40,9 @@ const js = await build({
   define: {
     "process.env.NODE_ENV": '"production"',
     "process.env.NEXT_PUBLIC_ARTIFACT": '"1"',
+    // lib/site.ts (canonical origin) is shared with the Next app; these are server/Vercel-only.
+    "process.env.NEXT_PUBLIC_SITE_URL": "undefined",
+    "process.env.VERCEL_PROJECT_PRODUCTION_URL": "undefined",
   },
   alias: {
     "next/link": join(ROOT, "artifact/shims/next-link.tsx"),
@@ -47,6 +50,10 @@ const js = await build({
   },
 });
 const script = js.outputFiles[0].text.replace(/<\/script/gi, "<\\/script");
+// The page has no Node globals: any process.env left in the bundle would throw at runtime and blank the page.
+if (/\bprocess\.env\b/.test(script)) {
+  throw new Error("build-artifact: unresolved process.env in the bundle; add it to `define` above.");
+}
 
 // 2. CSS (Tailwind v4 over the same globals.css) + inlined fonts
 const cssFile = join(ROOT, "app/globals.css");
