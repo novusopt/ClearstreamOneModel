@@ -116,6 +116,7 @@ function stopLoop() {
 
 function loadIndex(index: number, autoplay: boolean, seekMs?: number) {
   clearPause();
+  resumeAdvances = false;
   const el = ensureAudio();
   const { verses, surah } = playerStore.get();
   const v = verses[index];
@@ -142,6 +143,8 @@ function preloadNext(index: number) {
 }
 
 let pauseTimer = 0;
+/** Set when the listener paused during a teaching pause: the next play continues with the next ayah. */
+let resumeAdvances = false;
 
 function clearPause() {
   if (pauseTimer) window.clearTimeout(pauseTimer);
@@ -219,8 +222,14 @@ export const player = {
   },
   toggle() {
     if (playerStore.get().status === "repeat") {
-      // Skip the rest of the teaching pause.
+      // Pause during the teaching pause: stop the countdown; playing again moves on to the next ayah.
       clearPause();
+      resumeAdvances = true;
+      playerStore.set({ status: "paused" });
+      return;
+    }
+    if (resumeAdvances) {
+      resumeAdvances = false;
       advance();
       return;
     }

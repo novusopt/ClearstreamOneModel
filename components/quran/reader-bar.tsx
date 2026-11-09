@@ -26,10 +26,15 @@ function Position({ chapter, pages }: { chapter: Chapter; pages?: Array<number |
         <span className="block truncate text-sm font-semibold text-primary">{chapter.nameSimple}</span>
         <span className="block h-4 overflow-hidden text-xs text-tertiary tabular-nums">
           <AnimatePresence mode="popLayout" initial={false}>
-            <motion.span key={ayah} initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -10, opacity: 0 }} className="block">
-              {ayah
-                ? `Ayah ${ayah} of ${chapter.versesCount}${pages?.[ayah - 1] ? ` · Page ${pages[ayah - 1]}` : ""} · Juzʾ ${juzOf(chapter.id, ayah)}`
-                : `${chapter.versesCount} ayat · ${chapter.nameTranslation}`}
+            <motion.span key={ayah} initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -10, opacity: 0 }} className="block whitespace-nowrap">
+              {ayah ? (
+                <>
+                  Ayah {ayah} of {chapter.versesCount}
+                  {pages?.[ayah - 1] ? <span className="hidden xl:inline"> · Page {pages[ayah - 1]}</span> : null} · Juzʾ {juzOf(chapter.id, ayah)}
+                </>
+              ) : (
+                `${chapter.versesCount} ayat · ${chapter.nameTranslation}`
+              )}
             </motion.span>
           </AnimatePresence>
         </span>
@@ -97,7 +102,7 @@ interface ReaderBarProps {
 export function ReaderBar({ chapter, onPlay, pages }: ReaderBarProps) {
   const viewMode = useSettings((s) => s.viewMode);
   const isThisSurah = usePlayer((s) => s.surah === chapter.id);
-  const isPlaying = usePlayer((s) => s.surah === chapter.id && (s.status === "playing" || s.status === "loading"));
+  const isPlaying = usePlayer((s) => s.surah === chapter.id && (s.status === "playing" || s.status === "loading" || s.status === "repeat"));
   const playerOpen = usePlayer((s) => s.surah != null);
   // When the site header slides back in, tuck the sticky bar beneath it instead of under it.
   const headerVisible = useChrome((c) => c.headerVisible);

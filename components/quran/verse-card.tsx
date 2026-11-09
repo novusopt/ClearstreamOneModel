@@ -38,7 +38,7 @@ interface VerseCardProps {
 
 export const VerseCard = memo(function VerseCard({ verse, index, surah, surahName, translation, translationRtl, sajdah = false, similar, onPlay }: VerseCardProps) {
   const isCurrent = usePlayer((s) => s.surah === surah && s.index === index && s.status !== "idle");
-  const isPlaying = usePlayer((s) => s.surah === surah && s.index === index && (s.status === "playing" || s.status === "loading"));
+  const isPlaying = usePlayer((s) => s.surah === surah && s.index === index && (s.status === "playing" || s.status === "loading" || s.status === "repeat"));
   const activeWord = useTick((s) => (isCurrent ? s.word : -1));
   const bookmarked = useLibrary((s) => s.bookmarks.includes(verseKey(surah, verse.n)));
   const note = useLibrary((s) => s.notes[verseKey(surah, verse.n)]?.text ?? null);
