@@ -6,6 +6,7 @@ import { Toggle } from "@/components/base/toggle/toggle";
 import { SlideoutMenu } from "@/components/application/slideout-menus/slideout-menu";
 import { TajweedLegend } from "@/components/quran/tajweed-legend";
 import { player } from "@/lib/audio-engine";
+import { ReciterAvatar } from "@/components/quran/reciter-avatar";
 import { RECITERS, TAFSIR_LANGS, TAFSIR_SOURCE, TRANSLATIONS } from "@/lib/constants";
 import { applyPreset, currentPreset, DISPLAY_PRESETS, type DisplayPreset, setSettings, useSettings } from "@/lib/settings";
 import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
@@ -139,9 +140,9 @@ export default function ReaderSettingsPanel() {
                   setSettings({ reciter: String(k) });
                   player.reload();
                 }}
-                items={RECITERS.map((r) => ({ id: r.id, label: r.name, supportingText: r.style }))}
+                items={RECITERS.map((r) => ({ id: r.id, label: r.name, supportingText: r.style, icon: <ReciterAvatar reciter={r} size="xs" /> }))}
               >
-                {(item) => <Select.Item id={item.id} label={item.label} supportingText={item.supportingText} />}
+                {(item) => <Select.Item id={item.id} label={item.label} supportingText={item.supportingText} icon={item.icon} />}
               </Select>
               <Toggle label="Auto-scroll while playing" isSelected={s.autoScroll} onChange={(v) => setSettings({ autoScroll: v })} />
               <Select

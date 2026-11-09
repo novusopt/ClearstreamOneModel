@@ -13,14 +13,21 @@ export interface Reciter {
   bitrate: number;
   /** Fallback source: everyayah.com folder, keyed by SSSAAA. */
   everyayah: string;
+  /** Name in Arabic; its emblem letter is `letter` (the name the reciter is known by). */
+  arabic: string;
+  letter: string;
+  /** Avatar tone (see components/quran/reciter-avatar.tsx). */
+  tone: "gold" | "indigo" | "emerald" | "sky" | "purple";
+  /** Optional licensed portrait (public URL); the emblem is shown when absent. */
+  photo?: string;
 }
 
 export const RECITERS: Reciter[] = [
-  { id: "husary", name: "Mahmoud Khalil Al-Husary", style: "Murattal · word sync", wordSync: true, edition: "ar.husary", bitrate: 128, everyayah: "Husary_64kbps" },
-  { id: "alafasy", name: "Mishary Rashid Alafasy", style: "Murattal", wordSync: false, edition: "ar.alafasy", bitrate: 128, everyayah: "Alafasy_128kbps" },
-  { id: "abdulbasit", name: "Abdul Basit Abdus Samad", style: "Murattal", wordSync: false, edition: "ar.abdulbasitmurattal", bitrate: 192, everyayah: "Abdul_Basit_Murattal_192kbps" },
-  { id: "minshawi", name: "Mohamed Siddiq Al-Minshawi", style: "Murattal", wordSync: false, edition: "ar.minshawi", bitrate: 128, everyayah: "Minshawy_Murattal_128kbps" },
-  { id: "sudais", name: "Abdur-Rahman As-Sudais", style: "Murattal", wordSync: false, edition: "ar.abdurrahmaansudais", bitrate: 192, everyayah: "Abdurrahmaan_As-Sudais_192kbps" },
+  { id: "husary", name: "Mahmoud Khalil Al-Husary", style: "Murattal · word sync", wordSync: true, edition: "ar.husary", bitrate: 128, everyayah: "Husary_64kbps", arabic: "محمود خليل الحصري", letter: "ح", tone: "gold" },
+  { id: "alafasy", name: "Mishary Rashid Alafasy", style: "Murattal", wordSync: false, edition: "ar.alafasy", bitrate: 128, everyayah: "Alafasy_128kbps", arabic: "مشاري راشد العفاسي", letter: "ع", tone: "indigo" },
+  { id: "abdulbasit", name: "Abdul Basit Abdus Samad", style: "Murattal", wordSync: false, edition: "ar.abdulbasitmurattal", bitrate: 192, everyayah: "Abdul_Basit_Murattal_192kbps", arabic: "عبد الباسط عبد الصمد", letter: "ب", tone: "emerald" },
+  { id: "minshawi", name: "Mohamed Siddiq Al-Minshawi", style: "Murattal", wordSync: false, edition: "ar.minshawi", bitrate: 128, everyayah: "Minshawy_Murattal_128kbps", arabic: "محمد صديق المنشاوي", letter: "م", tone: "sky" },
+  { id: "sudais", name: "Abdur-Rahman As-Sudais", style: "Murattal", wordSync: false, edition: "ar.abdurrahmaansudais", bitrate: 192, everyayah: "Abdurrahmaan_As-Sudais_192kbps", arabic: "عبد الرحمن السديس", letter: "س", tone: "purple" },
 ];
 
 export const DEFAULT_RECITER = "husary";

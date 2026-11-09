@@ -3,7 +3,7 @@
 import { FastForward, Microphone01, PauseCircle, PlayCircle, Repeat04, SkipBack, SkipForward, XClose } from "@untitledui/icons";
 import { AnimatePresence, m } from "motion/react";
 import Link from "next/link";
-import { Avatar } from "@/components/base/avatar/avatar";
+import { ReciterAvatar } from "@/components/quran/reciter-avatar";
 import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { Slider } from "@/components/base/slider/slider";
@@ -15,13 +15,6 @@ import { formatTime } from "@/lib/utils";
 import { cx } from "@/utils/cx";
 
 const RATES = [0.75, 1, 1.25, 1.5];
-const initials = (name: string) =>
-  name
-    .split(" ")
-    .filter((w) => /^[A-Z]/.test(w))
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("");
 const REPEAT_LABEL = { off: "Repeat off", ayah: "Repeat ayah", surah: "Repeat surah" } as const;
 const REPEAT_NEXT = { off: "ayah", ayah: "surah", surah: "off" } as const;
 
@@ -106,7 +99,7 @@ export default function AudioPlayerBarContent() {
         >
           <div className="mx-auto flex max-w-4xl flex-col gap-2 rounded-2xl bg-primary/85 p-3 shadow-xl ring-1 ring-secondary_alt backdrop-blur-xl md:flex-row md:items-center md:gap-5 md:px-5">
             <div className="flex min-w-0 items-center gap-3 md:w-60">
-              <Avatar size="md" initials={initials(reciter.name)} alt={reciter.name} />
+              <ReciterAvatar reciter={reciter} size="md" />
               <div className="min-w-0 flex-1">
                 <Link href={`/surah/${surah}#v-${ayah}`} className="flex items-center gap-2 truncate text-sm font-semibold text-primary hover:underline">
                   {surahName} <span className="text-tertiary tabular-nums">{surah}:{ayah}</span>

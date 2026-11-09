@@ -1,15 +1,16 @@
 "use client";
 
 import { useUi } from "@/components/providers/ui-messages";
-import { RECITERS } from "@/lib/constants";
+import { ReciterAvatar } from "@/components/quran/reciter-avatar";
+import { RECITERS, type Reciter } from "@/lib/constants";
 import type { Messages } from "@/lib/ui-messages/en";
 
-const sourcesFor = (t: Messages["sources"]) => [
+const sourcesFor = (t: Messages["sources"]): { name: string; note: string; reciter?: Reciter }[] => [
   { name: "Tanzil", note: t.uthmani },
   { name: "Saheeh International", note: t.english },
   { name: "QuranEnc", note: t.translations },
   { name: "Al-Mukhtaṣar", note: t.tafsir },
-  ...RECITERS.map((r) => ({ name: r.name, note: r.wordSync ? t.synced : t.recitation })),
+  ...RECITERS.map((r) => ({ name: r.name, note: r.wordSync ? t.synced : t.recitation, reciter: r })),
   { name: "Madani Mushaf", note: t.pages },
   { name: "Mutashābihāt", note: t.lookalike },
 ];
@@ -22,9 +23,13 @@ export function SourcesMarquee() {
     <ul aria-hidden={hidden || undefined} className="flex shrink-0">
       {SOURCES.map((s) => (
         <li key={s.name} className="flex shrink-0 items-center gap-3 px-6">
-          <span aria-hidden="true" className="text-gold-500">
-            ۞
-          </span>
+          {s.reciter ? (
+            <ReciterAvatar reciter={s.reciter} size="xs" />
+          ) : (
+            <span aria-hidden="true" className="text-gold-500">
+              ۞
+            </span>
+          )}
           <span className="text-md font-semibold whitespace-nowrap text-secondary">{s.name}</span>
           <span className="text-sm whitespace-nowrap text-quaternary">{s.note}</span>
         </li>

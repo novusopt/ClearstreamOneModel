@@ -6,8 +6,9 @@ import { type FC, type MouseEvent, type ReactNode, useEffect, useRef, useState }
 import { Badge } from "@/components/base/badges/badges";
 import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
 import { useUi } from "@/components/providers/ui-messages";
+import { ReciterAvatar, ReciterStack } from "@/components/quran/reciter-avatar";
 import { TajweedText } from "@/components/quran/tajweed-text";
-import { TAJWEED_RULES } from "@/lib/constants";
+import { RECITERS, TAJWEED_RULES } from "@/lib/constants";
 import type { Verse } from "@/lib/types";
 import { cx } from "@/utils/cx";
 
@@ -170,7 +171,10 @@ function AudioDemo() {
         ))}
       </div>
       <div className="mt-4 flex items-center gap-3 text-xs text-tertiary">
-        <span className="font-semibold text-secondary">Al-Husary</span>
+        <span className="flex items-center gap-2 font-semibold text-secondary">
+          <ReciterAvatar reciter={RECITERS[0]} size="xs" />
+          Al-Husary
+        </span>
         <span className="h-1 flex-1 overflow-hidden rounded-full bg-quaternary">
           <m.span
             className="block h-full rounded-full bg-brand-solid"
@@ -179,7 +183,10 @@ function AudioDemo() {
             transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
           />
         </span>
-        <span>{useUi().m.bento.reciters}</span>
+        <span className="flex items-center gap-2">
+          <ReciterStack reciters={RECITERS} size="xs" />
+          {useUi().m.bento.reciters}
+        </span>
       </div>
     </div>
   );
