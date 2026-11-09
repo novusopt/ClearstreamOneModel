@@ -55,9 +55,11 @@ interface SurahReaderProps {
   next: Chapter | null;
   /** Ayah 1:1 — the Basmala shown at the top of every surah except 1 and 9. */
   basmala: Verse;
+  /** Rendered after the end-of-surah card (e.g. links to the surah in other languages). */
+  footer?: React.ReactNode;
 }
 
-export function SurahReader({ chapter, verses, prev, next, basmala }: SurahReaderProps) {
+export function SurahReader({ chapter, verses, prev, next, basmala, footer }: SurahReaderProps) {
   const lenis = useLenis();
   const viewMode = useSettings((s) => s.viewMode);
   const lang = useSettings((s) => s.translation);
@@ -85,6 +87,16 @@ export function SurahReader({ chapter, verses, prev, next, basmala }: SurahReade
     (index: number) => player.play(chapter.id, chapter.nameSimple, audioVerses, index),
     [chapter.id, chapter.nameSimple, audioVerses],
   );
+
+  // "?t=fr" (links from the localized pages): open with that translation selected, then tidy the URL.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const want = url.searchParams.get("t");
+    if (!want) return;
+    if (TRANSLATIONS.some((x) => x.id === want)) setSettings({ translation: want });
+    url.searchParams.delete("t");
+    window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+  }, []);
 
   // Follow the recitation: scroll the active ayah into view.
   useEffect(() => {
@@ -233,6 +245,7 @@ export function SurahReader({ chapter, verses, prev, next, basmala }: SurahReade
 
       <VerseDialogs />
       <SurahEnd chapter={chapter} prev={prev} next={next} />
+      {footer}
     </div>
   );
 }

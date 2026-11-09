@@ -86,11 +86,13 @@ function main() {
   const translit = readJson(join(QURAN_JSON, "quran_transliteration.json"));
   const langs = Object.fromEntries(LANGS.map((l) => [l, readJson(join(QURAN_JSON, `quran_${l}.json`))]));
 
-  const chapters = en.map((c) => ({
+  const chapters = en.map((c, i) => ({
     id: c.id,
     nameArabic: c.name,
     nameSimple: c.transliteration,
     nameTranslation: c.translation,
+    // Surah name meaning per translation language (used by the localized /{lang}/ pages).
+    names: Object.fromEntries(LANGS.map((l) => [l, langs[l][i].translation])),
     revelation: c.type,
     versesCount: c.total_verses,
   }));

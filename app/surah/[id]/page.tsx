@@ -6,7 +6,9 @@ import { ScrollProgress } from "@/components/site/scroll-progress";
 import { JsonLd } from "@/components/seo/json-ld";
 import { getChapter, getChapters, getSurah, isValidSurahId } from "@/lib/quran";
 import { breadcrumbLd, surahLd } from "@/lib/seo";
+import { languageAlternates } from "@/lib/i18n";
 import { surahPath } from "@/lib/site";
+import { LanguageLinks } from "@/components/quran/language-links";
 
 export const dynamicParams = false;
 
@@ -23,7 +25,7 @@ export async function generateMetadata({ params }: PageProps<"/surah/[id]">): Pr
   return {
     title,
     description,
-    alternates: { canonical: surahPath(chapter.id) },
+    alternates: { canonical: surahPath(chapter.id), languages: languageAlternates(surahPath(chapter.id)) },
     openGraph: { type: "article", url: surahPath(chapter.id), title: `Surah ${chapter.nameSimple} (${chapter.nameTranslation})`, description },
   };
 }
@@ -54,6 +56,7 @@ export default async function SurahPage({ params }: PageProps<"/surah/[id]">) {
         prev={getChapter(id - 1) ?? null}
         next={getChapter(id + 1) ?? null}
         basmala={fatihah.verses[0]}
+        footer={<LanguageLinks current="en" path={surahPath(id)} className="mt-10 justify-center" />}
       />
     </>
   );

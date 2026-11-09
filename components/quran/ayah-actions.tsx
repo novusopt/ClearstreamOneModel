@@ -13,10 +13,14 @@ interface AyahActionsProps {
   audio: AudioVerse;
   title: string;
   contextHref: string;
+  /** Localized button labels (English by default). */
+  labels?: { listen: string; pause: string; context: string; share: string; linkCopied: string };
 }
 
+const EN_LABELS = { listen: "Listen", pause: "Pause", context: "Read in context", share: "Share", linkCopied: "Link copied" };
+
 /** Interactive island on the (otherwise server-rendered) ayah page: listen, read in context, share. */
-export function AyahActions({ surah, surahName, audio, title, contextHref }: AyahActionsProps) {
+export function AyahActions({ surah, surahName, audio, title, contextHref, labels = EN_LABELS }: AyahActionsProps) {
   const playing = usePlayer((s) => s.surah === surah && s.verses.length === 1 && s.verses[0]?.n === audio.n && (s.status === "playing" || s.status === "loading" || s.status === "repeat"));
 
   const share = async () => {
@@ -26,7 +30,7 @@ export function AyahActions({ surah, surahName, audio, title, contextHref }: Aya
       return;
     }
     await navigator.clipboard.writeText(url);
-    notify.success("Link copied", { description: title });
+    notify.success(labels.linkCopied, { description: title });
   };
 
   return (
@@ -36,13 +40,13 @@ export function AyahActions({ surah, surahName, audio, title, contextHref }: Aya
         iconLeading={playing ? PauseCircle : PlayCircle}
         onPress={() => (playing ? player.toggle() : player.play(surah, surahName, [audio], 0))}
       >
-        {playing ? "Pause" : "Listen"}
+        {playing ? labels.pause : labels.listen}
       </Button>
       <Button size="md" color="secondary" iconLeading={BookOpen01} href={contextHref}>
-        Read in context
+        {labels.context}
       </Button>
       <Button size="md" color="tertiary" iconLeading={Share07} onPress={share}>
-        Share
+        {labels.share}
       </Button>
     </div>
   );

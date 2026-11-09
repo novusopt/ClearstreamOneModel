@@ -50,17 +50,26 @@ export function surahLd(chapter: Chapter) {
   };
 }
 
-export function ayahLd(chapter: Chapter, ayah: number, arabic: string, translation: string, name?: string) {
+export function ayahLd(
+  chapter: Chapter,
+  ayah: number,
+  arabic: string,
+  translation: string,
+  name?: string,
+  /** Language and translator of `translation`, and the page path when it is a localized page. */
+  opts: { lang?: string; translator?: string; path?: string } = {},
+) {
+  const path = opts.path ?? ayahPath(chapter.id, ayah);
   return {
     "@context": "https://schema.org",
     "@type": "Quotation",
-    "@id": `${absoluteUrl(ayahPath(chapter.id, ayah))}#ayah`,
-    url: absoluteUrl(ayahPath(chapter.id, ayah)),
+    "@id": `${absoluteUrl(path)}#ayah`,
+    url: absoluteUrl(path),
     name: `${chapter.nameSimple} ${chapter.id}:${ayah}${name ? ` (${name})` : ""}`,
     text: arabic,
     inLanguage: "ar",
     position: ayah,
-    workTranslation: { "@type": "CreativeWork", inLanguage: "en", text: translation, author: { "@type": "Person", name: "Saheeh International" } },
+    workTranslation: { "@type": "CreativeWork", inLanguage: opts.lang ?? "en", text: translation, author: { "@type": "Person", name: opts.translator ?? "Saheeh International" } },
     isPartOf: { "@type": "Chapter", "@id": `${absoluteUrl(surahPath(chapter.id))}#surah`, name: `Surah ${chapter.nameSimple}`, isPartOf: QURAN_BOOK },
   };
 }

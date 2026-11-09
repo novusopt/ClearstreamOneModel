@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
     "/surah/[id]/opengraph-image": ["./data/quran/**", "./lib/og/fonts/**"],
     "/opengraph-image": ["./lib/og/fonts/**"],
     "/page/[n]": ["./data/quran/**"],
+    "/[lang]/surah/[id]": ["./data/quran/**", "./public/data/translations/**"],
+    "/[lang]/surah/[id]/[ayah]": ["./data/quran/**", "./public/data/translations/**", "./public/data/tafsir/**", "./public/data/similar/**"],
   },
   experimental: {
     // Import only the icons/helpers actually used from these barrel packages.

@@ -41,9 +41,12 @@ app/
   surah/[id]/page.tsx     # reader (generateStaticParams → 114 static pages)
   surah/[id]/[ayah]/page.tsx  # ayah page (SEO): Arabic + tajweed, translation, word by word, tafsir, similar ayat,
                           # prev/next; ~90 popular ayat prebuilt, the rest generated on first request (ISR)
+  [lang]/surah/[id]/…     # localized surah + ayah pages for the 9 translation languages (fr es id tr ur bn ru zh sv):
+                          # server-rendered, hreflang-linked, ISR; strings in lib/i18n.ts; ayah pages share
+                          # components/quran/ayah-view.tsx + lib/ayah-page.ts with the English route
   juz/[n]/page.tsx        # juzʾ landing (30, static): surahs, ḥizb quarters, page grid, opening words
   page/[n]/page.tsx       # mushaf page landing (604): StaticMushafPage + translation; popular pages prebuilt, rest ISR
-  robots.ts, sitemap.ts   # robots + sitemap (home, 114 surahs, 30 juzʾ, 604 pages, 6,236 ayat)
+  robots.ts, sitemap.ts   # robots + one sitemap per language (/sitemap/en.xml … /sitemap/sv.xml)
   **/opengraph-image.tsx  # share cards via lib/og/og-card.tsx (Satori; Latin only, it cannot shape Arabic)
   library/page.tsx        # progress & reading plan, bookmarks, notes, memorised (UUI Tabs)
   bookmarks/page.tsx      # same view, Bookmarks tab
@@ -145,6 +148,11 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
 - The surah HTML must contain every ayah: verses not yet upgraded to interactive cards render as `PlainVerse`.
 - Ayah references link to `/surah/{s}/{a}`; juzʾ dividers/index link to `/juz/{n}`; mushaf page numbers link to `/page/{n}`; famous ayah names live in `lib/ayah-names.ts` (established names only).
 - Files read at request time by ISR pages/OG images are listed in `outputFileTracingIncludes` (next.config.ts).
+- Languages: English is unprefixed; `/{lang}/…` for LOCALES in `lib/i18n.ts`. Surah and ayah pages (both languages)
+  carry `alternates.languages` (`languageAlternates`) and a `LanguageLinks` switcher. Localized pages set `lang`/`dir`
+  on their article and `HtmlLang` for the document (never `dir` on html: the English header would mirror).
+  Word-by-word glosses are English only; tafsir falls back to English for ur/sv (labelled). `?t={lang}` on a surah
+  URL opens the reader with that translation. Surah-name meanings per language come from `chapters.json` `names`.
 
 ## Performance rules
 

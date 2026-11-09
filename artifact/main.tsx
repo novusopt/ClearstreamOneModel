@@ -35,7 +35,7 @@ import chaptersJson from "@/data/quran/chapters.json";
 import type { Chapter, SurahData, Verse } from "@/lib/types";
 import { navigate, onRouteRequest, parseHash, pathToHash, type Route } from "./router";
 
-const chapters = chaptersJson as Chapter[];
+const chapters = chaptersJson as unknown as Chapter[];
 
 const cache = new Map<string, Promise<unknown>>();
 function load<T>(file: string): Promise<T> {

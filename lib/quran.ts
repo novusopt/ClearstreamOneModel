@@ -5,7 +5,7 @@ import chaptersJson from "@/data/quran/chapters.json";
 import { juzOf } from "@/lib/constants";
 import type { Chapter, SimilarRef, SurahData, Verse } from "@/lib/types";
 
-const chapters = chaptersJson as Chapter[];
+const chapters = chaptersJson as unknown as Chapter[];
 
 export function getChapters(): Chapter[] {
   return chapters;
@@ -59,4 +59,11 @@ export async function getMushafPage(page: number): Promise<VerseRef[]> {
 /** The ayat of one juzʾ (1–30). */
 export async function getJuz(juz: number): Promise<VerseRef[]> {
   return (await getAllVerses()).filter((r) => juzOf(r.s, r.verse.n) === juz);
+}
+
+/** A translation of one surah (one string per ayah), for the localized pages. English comes from the surah file. */
+export async function getTranslation(lang: string, id: number): Promise<string[]> {
+  if (lang === "en") return (await getSurah(id)).verses.map((v) => v.en);
+  const file = join(process.cwd(), "public", "data", "translations", lang, `${id}.json`);
+  return JSON.parse(await readFile(file, "utf8")) as string[];
 }

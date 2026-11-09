@@ -36,6 +36,8 @@ export interface Chapter {
   nameArabic: string;
   nameSimple: string;
   nameTranslation: string;
+  /** Surah name meaning per translation language (fr, es, id, tr, ur, bn, ru, zh, sv). */
+  names?: Record<string, string>;
   revelation: "meccan" | "medinan";
   versesCount: number;
   /** First and last Madani mushaf page. */
