@@ -7,15 +7,16 @@ import { Badge } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
 import Link from "next/link";
 import { HeroShowcase } from "@/components/home/hero-showcase";
+import { useUi } from "@/components/providers/ui-messages";
+import { fmt } from "@/lib/ui-format";
 import { useLibrary } from "@/lib/library";
 import { cx } from "@/utils/cx";
 import type { Chapter, Verse } from "@/lib/types";
 
-const HEADLINE = ["A", "lantern", "for", "the", "Qurʾān."];
-
-const TRUST = ["Free, no account", "Private: saved on your device", "Works offline"];
-
 export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Verse[] }) {
+  const { m: t, href, lang } = useUi();
+  // Chinese headlines are not space-separated.
+  const wordGap = lang === "zh" ? "" : " ";
   const lastRead = useLibrary((s) => s.lastRead);
   const resume = lastRead ? chapters[lastRead.surah - 1] : null;
   const ref = useRef<HTMLElement>(null);
@@ -62,60 +63,60 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
           </span>
         </m.p>
         <p className="enter mt-2 text-sm text-tertiary italic" style={{ animationDelay: "0.6s" }}>
-          “Allah is the Light of the heavens and the earth” — An-Nūr 24:35
+          {t.hero.verseGloss}
         </p>
 
         <div className="enter mt-8 flex justify-center" style={{ animationDelay: "0.25s" }}>
           <Link
-            href="/#journey"
+            href={href("/#journey")}
             className="group inline-flex items-center gap-3 rounded-full border border-secondary bg-primary/80 py-1 pr-3 pl-1 text-sm font-medium text-secondary shadow-xs backdrop-blur transition hover:border-brand hover:text-primary outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             <Badge type="pill-color" color="brand" size="sm">
-              New
+              {t.hero.newBadge}
             </Badge>
-            Tafsir in 9 languages and memorisation review
-            <ArrowRight aria-hidden="true" className="size-4 text-fg-quaternary transition group-hover:translate-x-0.5 group-hover:text-fg-brand-secondary" />
+            {t.hero.newText}
+            <ArrowRight aria-hidden="true" className="size-4 text-fg-quaternary transition group-hover:translate-x-0.5 group-hover:text-fg-brand-secondary rtl:rotate-180 rtl:group-hover:-translate-x-0.5" />
           </Link>
         </div>
 
         <h1 className="mt-6 text-display-md font-display font-medium tracking-tight text-primary sm:text-display-lg md:text-display-2xl">
-          {HEADLINE.map((word, i) => (
+          {t.hero.headline.map((word, i) => (
             <Fragment key={word}>
               <span
                 style={{ animationDelay: `${0.1 + i * 0.1}s` }}
-                className={cx("enter-word-visible mr-[0.15em] inline-block", i >= 3 && "bg-gradient-to-r from-gold-600 to-gold-400 bg-clip-text pr-1 text-transparent italic")}
+                className={cx("enter-word-visible inline-block", lang !== "zh" && "mr-[0.15em]", i >= t.hero.highlightFrom && "bg-gradient-to-r from-gold-600 to-gold-400 bg-clip-text pr-1 text-transparent italic")}
               >
                 {word}
-              </span>{" "}
+              </span>
+              {wordGap}
             </Fragment>
           ))}
         </h1>
         <p className="enter-visible mx-auto mt-6 max-w-2xl text-lg text-tertiary md:text-xl" style={{ animationDelay: "0.3s" }}>
-          Read the Uthmani text, listen as every word lights up with the recitation, and understand it word by word, in ten languages,
-          with tajweed in colour.
+          {t.hero.intro}
         </p>
         <div className="enter mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row" style={{ animationDelay: "0.65s" }}>
           {resume && lastRead ? (
-            <Button size="xl" href={`/surah/${resume.id}#v-${lastRead.ayah}`} iconLeading={BookOpen01}>
-              Continue {resume.nameSimple} · {resume.id}:{lastRead.ayah}
+            <Button size="xl" href={href(`/surah/${resume.id}#v-${lastRead.ayah}`)} iconLeading={BookOpen01}>
+              {fmt(t.hero.continueAt, { name: resume.nameSimple, ref: `${resume.id}:${lastRead.ayah}` })}
             </Button>
           ) : (
-            <Button size="xl" href="/surah/1" iconLeading={BookOpen01}>
-              Open Al-Fātiḥah
+            <Button size="xl" href={href("/surah/1")} iconLeading={BookOpen01}>
+              {t.hero.openFatihah}
             </Button>
           )}
-          <Button size="xl" color="secondary" href="#surahs" iconTrailing={ArrowRight}>
-            Browse all 114 surahs
+          <Button size="xl" color="secondary" href="#surahs" iconTrailing={<ArrowRight data-icon aria-hidden="true" className="rtl:rotate-180" />}>
+            {t.hero.browse}
           </Button>
         </div>
         <ul
           style={{ animationDelay: "0.8s" }}
           className="enter mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-tertiary"
         >
-          {TRUST.map((t) => (
-            <li key={t} className="flex items-center gap-1.5">
+          {t.hero.trust.map((item) => (
+            <li key={item} className="flex items-center gap-1.5">
               <CheckCircle aria-hidden="true" className="size-4 text-fg-success-secondary" />
-              {t}
+              {item}
             </li>
           ))}
         </ul>

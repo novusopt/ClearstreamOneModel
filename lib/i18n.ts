@@ -390,7 +390,7 @@ export const translator = (l: Lang) => TRANSLATIONS.find((x) => x.id === l)?.aut
 export const meaningIn = (c: Chapter, l: Lang) => (l === "en" ? c.nameTranslation : (c.names?.[l] ?? c.nameTranslation));
 
 /** Localized path for an English path ("/surah/18/10" → "/fr/surah/18/10"). */
-export const localePath = (l: Lang, path: string) => (l === "en" ? path : `/${l}${path}`);
+export const localePath = (l: Lang, path: string) => (l === "en" ? path : path === "/" ? `/${l}` : `/${l}${path}`);
 
 /** hreflang alternates for a page that exists in English and every locale. */
 export function languageAlternates(path: string): Record<string, string> {

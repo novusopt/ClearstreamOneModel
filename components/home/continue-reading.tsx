@@ -5,9 +5,13 @@ import { AnimatePresence, m } from "motion/react";
 import Link from "next/link";
 import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
 import { dueReviews, useLibrary } from "@/lib/library";
+import { useUi } from "@/components/providers/ui-messages";
 import type { Chapter } from "@/lib/types";
+import { fmt } from "@/lib/ui-format";
 
 export function ContinueReading({ chapters }: { chapters: Chapter[] }) {
+  const { m: msg, href } = useUi();
+  const t = msg.continue;
   const lastRead = useLibrary((s) => s.lastRead);
   const bookmarks = useLibrary((s) => s.bookmarks);
   const due = useLibrary((s) => dueReviews(s).length);
@@ -19,17 +23,17 @@ export function ContinueReading({ chapters }: { chapters: Chapter[] }) {
       <m.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-10 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {ch && lastRead && (
           <Link
-            href={`/surah/${ch.id}#v-${lastRead.ayah}`}
+            href={href(`/surah/${ch.id}#v-${lastRead.ayah}`)}
             className="group flex items-center gap-4 rounded-2xl bg-brand-solid p-5 text-white shadow-lg outline-focus-ring transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             <FeaturedIcon icon={BookOpen01} color="gray" theme="dark" size="lg" />
             <span className="flex-1">
-              <span className="block text-sm text-white/80">Continue reading</span>
+              <span className="block text-sm text-white/80">{t.reading}</span>
               <span className="block text-lg font-semibold">
                 {ch.nameSimple} · {ch.id}:{lastRead.ayah}
               </span>
             </span>
-            <ArrowRight className="size-5 transition group-hover:translate-x-1" />
+            <ArrowRight className="size-5 transition group-hover:translate-x-1 rtl:rotate-180" />
           </Link>
         )}
         {due > 0 && (
@@ -39,12 +43,12 @@ export function ContinueReading({ chapters }: { chapters: Chapter[] }) {
           >
             <FeaturedIcon icon={RefreshCw01} color="warning" theme="light" size="lg" />
             <span className="flex-1">
-              <span className="block text-sm text-tertiary">Memorisation review</span>
+              <span className="block text-sm text-tertiary">{t.review}</span>
               <span className="block text-lg font-semibold text-primary">
-                {due} ayah{due === 1 ? "" : "s"} due today
+                {fmt(due === 1 ? t.due1 : t.dueN, { n: due })}
               </span>
             </span>
-            <ArrowRight className="size-5 text-fg-quaternary transition group-hover:translate-x-1" />
+            <ArrowRight className="size-5 text-fg-quaternary transition group-hover:translate-x-1 rtl:rotate-180" />
           </Link>
         )}
         {bookmarks.length > 0 && (
@@ -54,12 +58,12 @@ export function ContinueReading({ chapters }: { chapters: Chapter[] }) {
           >
             <FeaturedIcon icon={Bookmark} color="brand" theme="light" size="lg" />
             <span className="flex-1">
-              <span className="block text-sm text-tertiary">Bookmarks</span>
+              <span className="block text-sm text-tertiary">{t.bookmarks}</span>
               <span className="block text-lg font-semibold text-primary">
-                {bookmarks.length} saved {bookmarks.length === 1 ? "ayah" : "ayat"}
+                {fmt(bookmarks.length === 1 ? t.saved1 : t.savedN, { n: bookmarks.length })}
               </span>
             </span>
-            <ArrowRight className="size-5 text-fg-quaternary transition group-hover:translate-x-1" />
+            <ArrowRight className="size-5 text-fg-quaternary transition group-hover:translate-x-1 rtl:rotate-180" />
           </Link>
         )}
       </m.div>

@@ -3,24 +3,22 @@
 import { Code02, Globe02, Lock01, WifiOff } from "@untitledui/icons";
 import { m } from "motion/react";
 import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
+import { useUi } from "@/components/providers/ui-messages";
 
-const PRINCIPLES = [
-  { icon: Lock01, title: "Private by design", text: "No account, no tracking. Bookmarks, notes and your memorisation stay in this browser." },
-  { icon: WifiOff, title: "Ready without a connection", text: "Install Mishkah and save every surah, with your translation and tafsir, for the plane or the masjid." },
-  { icon: Globe02, title: "Made for every reader", text: "Ten translations, right-to-left where it belongs, keyboard shortcuts, and motion that respects your settings." },
-  { icon: Code02, title: "Sources you can check", text: "Every text, translation, timing and explanation is openly licensed and credited, down to the dataset." },
-];
+const ICONS = [Lock01, WifiOff, Globe02, Code02];
 
 export function Principles() {
+  const t = useUi().m.principles;
+  const PRINCIPLES = t.items.map((item, i) => ({ ...item, icon: ICONS[i] }));
   return (
     <section className="py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold text-brand-secondary">Made with care</p>
+          <p className="text-sm font-semibold text-brand-secondary">{t.eyebrow}</p>
           <h2 className="mt-3 font-display text-display-sm font-medium tracking-tight text-primary md:text-display-md">
-            A quiet place for the Book of Allah
+            {t.title}
           </h2>
-          <p className="mt-4 text-lg text-tertiary">No ads, no feeds, no streaks that shame you. Just the text, its meaning, and the tools to keep it.</p>
+          <p className="mt-4 text-lg text-tertiary">{t.intro}</p>
         </div>
         <ul className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {PRINCIPLES.map((p, i) => (

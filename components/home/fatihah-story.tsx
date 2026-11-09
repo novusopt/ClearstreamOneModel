@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { TajweedText } from "@/components/quran/tajweed-text";
 import { AyahMarker } from "@/components/quran/ayah-marker";
 import type { Verse } from "@/lib/types";
+import { useUi } from "@/components/providers/ui-messages";
 import { cx } from "@/utils/cx";
 
 function StoryVerse({ verse, i, total, progress }: { verse: Verse; i: number; total: number; progress: MotionValue<number> }) {
@@ -31,6 +32,8 @@ function StoryVerse({ verse, i, total, progress }: { verse: Verse; i: number; to
 
 /** Sticky, scroll-driven walk through Al-Fātiḥah: each ayah lights up in turn. */
 export function FatihahStory({ verses }: { verses: Verse[] }) {
+  const { m: msg, fatihah: fatihahT } = useUi();
+  const t = msg.story;
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const [active, setActive] = useState(0);
@@ -38,10 +41,10 @@ export function FatihahStory({ verses }: { verses: Verse[] }) {
   const bar = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
-    <section ref={ref} aria-label="Al-Fātiḥah, ayah by ayah" className="relative h-[420vh]">
+    <section ref={ref} aria-label={t.label} className="relative h-[420vh]">
       <div className="sticky top-0 flex h-[100svh] flex-col items-center justify-center overflow-hidden px-4">
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-brand-primary/50 to-transparent" />
-        <p className="text-sm font-semibold text-brand-secondary">Scroll to recite · Al-Fātiḥah</p>
+        <p className="text-sm font-semibold text-brand-secondary">{t.eyebrow}</p>
         <p lang="ar" dir="rtl" className="mt-8 max-w-5xl text-center font-quran text-2xl leading-[2.2] text-primary sm:text-3xl lg:text-4xl">
           {verses.map((v, i) => (
             <StoryVerse key={v.n} verse={v} i={i} total={verses.length} progress={scrollYProgress} />
@@ -56,7 +59,7 @@ export function FatihahStory({ verses }: { verses: Verse[] }) {
             className="text-lg text-secondary md:text-xl"
           >
             <span className="mr-2 font-semibold text-brand-secondary tabular-nums">1:{verses[active].n}</span>
-            {verses[active].en}
+            {fatihahT?.[active] ?? verses[active].en}
           </m.p>
         </div>
         <div className="mt-6 flex items-center gap-2" aria-hidden="true">

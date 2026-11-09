@@ -5,6 +5,7 @@ import { AnimatePresence, m, useMotionTemplate, useMotionValue, useScroll, useTr
 import { type FC, type MouseEvent, type ReactNode, useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/base/badges/badges";
 import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
+import { useUi } from "@/components/providers/ui-messages";
 import { TajweedText } from "@/components/quran/tajweed-text";
 import { TAJWEED_RULES } from "@/lib/constants";
 import type { Verse } from "@/lib/types";
@@ -178,7 +179,7 @@ function AudioDemo() {
             transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
           />
         </span>
-        <span>5 reciters</span>
+        <span>{useUi().m.bento.reciters}</span>
       </div>
     </div>
   );
@@ -212,7 +213,7 @@ function TranslationDemo() {
 function ModesDemo() {
   return (
     <div className="grid w-full grid-cols-2 gap-3">
-      {["Verse by verse", "Mushaf reading"].map((label, i) => (
+      {useUi().m.bento.modes.map((label, i) => (
         <m.div
           key={label}
           initial={{ y: 20 }}
@@ -233,6 +234,7 @@ function ModesDemo() {
 }
 
 export function BentoFeatures({ sample }: { sample: Verse }) {
+  const t = useUi().m.bento;
   return (
     <section id="features" className="relative scroll-mt-24 py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
@@ -243,9 +245,9 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
           transition={{ duration: 0.7 }}
           className="mx-auto max-w-2xl text-center"
         >
-          <p className="text-sm font-semibold text-brand-secondary">Everything in one reader</p>
-          <h2 className="mt-3 text-display-sm font-display font-medium tracking-tight text-primary md:text-display-md">Built for reciting, reflecting & learning</h2>
-          <p className="mt-4 text-lg text-tertiary">Each layer can be switched on or off, so the page stays as quiet or as rich as you need.</p>
+          <p className="text-sm font-semibold text-brand-secondary">{t.eyebrow}</p>
+          <h2 className="mt-3 text-display-sm font-display font-medium tracking-tight text-primary md:text-display-md">{t.title}</h2>
+          <p className="mt-4 text-lg text-tertiary">{t.intro}</p>
         </m.div>
 
         <div className="mt-16 grid auto-rows-[minmax(0,auto)] grid-cols-1 gap-4 md:grid-cols-6 md:gap-5">
@@ -253,9 +255,9 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
             index={0}
             className="md:col-span-4"
             icon={Type01}
-            eyebrow="Qurʾānic text"
-            title="Uthmani script, beautifully set"
-            description="The full mushaf text in the Uthmani rasm with a Qurʾān-specific typeface, adjustable sizing and ornamented ayah markers."
+            eyebrow={t.cards[0].eyebrow}
+            title={t.cards[0].title}
+            description={t.cards[0].description}
           >
             <ScrollRevealArabic text="ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ" />
           </BentoCard>
@@ -263,9 +265,9 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
             index={1}
             className="md:col-span-2 md:row-span-2"
             icon={Palette}
-            eyebrow="Tajweed"
-            title="Rules you can see"
-            description="Nineteen recitation rules colour-coded letter by letter. Scroll to bring them to life."
+            eyebrow={t.cards[1].eyebrow}
+            title={t.cards[1].title}
+            description={t.cards[1].description}
           >
             <TajweedDemo verse={sample} />
           </BentoCard>
@@ -273,9 +275,9 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
             index={2}
             className="md:col-span-4"
             icon={LayersThree01}
-            eyebrow="Word by word"
-            title="Meaning beneath every word"
-            description="Hover or tap any word for its transliteration and meaning, hear it pronounced, or show glosses inline."
+            eyebrow={t.cards[2].eyebrow}
+            title={t.cards[2].title}
+            description={t.cards[2].description}
           >
             <WordByWordDemo verse={sample} />
           </BentoCard>
@@ -283,9 +285,9 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
             index={3}
             className="md:col-span-3"
             icon={Headphones02}
-            eyebrow="Audio"
-            title="Recitation that follows along"
-            description="Continuous playback with word-level highlighting, auto-scroll, repeat and speed control."
+            eyebrow={t.cards[3].eyebrow}
+            title={t.cards[3].title}
+            description={t.cards[3].description}
           >
             <AudioDemo />
           </BentoCard>
@@ -293,9 +295,9 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
             index={4}
             className="md:col-span-3"
             icon={Translate01}
-            eyebrow="Translation"
-            title="Ten languages"
-            description="Saheeh International plus nine more translations, loaded on demand."
+            eyebrow={t.cards[4].eyebrow}
+            title={t.cards[4].title}
+            description={t.cards[4].description}
           >
             <TranslationDemo />
           </BentoCard>
@@ -303,9 +305,9 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
             index={5}
             className="md:col-span-3"
             icon={BookOpen01}
-            eyebrow="Reading modes"
-            title="Study or simply read"
-            description="Switch between detailed verse cards and a continuous mushaf-style page."
+            eyebrow={t.cards[5].eyebrow}
+            title={t.cards[5].title}
+            description={t.cards[5].description}
           >
             <ModesDemo />
           </BentoCard>
@@ -313,9 +315,9 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
             index={6}
             className="md:col-span-3"
             icon={LayersThree01}
-            eyebrow="Your progress"
-            title="Pick up where you left off"
-            description="Your last ayah and bookmarks are remembered on this device — no account needed."
+            eyebrow={t.cards[6].eyebrow}
+            title={t.cards[6].title}
+            description={t.cards[6].description}
           >
             <div className="flex w-full items-center gap-3 rounded-2xl bg-secondary p-4 ring-1 ring-secondary">
               <m.span
@@ -328,7 +330,7 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
               </m.span>
               <div className="text-sm">
                 <p className="font-semibold text-primary">Al-Kahf · 18:10</p>
-                <p className="text-tertiary">Continue reading</p>
+                <p className="text-tertiary">{t.continueReading}</p>
               </div>
             </div>
           </BentoCard>

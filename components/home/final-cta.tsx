@@ -3,9 +3,12 @@
 import { ArrowRight, BookOpen01 } from "@untitledui/icons";
 import { m } from "motion/react";
 import { Button } from "@/components/base/buttons/button";
+import { useUi } from "@/components/providers/ui-messages";
 
 /** Closing call to action: a midnight niche with the lantern lit. */
 export function FinalCta() {
+  const { m: msg, href } = useUi();
+  const t = msg.cta;
   return (
     <section className="px-4 pb-24 md:px-8">
       <m.div
@@ -28,17 +31,17 @@ export function FinalCta() {
           <p lang="ar" dir="rtl" className="font-quran text-3xl text-gold-200 md:text-4xl">
             ٱقْرَأْ بِٱسْمِ رَبِّكَ
           </p>
-          <p className="mt-2 text-sm text-tertiary_on-brand italic">“Read in the name of your Lord” — Al-ʿAlaq 96:1</p>
+          <p className="mt-2 text-sm text-tertiary_on-brand italic">{t.verseGloss}</p>
           <h2 className="mx-auto mt-8 max-w-2xl font-display text-display-sm font-medium tracking-tight text-primary_on-brand md:text-display-lg">
-            Begin today, one ayah at a time.
+            {t.title}
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-lg text-secondary_on-brand">Free, private, and ready on any device. Pick up where you left off, whenever you return.</p>
+          <p className="mx-auto mt-4 max-w-xl text-lg text-secondary_on-brand">{t.intro}</p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button size="xl" color="secondary" href="/surah/1" iconLeading={BookOpen01}>
-              Open Al-Fātiḥah
+            <Button size="xl" color="secondary" href={href("/surah/1")} iconLeading={BookOpen01}>
+              {t.openFatihah}
             </Button>
-            <Button size="xl" href="/#surahs" iconTrailing={ArrowRight} className="bg-white/10 text-white ring-white/20 hover:bg-white/15">
-              Browse all surahs
+            <Button size="xl" href={href("/#surahs")} iconTrailing={<ArrowRight data-icon aria-hidden="true" className="rtl:rotate-180" />} className="bg-white/10 text-white ring-white/20 hover:bg-white/15">
+              {t.browse}
             </Button>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import { animate, m, useInView } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { useUi } from "@/components/providers/ui-messages";
 import { TOTAL_AYAT, TOTAL_SURAHS, TOTAL_WORDS } from "@/lib/constants";
 
 function Counter({ to }: { to: number }) {
@@ -21,14 +22,11 @@ function Counter({ to }: { to: number }) {
   );
 }
 
-const STATS = [
-  { value: TOTAL_SURAHS, label: "Surahs" },
-  { value: TOTAL_AYAT, label: "Ayat" },
-  { value: TOTAL_WORDS, label: "Words with meanings" },
-  { value: 10, label: "Translations" },
-];
+const STAT_VALUES = { surahs: TOTAL_SURAHS, ayat: TOTAL_AYAT, words: TOTAL_WORDS, translations: 10 } as const;
 
 export function Stats() {
+  const labels = useUi().m.stats;
+  const STATS = (Object.keys(STAT_VALUES) as Array<keyof typeof STAT_VALUES>).map((k) => ({ value: STAT_VALUES[k], label: labels[k] }));
   return (
     <section className="border-y border-secondary bg-secondary/50">
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-4 py-14 md:grid-cols-4 md:px-8">

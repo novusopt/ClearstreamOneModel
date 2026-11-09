@@ -10,6 +10,7 @@ import { Header } from "@/components/site/header";
 import { BRAND } from "@/lib/brand";
 import { SITE_URL } from "@/lib/site";
 import { getChapters } from "@/lib/quran";
+import { getChromeMessages } from "@/lib/ui-messages";
 import "./globals.css";
 
 const inter = localFont({
@@ -80,6 +81,8 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  // Header and footer strings for every language; the client picks one from the URL (static pages stay static).
+  const chrome = getChromeMessages();
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${fraunces.variable} ${frauncesExt.variable} ${amiriQuran.variable} ${amiriQuranLatin.variable} antialiased`}>
       <body className="flex min-h-dvh flex-col bg-primary text-primary">
@@ -90,11 +93,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           >
             Skip to content
           </a>
-          <Header />
+          <Header chrome={chrome} />
           <main id="main" className="flex-1">
             {children}
           </main>
-          <Footer />
+          <Footer chrome={chrome} />
           <AudioPlayerBar />
           <CommandPalette chapters={getChapters()} />
           <ServiceWorker />

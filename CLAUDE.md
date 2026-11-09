@@ -41,6 +41,7 @@ app/
   surah/[id]/page.tsx     # reader (generateStaticParams → 114 static pages)
   surah/[id]/[ayah]/page.tsx  # ayah page (SEO): Arabic + tajweed, translation, word by word, tafsir, similar ayat,
                           # prev/next; ~90 popular ayat prebuilt, the rest generated on first request (ISR)
+  [lang]/page.tsx         # localized home (/fr …): components/home/home-page.tsx renders the same sections
   [lang]/surah/[id]/…     # localized surah + ayah pages for the 9 translation languages (fr es id tr ur bn ru zh sv):
                           # server-rendered, hreflang-linked, ISR; strings in lib/i18n.ts; ayah pages share
                           # components/quran/ayah-view.tsx + lib/ayah-page.ts with the English route
@@ -153,6 +154,11 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
   on their article and `HtmlLang` for the document (never `dir` on html: the English header would mirror).
   Word-by-word glosses are English only; tafsir falls back to English for ur/sv (labelled). `?t={lang}` on a surah
   URL opens the reader with that translation. Surah-name meanings per language come from `chapters.json` `names`.
+- Site copy (header, footer, home) lives in `lib/ui-messages/{lang}.ts` (shape = `en.ts`): plain strings with
+  `{placeholders}` filled by `fmt()` (lib/ui-format.ts), so a page sends only its language to the client. Home sections
+  read it via `useUi()` (UiProvider from HomePage); header/footer get all languages' chrome strings from the layout and
+  pick one from the URL (`langFromPath`). Links go through `localizeHref` to stay in the visitor's language; the header
+  language menu uses `switchLanguagePath`. Add a string to `en.ts` first, then every locale (tsc enforces the shape).
 
 ## Performance rules
 

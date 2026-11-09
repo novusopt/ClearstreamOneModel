@@ -8,6 +8,8 @@ import { ProgressBarBase } from "@/components/base/progress-indicators/progress-
 import { AyahMarker } from "@/components/quran/ayah-marker";
 import { TajweedText } from "@/components/quran/tajweed-text";
 import { rulesIn } from "@/components/quran/word";
+import { useUi } from "@/components/providers/ui-messages";
+import { fmt } from "@/lib/ui-format";
 import type { Verse } from "@/lib/types";
 import { cx } from "@/utils/cx";
 
@@ -28,6 +30,7 @@ function useWordTrack(verses: Verse[]) {
  * screen readers in one sentence.
  */
 export function HeroShowcase({ verses }: { verses: Verse[] }) {
+  const { m: t, fatihah } = useUi();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { margin: "-10% 0px" });
   const reduce = useReducedMotion();
@@ -55,7 +58,7 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
     <div ref={ref} className="relative isolate mx-auto mt-16 max-w-6xl [perspective:1600px] md:mt-20">
       {/* Lantern glow under the window */}
       <div aria-hidden="true" className="absolute inset-x-[12%] top-[8%] bottom-0 -z-10 rounded-full bg-gold-400/30 blur-3xl dark:bg-gold-500/15" />
-      <p className="sr-only">Preview of the Mishkah reader playing Al-Fātiḥah, with each word lighting up as it is recited.</p>
+      <p className="sr-only">{t.showcase.srOnly}</p>
       <m.div
         aria-hidden="true"
         style={{ rotateX, scale, transformOrigin: "50% 0%" }}
@@ -84,17 +87,17 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
               <div className="min-w-0 leading-tight">
                 <p className="text-sm font-semibold text-primary">Al-Fātiḥah</p>
                 <p className="text-xs text-tertiary tabular-nums">
-                  Ayah {verse?.n ?? 1} of 7 · Page 1 · Juzʾ 1
+                  {fmt(t.showcase.position, { ayah: verse?.n ?? 1 })}
                 </p>
               </div>
               <span className="ml-auto hidden sm:inline-flex">
                 <BadgeWithIcon type="pill-color" color="brand" size="md" iconLeading={Headphones02}>
-                  Listening
+                  {t.showcase.listening}
                 </BadgeWithIcon>
               </span>
               <span className="hidden md:inline-flex">
                 <Badge type="modern" size="md">
-                  Study preset
+                  {t.showcase.studyPreset}
                 </Badge>
               </span>
             </div>
@@ -130,7 +133,7 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
                   transition={{ duration: 0.35 }}
                   className="mx-auto max-w-xl text-sm text-tertiary md:text-md"
                 >
-                  {verse?.en}
+                  {(verse && fatihah?.[verse.n - 1]) ?? verse?.en}
                 </m.p>
               </AnimatePresence>
             </div>
@@ -138,7 +141,7 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
 
           {/* Side panel: the word being recited */}
           <div className="hidden flex-col gap-3 border-l border-secondary bg-secondary/50 p-4 lg:flex">
-            <p className="text-xs font-semibold tracking-wide text-quaternary uppercase">Now reciting</p>
+            <p className="text-xs font-semibold tracking-wide text-quaternary uppercase">{t.showcase.nowReciting}</p>
             <div className="rounded-xl border border-secondary bg-primary p-4 text-center shadow-xs">
               <m.div key={`${cur.vi}-${cur.wi}`} initial={{ opacity: 0.4, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.25 }}>
                   <p lang="ar" dir="rtl" className="font-quran text-4xl leading-[1.8] text-primary">
@@ -150,7 +153,7 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
             </div>
             <div className="rounded-xl border border-secondary bg-primary p-3">
               <p className="flex items-center gap-1.5 text-xs font-semibold text-gold-700 dark:text-gold-300">
-                <Palette className="size-3.5" /> Tajweed in this word
+                <Palette className="size-3.5" /> {t.showcase.tajweedInWord}
               </p>
               <ul className="mt-2 flex min-h-12 flex-wrap content-start gap-1.5">
                 {rules.length > 0 ? (
@@ -163,14 +166,14 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
                     </li>
                   ))
                 ) : (
-                  <li className="text-xs text-quaternary">No rule on this word</li>
+                  <li className="text-xs text-quaternary">{t.showcase.noRule}</li>
                 )}
               </ul>
             </div>
             <div className="mt-auto rounded-xl border border-secondary bg-primary p-3">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-secondary">Today</span>
-                <span className="text-tertiary tabular-nums">{Math.round(progress * 7)} / 7 ayat</span>
+                <span className="font-semibold text-secondary">{t.showcase.today}</span>
+                <span className="text-tertiary tabular-nums">{fmt(t.showcase.ayatToday, { n: Math.round(progress * 7) })}</span>
               </div>
               <ProgressBarBase value={progress * 100} className="mt-2 h-1.5" progressClassName="duration-500" />
             </div>
@@ -183,7 +186,7 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2 text-xs">
               <span className="truncate font-semibold text-secondary">Mahmoud Khalil Al-Husary</span>
-              <span className="hidden text-tertiary sm:inline">Word-synced · 1×</span>
+              <span className="hidden text-tertiary sm:inline">{t.showcase.synced}</span>
             </div>
             <ProgressBarBase value={progress * 100} className="mt-1.5 h-1" progressClassName="bg-gold-500 duration-500" />
           </div>

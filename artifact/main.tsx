@@ -3,6 +3,10 @@
  * as the Next.js app, with a hash router and data fetched from files published beside the page.
  */
 import { LazyMotion, MotionConfig } from "motion/react";
+import type { Lang } from "@/lib/i18n";
+import type { ChromeMessages } from "@/lib/ui-messages";
+import { en } from "@/lib/ui-messages/en";
+import { UiProvider } from "@/components/providers/ui-messages";
 import { loadMotionFeatures } from "@/components/providers/providers";
 import { ThemeProvider } from "next-themes";
 import { type ReactNode, useEffect, useState } from "react";
@@ -38,6 +42,9 @@ import { navigate, onRouteRequest, parseHash, pathToHash, type Route } from "./r
 const chapters = chaptersJson as unknown as Chapter[];
 
 const cache = new Map<string, Promise<unknown>>();
+/** The hosted build is English-only: header/footer strings for "en" (the server-only catalogue index is not available here). */
+const CHROME = { en: { header: en.header, footer: en.footer } } as unknown as Record<Lang, ChromeMessages>;
+
 function load<T>(file: string): Promise<T> {
   if (!cache.has(file)) cache.set(file, fetch(`data/${file}`).then((r) => (r.ok ? r.json() : Promise.reject(new Error(r.statusText)))));
   return cache.get(file) as Promise<T>;
@@ -66,7 +73,7 @@ function Loading({ label }: { label: string }) {
 function HomeView() {
   const home = useData<{ fatihah: Verse[]; sample: Verse }>("home.json");
   return (
-    <>
+    <UiProvider lang="en" messages={en}>
       <Hero chapters={chapters} fatihah={home?.fatihah} />
       <SourcesMarquee />
       {home ? <BentoFeatures sample={home.sample} /> : <Loading label="Preparing features" />}
@@ -81,7 +88,7 @@ function HomeView() {
       <Principles />
       <Faq />
       <FinalCta />
-    </>
+    </UiProvider>
   );
 }
 
@@ -197,11 +204,11 @@ function Shell({ children }: { children: ReactNode }) {
 createRoot(document.getElementById("mishkah-root")!).render(
   <Shell>
     <div className="flex min-h-dvh flex-col bg-primary text-primary">
-      <Header />
+      <Header chrome={CHROME} />
       <main id="main" className="flex-1">
         <App />
       </main>
-      <Footer />
+      <Footer chrome={CHROME} />
       <AudioPlayerBar />
       <CommandPalette chapters={chapters} />
       <Toaster position="bottom-center" offset={112} toastOptions={{ unstyled: true }} />

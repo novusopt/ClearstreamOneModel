@@ -14,6 +14,9 @@ import { JUZ_STARTS } from "@/lib/constants";
 import { useLibrary } from "@/lib/library";
 import type { Chapter } from "@/lib/types";
 import { normalizeArabic, normalizeLatin, toArabicNumber } from "@/lib/utils";
+import { useUi } from "@/components/providers/ui-messages";
+import { meaningIn } from "@/lib/i18n";
+import { fmt } from "@/lib/ui-format";
 import { cx } from "@/utils/cx";
 
 type Filter = "all" | "meccan" | "medinan";
@@ -54,6 +57,9 @@ function useReadPct(chapter: Chapter) {
 function SurahNiche({ chapter, i }: { chapter: Chapter; i: number }) {
   const pct = useReadPct(chapter);
   const meccan = chapter.revelation === "meccan";
+  const { m: msg, lang, href } = useUi();
+  const t = msg.index;
+  const meaning = meaningIn(chapter, lang);
   return (
     <m.li
       layout
@@ -64,8 +70,8 @@ function SurahNiche({ chapter, i }: { chapter: Chapter; i: number }) {
       transition={{ duration: 0.55, delay: (i % 6) * 0.05, ease: [0.22, 1, 0.36, 1] }}
     >
       <Link
-        href={`/surah/${chapter.id}`}
-        aria-label={`${chapter.id}. ${chapter.nameSimple}, ${chapter.nameTranslation}. ${chapter.versesCount} ayat, ${meccan ? "Meccan" : "Medinan"}${pct ? `, ${pct}% read` : ""}`}
+        href={href(`/surah/${chapter.id}`)}
+        aria-label={`${chapter.id}. ${chapter.nameSimple}, ${meaning}. ${fmt(t.ayat, { n: chapter.versesCount })}, ${meccan ? t.meccan : t.medinan}${pct ? `, ${fmt(t.read, { p: pct })}` : ""}`}
         className={cx(
           "group relative flex h-full flex-col items-center overflow-hidden rounded-t-[999px] rounded-b-2xl border bg-primary_alt px-3 pt-5 pb-4 text-center outline-focus-ring",
           "transition duration-500 ease-out hover:-translate-y-1.5 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-2",
@@ -109,10 +115,10 @@ function SurahNiche({ chapter, i }: { chapter: Chapter; i: number }) {
           {chapter.nameArabic}
         </span>
         <span className="relative mt-auto pt-2 font-display text-md leading-tight font-medium text-primary">{chapter.nameSimple}</span>
-        <span className="relative mt-0.5 line-clamp-1 text-xs text-tertiary">{chapter.nameTranslation}</span>
+        <span className="relative mt-0.5 line-clamp-1 text-xs text-tertiary">{meaning}</span>
         <span className="relative mt-2 flex items-center gap-1.5 text-[11px] font-medium text-quaternary tabular-nums">
           <span className={cx("size-1.5 rounded-full", meccan ? "bg-gold-500" : "bg-brand-500")} aria-hidden="true" />
-          {chapter.versesCount} ayat
+          {fmt(t.ayat, { n: chapter.versesCount })}
           {pct > 0 && <span className="text-gold-600 dark:text-gold-400">· {pct}%</span>}
         </span>
       </Link>
@@ -124,6 +130,8 @@ function SurahNiche({ chapter, i }: { chapter: Chapter; i: number }) {
 function SurahIndexRow({ chapter, i }: { chapter: Chapter; i: number }) {
   const pct = useReadPct(chapter);
   const meccan = chapter.revelation === "meccan";
+  const { m: msg, lang, href } = useUi();
+  const t = msg.index;
   return (
     <m.li
       layout
@@ -135,13 +143,13 @@ function SurahIndexRow({ chapter, i }: { chapter: Chapter; i: number }) {
       className="break-inside-avoid"
     >
       <Link
-        href={`/surah/${chapter.id}`}
+        href={href(`/surah/${chapter.id}`)}
         className="group relative flex items-center gap-3 rounded-xl px-2 py-2.5 outline-focus-ring transition-colors hover:bg-primary_hover focus-visible:outline-2"
       >
         <StarNumber n={chapter.id} className="size-9" />
         <span className="min-w-0 shrink">
           <span className="block truncate font-display text-md font-medium text-primary group-hover:text-brand-secondary">{chapter.nameSimple}</span>
-          <span className="block truncate text-xs text-tertiary">{chapter.nameTranslation}</span>
+          <span className="block truncate text-xs text-tertiary">{meaningIn(chapter, lang)}</span>
         </span>
         <span aria-hidden="true" className="mb-1 min-w-6 flex-1 self-end border-b-2 border-dotted border-secondary transition-colors group-hover:border-gold-400" />
         <span className="flex shrink-0 flex-col items-end">
@@ -149,7 +157,7 @@ function SurahIndexRow({ chapter, i }: { chapter: Chapter; i: number }) {
             {chapter.nameArabic}
           </span>
           <span className="text-[11px] text-quaternary tabular-nums">
-            {chapter.versesCount} ayat{pct > 0 ? ` · ${pct}% read` : ""}
+            {fmt(t.ayat, { n: chapter.versesCount })}{pct > 0 ? ` · ${fmt(t.read, { p: pct })}` : ""}
           </span>
         </span>
         {pct > 0 && (
@@ -163,6 +171,8 @@ function SurahIndexRow({ chapter, i }: { chapter: Chapter; i: number }) {
 }
 
 export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
+  const { m: msg, lang } = useUi();
+  const t = msg.index;
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
   const [view, setView] = useState<View>("niches");
@@ -179,35 +189,36 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
       return (
         normalizeLatin(c.nameSimple).includes(qLatin) ||
         normalizeLatin(c.nameTranslation).includes(qLatin) ||
+        normalizeLatin(meaningIn(c, lang)).includes(qLatin) ||
         (qArabic.length > 0 && normalizeArabic(c.nameArabic).includes(qArabic))
       );
     });
-  }, [chapters, deferred, filter]);
+  }, [chapters, deferred, filter, lang]);
 
   return (
     <section id="surahs" className="scroll-mt-24 py-24">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <m.div initial={{ x: -24 }} whileInView={{ x: 0 }} viewport={{ once: true }}>
-            <p className="text-sm font-semibold text-brand-secondary">The Noble Qurʾān</p>
-            <h2 className="mt-2 text-display-sm font-display font-medium tracking-tight text-primary">All 114 surahs</h2>
+            <p className="text-sm font-semibold text-brand-secondary">{t.eyebrow}</p>
+            <h2 className="mt-2 text-display-sm font-display font-medium tracking-tight text-primary">{t.title}</h2>
           </m.div>
           <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center md:w-auto">
             <Tabs selectedKey={filter} onSelectionChange={(k) => setFilter(k as Filter)} className="w-auto">
               <Tabs.List
                 type="button-gray"
                 size="sm"
-                aria-label="Filter by revelation"
+                aria-label={t.filterLabel}
                 items={[
-                  { id: "all", label: "All" },
-                  { id: "meccan", label: "Meccan" },
-                  { id: "medinan", label: "Medinan" },
+                  { id: "all", label: t.all },
+                  { id: "meccan", label: t.meccan },
+                  { id: "medinan", label: t.medinan },
                 ]}
               />
             </Tabs>
             <Input
-              aria-label="Search surahs"
-              placeholder="Name, meaning or number"
+              aria-label={t.searchLabel}
+              placeholder={t.searchPlaceholder}
               icon={SearchLg}
               value={query}
               onChange={setQuery}
@@ -220,22 +231,22 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
           <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-tertiary">
             <span className="flex items-center gap-1.5">
-              <span className="size-2 rounded-full bg-gold-500" aria-hidden="true" /> Meccan
+              <span className="size-2 rounded-full bg-gold-500" aria-hidden="true" /> {t.meccan}
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="size-2 rounded-full bg-brand-500" aria-hidden="true" /> Medinan
+              <span className="size-2 rounded-full bg-brand-500" aria-hidden="true" /> {t.medinan}
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="h-3 w-2 rounded-sm bg-gradient-to-t from-gold-400 to-transparent" aria-hidden="true" /> Light rises as you read
+              <span className="h-3 w-2 rounded-sm bg-gradient-to-t from-gold-400 to-transparent" aria-hidden="true" /> {t.light}
             </span>
-            <span className="tabular-nums">{results.length} of 114</span>
+            <span className="tabular-nums">{fmt(t.count, { n: results.length })}</span>
           </p>
-          <ButtonGroup size="sm" selectedKeys={[view]} disallowEmptySelection onSelectionChange={(k) => setView([...k][0] as View)} aria-label="Layout">
+          <ButtonGroup size="sm" selectedKeys={[view]} disallowEmptySelection onSelectionChange={(k) => setView([...k][0] as View)} aria-label={t.layout}>
             <ButtonGroupItem id="niches" iconLeading={LayoutGrid01}>
-              Niches
+              {t.niches}
             </ButtonGroupItem>
             <ButtonGroupItem id="index" iconLeading={List}>
-              Contents
+              {t.contents}
             </ButtonGroupItem>
           </ButtonGroup>
         </div>
@@ -278,9 +289,9 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
                 <EmptyState.FeaturedIcon icon={SearchLg} color="gray" theme="modern" />
               </EmptyState.Header>
               <EmptyState.Content>
-                <EmptyState.Title>No surah found</EmptyState.Title>
+                <EmptyState.Title>{t.emptyTitle}</EmptyState.Title>
                 <EmptyState.Description>
-                  Nothing matches “{query}”. Try a name like Kahf, a meaning like “The Cave”, or a number from 1 to 114.
+                  {fmt(t.emptyText, { q: query })}
                 </EmptyState.Description>
               </EmptyState.Content>
               <EmptyState.Footer>
@@ -291,7 +302,7 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
                     setFilter("all");
                   }}
                 >
-                  Clear search
+                  {t.clear}
                 </Button>
               </EmptyState.Footer>
             </EmptyState>
@@ -303,12 +314,14 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
 }
 
 export function JuzIndex({ chapters }: { chapters: Chapter[] }) {
+  const { m: msg } = useUi();
+  const t = msg.index;
   return (
     <section id="juz" className="scroll-mt-24 pb-24">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <m.div initial={{ x: -24 }} whileInView={{ x: 0 }} viewport={{ once: true }}>
-          <p className="text-sm font-semibold text-brand-secondary">Thirty parts</p>
-          <h2 className="mt-2 text-display-sm font-display font-medium tracking-tight text-primary">Browse by juzʾ</h2>
+          <p className="text-sm font-semibold text-brand-secondary">{t.juzEyebrow}</p>
+          <h2 className="mt-2 text-display-sm font-display font-medium tracking-tight text-primary">{t.juzTitle}</h2>
         </m.div>
         <ol className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6">
           {JUZ_STARTS.map(([s, a], i) => (
@@ -327,7 +340,7 @@ export function JuzIndex({ chapters }: { chapters: Chapter[] }) {
               >
                 <span className="flex items-center justify-between">
                   <Badge type="pill-color" size="sm" color="gray">
-                    Juzʾ {i + 1}
+                    {fmt(t.juz, { n: i + 1 })}
                   </Badge>
                   <span lang="ar" className="font-quran text-lg text-gold-600 dark:text-gold-400">
                     {toArabicNumber(i + 1)}
@@ -335,7 +348,7 @@ export function JuzIndex({ chapters }: { chapters: Chapter[] }) {
                 </span>
                 <span className="mt-2 truncate font-semibold text-primary">{chapters[s - 1].nameSimple}</span>
                 <span className="text-xs text-quaternary tabular-nums">
-                  from {s}:{a}
+                  {fmt(t.from, { ref: `${s}:${a}` })}
                 </span>
               </Link>
             </m.li>

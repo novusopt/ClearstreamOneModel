@@ -1,17 +1,23 @@
-import { RECITERS } from "@/lib/constants";
+"use client";
 
-const SOURCES = [
-  { name: "Tanzil", note: "Uthmani text" },
-  { name: "Saheeh International", note: "English translation" },
-  { name: "QuranEnc", note: "Translations" },
-  { name: "Al-Mukhtaṣar", note: "Tafsir · 9 languages" },
-  ...RECITERS.map((r) => ({ name: r.name, note: r.wordSync ? "Word-synced recitation" : "Recitation" })),
-  { name: "Madani Mushaf", note: "604 pages" },
-  { name: "Mutashābihāt", note: "Look-alike ayat" },
+import { useUi } from "@/components/providers/ui-messages";
+import { RECITERS } from "@/lib/constants";
+import type { Messages } from "@/lib/ui-messages/en";
+
+const sourcesFor = (t: Messages["sources"]) => [
+  { name: "Tanzil", note: t.uthmani },
+  { name: "Saheeh International", note: t.english },
+  { name: "QuranEnc", note: t.translations },
+  { name: "Al-Mukhtaṣar", note: t.tafsir },
+  ...RECITERS.map((r) => ({ name: r.name, note: r.wordSync ? t.synced : t.recitation })),
+  { name: "Madani Mushaf", note: t.pages },
+  { name: "Mutashābihāt", note: t.lookalike },
 ];
 
 /** "Logo cloud" for a Qurʾān app: the sources the text, meaning and audio come from, on a slow loop. */
 export function SourcesMarquee() {
+  const { m } = useUi();
+  const SOURCES = sourcesFor(m.sources);
   const list = (hidden: boolean) => (
     <ul aria-hidden={hidden || undefined} className="flex shrink-0">
       {SOURCES.map((s) => (
@@ -28,7 +34,7 @@ export function SourcesMarquee() {
   return (
     <section aria-labelledby="sources-title" className="py-10 md:py-14">
       <h2 id="sources-title" className="text-center text-sm font-medium text-tertiary">
-        Built on trusted, openly licensed sources
+        {m.sources.title}
       </h2>
       <div className="group relative mt-6 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
         {/* Two copies side by side; the track slides by half its width for a seamless loop. */}
