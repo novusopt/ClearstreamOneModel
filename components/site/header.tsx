@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen01, Bookmark, Command, Globe02, Grid01, LayersThree01, Menu02, SearchLg } from "@untitledui/icons";
+import { BookOpen01, Bookmark, ChevronDown, Command, Globe02, Grid01, LayersThree01, Menu02, SearchLg } from "@untitledui/icons";
 import { m, useMotionValueEvent, useScroll } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,6 +11,7 @@ import { Button } from "@/components/base/buttons/button";
 import { Dropdown } from "@/components/base/dropdown/dropdown";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { Kbd, openCommandPalette } from "@/components/site/command-palette";
+import { LanguageFlag } from "@/components/site/language-flag";
 import { Logo } from "@/components/site/logo";
 import { ThemeToggle } from "@/components/site/theme-toggle";
 import { chromeStore } from "@/lib/chrome";
@@ -28,21 +29,67 @@ const navFor = (h: HeaderStrings, lang: Lang) => [
   { href: "/library", label: h.library, icon: Bookmark },
 ];
 
-/** Language switcher: opens the same page in another language where one exists, else that language's home. */
+/** Name of a language in the visitor's language ("espagnol" on French pages), via Intl. */
+function displayName(code: string, uiLang: string) {
+  try {
+    return new Intl.DisplayNames([uiLang], { type: "language" }).of(code) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+/**
+ * Language switcher: a flag pill showing the current language; the menu lists every language with its
+ * flag, its own name and its name in the visitor's language, and opens the same page in that language
+ * where one exists (else that language's home).
+ */
 function LanguageMenu({ label, pathname }: { label: string; pathname: string }) {
   const current = langFromPath(pathname);
+  const currentLang = ALL_LANGUAGES.find((l) => l.id === current) ?? ALL_LANGUAGES[0];
+  const currentCode = currentLang.code;
   return (
     <Dropdown.Root>
-      <ButtonUtility size="sm" color="tertiary" tooltip={label} tooltipPlacement="bottom" icon={Globe02} aria-label={label} />
-      <Dropdown.Popover className="w-48" placement="bottom end">
-        <Dropdown.Menu aria-label={label} selectionMode="single" selectedKeys={[current]}>
-          {ALL_LANGUAGES.map((l) => (
-            <Dropdown.Item key={l.id} id={l.id} href={switchLanguagePath(pathname, l.id)} hrefLang={l.code} textValue={l.native} selectionIndicator="radio">
-              <span lang={l.code} className="text-sm font-medium text-primary">
-                {l.native}
-              </span>
-            </Dropdown.Item>
-          ))}
+      <Button
+        size="sm"
+        color="tertiary"
+        aria-label={label}
+        iconLeading={<LanguageFlag lang={current} />}
+        iconTrailing={<ChevronDown data-icon aria-hidden="true" className="hidden size-4 sm:block" />}
+        className="gap-1.5 px-2 sm:px-2.5"
+      >
+        <span className="hidden text-xs font-semibold tracking-wide uppercase sm:inline">{current}</span>
+      </Button>
+      <Dropdown.Popover className="w-[min(30rem,calc(100vw-1.5rem))]" placement="bottom end">
+        <div className="flex items-center gap-2.5 border-b border-secondary px-4 py-3">
+          <span className="flex size-8 items-center justify-center rounded-lg border border-secondary bg-secondary text-fg-secondary">
+            <Globe02 aria-hidden="true" className="size-4" />
+          </span>
+          <span className="flex flex-col leading-tight">
+            <span className="text-sm font-semibold text-primary">{label}</span>
+            <span lang={currentCode} className="text-xs text-tertiary">
+              {currentLang.native}
+            </span>
+          </span>
+        </div>
+        <Dropdown.Menu aria-label={label} selectionMode="single" selectedKeys={[current]} className="grid max-h-[min(30rem,70vh)] grid-cols-1 overflow-y-auto py-1.5 sm:grid-cols-2">
+          {ALL_LANGUAGES.map((l) => {
+            const local = displayName(l.code, currentCode);
+            return (
+              <Dropdown.Item key={l.id} id={l.id} href={switchLanguagePath(pathname, l.id)} hrefLang={l.code} textValue={l.native} selectionIndicator="checkmark">
+                <span className="flex items-center gap-3">
+                  <LanguageFlag lang={l.id} className="size-6" />
+                  <span className="flex min-w-0 flex-col leading-tight">
+                    <span lang={l.code} className="truncate text-sm font-semibold text-primary">
+                      {l.native}
+                    </span>
+                    <span className="truncate text-xs font-normal text-tertiary">
+                      {local && local.toLocaleLowerCase() !== l.native.toLocaleLowerCase() ? local : l.code.toUpperCase()}
+                    </span>
+                  </span>
+                </span>
+              </Dropdown.Item>
+            );
+          })}
         </Dropdown.Menu>
       </Dropdown.Popover>
     </Dropdown.Root>

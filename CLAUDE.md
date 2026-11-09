@@ -158,7 +158,10 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
   `{placeholders}` filled by `fmt()` (lib/ui-format.ts), so a page sends only its language to the client. Home sections
   read it via `useUi()` (UiProvider from HomePage); header/footer get all languages' chrome strings from the layout and
   pick one from the URL (`langFromPath`). Links go through `localizeHref` to stay in the visitor's language; the header
-  language menu uses `switchLanguagePath`. Add a string to `en.ts` first, then every locale (tsc enforces the shape).
+  language menu uses `switchLanguagePath`.
+- The language menu (header) pairs a round flag (`components/site/language-flag.tsx`, `country-flag-icons`, MIT) with the
+  native name and the name in the visitor's language (`Intl.DisplayNames`). Flags stand for countries, not languages: never
+  show one without the language name. Add a string to `en.ts` first, then every locale (tsc enforces the shape).
 
 ## Performance rules
 
