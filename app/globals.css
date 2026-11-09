@@ -26,6 +26,12 @@
   --animate-equalizer: equalizer 1.1s ease-in-out infinite;
   --animate-flicker: flicker 4s ease-in-out infinite;
   --animate-marquee: marquee 48s linear infinite;
+  --animate-sway: sway 7s ease-in-out infinite;
+
+  @keyframes sway {
+    0%, 100% { transform: rotate(-1.6deg); }
+    50% { transform: rotate(1.6deg); }
+  }
 
   @keyframes marquee {
     from { transform: translate3d(0, 0, 0); }

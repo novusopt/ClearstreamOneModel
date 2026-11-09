@@ -6,6 +6,7 @@ import { Fragment, useRef } from "react";
 import { Badge } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
 import Link from "next/link";
+import { HeroLamp, HeroNiche } from "@/components/home/hero-niche";
 import { HeroShowcase } from "@/components/home/hero-showcase";
 import { useUi } from "@/components/providers/ui-messages";
 import { fmt } from "@/lib/ui-format";
@@ -22,11 +23,10 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const arabicY = useTransform(scrollYProgress, [0, 1], [0, -80]);
-  const starRotate = useTransform(scrollYProgress, [0, 1], [0, 90]);
-  const starScale = useTransform(scrollYProgress, [0, 1], [1, 1.35]);
+  const archScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
 
   return (
-    <section ref={ref} className="relative isolate overflow-hidden pt-32 pb-16 md:pt-40 md:pb-24">
+    <section ref={ref} className="relative isolate overflow-hidden pt-32 pb-16 md:pt-44 md:pb-24">
       {/* Aurora backdrop */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-brand-50/60 via-transparent to-transparent dark:from-brand-950/80" />
@@ -38,18 +38,8 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
         <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-bg-primary" />
       </div>
 
-      <m.svg
-        aria-hidden="true"
-        viewBox="0 0 200 260"
-        style={{ scale: starScale }}
-        className="pointer-events-none absolute top-0 left-1/2 -z-10 h-[52rem] -translate-x-1/2 text-brand-500/20 dark:text-brand-300/15"
-      >
-        <g fill="none" stroke="currentColor">
-          <path d="M20 258 V110 C20 60 60 22 100 4 C140 22 180 60 180 110 V258" strokeWidth="0.8" />
-          <path d="M36 258 V114 C36 72 68 40 100 26 C132 40 164 72 164 114 V258" strokeWidth="0.5" strokeDasharray="2 3" />
-          <m.path style={{ rotate: starRotate }} d="M100 70 l8 14 16 -2 -2 16 14 8 -14 8 2 16 -16 -2 -8 14 -8 -14 -16 2 2 -16 -14 -8 14 -8 -2 -16 16 2 Z" strokeWidth="0.6" />
-        </g>
-      </m.svg>
+      <HeroNiche scale={archScale} />
+      <HeroLamp />
 
       <div className="mx-auto w-full max-w-7xl px-4 text-center md:px-8">
         <m.p
