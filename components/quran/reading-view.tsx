@@ -1,6 +1,8 @@
 "use client";
 
-import { m } from "motion/react";
+import { m, useScroll, useTransform } from "motion/react";
+import { useRef } from "react";
+import { useChrome } from "@/lib/chrome";
 import { Word } from "@/components/quran/word";
 import { AyahMarker } from "@/components/quran/ayah-marker";
 import { HizbMark, quarterLabel } from "@/components/quran/hizb-mark";
@@ -68,8 +70,15 @@ function ReadingLineLabel({ surah }: { surah: number }) {
 function MushafPage({ page, verses, surah, startIndex, basmala, delay, className }: { page: number; verses: Verse[]; surah: number; startIndex: number; basmala?: React.ReactNode; delay: number; className?: string }) {
   const first = verses[0];
   const size = useSettings(mushafSize);
+  const ref = useRef<HTMLElement>(null);
+  // Page-by-page walk: the gold line in the header fills as this page moves through the reading line.
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.6", "end 0.6"] });
+  const walk = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  // The reader bar sits under the site header; the juzʾ header must stick beneath both.
+  const headerVisible = useChrome((c) => c.headerVisible);
   return (
     <m.section
+      ref={ref}
       aria-label={`Page ${page}`}
       dir="ltr"
       initial={{ y: 28 }}
@@ -79,10 +88,16 @@ function MushafPage({ page, verses, surah, startIndex, basmala, delay, className
       className={cx("relative mx-auto flex w-full max-w-4xl flex-col rounded-3xl border border-secondary bg-primary_alt px-3 pt-3 pb-4 shadow-xs ring-1 ring-gold-400/15 ring-inset sm:px-8 sm:pt-4 sm:pb-5", className)}
     >
       {/* Sticky so the reader always sees the juzʾ and where they are while a long page scrolls. */}
-      <header className="sticky top-16 z-10 -mx-3 flex items-center justify-between border-b border-gold-400/25 bg-primary_alt/90 px-3 pt-3 pb-2 text-[11px] font-semibold tracking-[0.08em] text-quaternary uppercase backdrop-blur-md sm:-mx-8 sm:px-8">
+      <header
+        className={cx(
+          "sticky top-[5.5rem] z-10 -mx-3 flex items-center justify-between border-b border-gold-400/25 bg-primary_alt/90 px-3 pt-3 pb-2 text-[11px] font-semibold tracking-[0.08em] text-quaternary uppercase backdrop-blur-md sm:-mx-8 sm:px-8",
+          headerVisible ? "md:top-[9.5rem]" : "md:top-[6rem]",
+        )}
+      >
         <span>Juzʾ {juzOf(surah, first.n)}</span>
         <ReadingLineLabel surah={surah} />
         {first.q ? <span className="text-gold-600 normal-case dark:text-gold-400">{quarterLabel(first.q)}</span> : <span />}
+        <m.span aria-hidden="true" style={{ scaleX: walk }} className="absolute inset-x-0 -bottom-px h-0.5 origin-left bg-gold-500" />
       </header>
       {basmala}
       <div dir="rtl" lang="ar" className={cx("mt-3 flex-1 text-justify font-quran leading-[1.8] [text-align-last:center]", size)}>
