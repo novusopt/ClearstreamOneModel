@@ -156,6 +156,17 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
 - The surah HTML must contain every ayah: verses not yet upgraded to interactive cards render as `PlainVerse`.
 - Ayah references link to `/surah/{s}/{a}`; juzʾ dividers/index link to `/juz/{n}`; mushaf page numbers link to `/page/{n}`; famous ayah names live in `lib/ayah-names.ts` (established names only).
 - Files read at request time by ISR pages/OG images are listed in `outputFileTracingIncludes` (next.config.ts).
+- `/credits` lists every data source, typeface and library with its licence; update it when a source is added.
+
+## Production
+
+- Security headers for every route are set in `next.config.ts` (`securityHeaders`): a CSP that allows only this origin plus
+  the four audio hosts in `AUDIO_HOSTS` (add a host there before loading anything new from it), HSTS, nosniff, DENY framing,
+  Referrer-Policy, Permissions-Policy, COOP. Preview deployments also allow the Vercel toolbar.
+- Error pages share `components/site/error-state.tsx` (Untitled UI 404/500 anatomy): `app/not-found.tsx`, `app/error.tsx`
+  (keeps header/footer), `app/global-error.tsx` (own html/body).
+- Vercel Web Analytics and Speed Insights (`@vercel/analytics`, `@vercel/speed-insights`) are mounted in the root layout:
+  cookie-free; site copy says "no ad tracking", never "no tracking". Enable both in the Vercel project dashboard.
 - Languages: English is unprefixed; `/{lang}/…` for LOCALES in `lib/i18n.ts`. Surah and ayah pages (both languages)
   carry `alternates.languages` (`languageAlternates`) and a `LanguageLinks` switcher. Localized pages set `lang`/`dir`
   on their article and `HtmlLang` for the document (never `dir` on html: the English header would mirror).

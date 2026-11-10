@@ -186,7 +186,7 @@ export const en = {
     title: "A quiet place for the Book of Allah",
     intro: "No ads, no feeds, no streaks that shame you. Just the text, its meaning, and the tools to keep it.",
     items: [
-      { title: "Private by design", text: "No account, no tracking. Bookmarks, notes and your memorisation stay in this browser." },
+      { title: "Private by design", text: "No account and no ad tracking: only anonymous, cookie-free visit counts. Bookmarks, notes and your memorisation stay in this browser." },
       { title: "Ready without a connection", text: "Install Mishkah and save every surah, with your translation and tafsir, for the plane or the masjid." },
       { title: "Made for every reader", text: "Ten translations, right-to-left where it belongs, keyboard shortcuts, and motion that respects your settings." },
       { title: "Sources you can check", text: "Every text, translation, timing and explanation is openly licensed and credited, down to the dataset." },

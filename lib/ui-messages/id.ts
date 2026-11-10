@@ -176,7 +176,7 @@ export const id: Messages = {
     title: "Tempat yang tenang untuk Kitab Allah",
     intro: "Tanpa iklan, tanpa linimasa, tanpa target yang membuat bersalah. Hanya teks, maknanya, dan alat untuk menjaganya.",
     items: [
-      { title: "Privat sejak awal", text: "Tanpa akun, tanpa pelacakan. Penanda, catatan, dan hafalan Anda tetap di peramban ini." },
+      { title: "Privat sejak awal", text: "Tanpa akun dan tanpa pelacakan iklan: hanya statistik kunjungan anonim tanpa cookie. Penanda, catatan, dan hafalan Anda tetap di peramban ini." },
       { title: "Siap tanpa koneksi", text: "Pasang Mishkah dan simpan setiap surat, lengkap dengan terjemahan dan tafsir, untuk di pesawat atau di masjid." },
       { title: "Untuk setiap pembaca", text: "Sepuluh terjemahan, arah kanan-ke-kiri di tempat yang semestinya, pintasan papan ketik, dan animasi yang mengikuti pengaturan Anda." },
       { title: "Sumber yang bisa dicek", text: "Setiap teks, terjemahan, waktu bacaan, dan penjelasan berlisensi terbuka dan disebutkan sumbernya, sampai ke datasetnya." },

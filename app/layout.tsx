@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Toaster } from "sonner";
 import { AudioPlayerBar } from "@/components/quran/audio-player-bar";
 import { Providers } from "@/components/providers/providers";
@@ -103,6 +105,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <ServiceWorker />
           <Toaster position="bottom-center" offset={112} toastOptions={{ unstyled: true }} />
         </Providers>
+        {/* Vercel Web Analytics + Speed Insights: cookie-free, anonymous page views and Core Web Vitals. */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

@@ -176,7 +176,7 @@ export const fr: Messages = {
     title: "Un lieu paisible pour le Livre d’Allah",
     intro: "Ni publicité, ni fil d’actualité, ni séries qui culpabilisent. Seulement le texte, son sens et les outils pour le garder.",
     items: [
-      { title: "Privé par conception", text: "Ni compte, ni pistage. Signets, notes et mémorisation restent dans ce navigateur." },
+      { title: "Privé par conception", text: "Ni compte, ni pistage publicitaire : seulement des statistiques de visite anonymes, sans cookies. Signets, notes et mémorisation restent dans ce navigateur." },
       { title: "Prêt sans connexion", text: "Installez Mishkah et enregistrez chaque sourate, avec votre traduction et le tafsir, pour l’avion ou la mosquée." },
       { title: "Pensé pour chaque lecteur", text: "Dix traductions, l’écriture de droite à gauche quand il le faut, des raccourcis clavier et des animations qui respectent vos réglages." },
       { title: "Des sources vérifiables", text: "Chaque texte, traduction, minutage et explication est sous licence libre et cité, jusqu’au jeu de données." },

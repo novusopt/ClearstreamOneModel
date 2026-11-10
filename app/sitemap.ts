@@ -23,6 +23,7 @@ export default async function sitemap(props: { id: Promise<string> }): Promise<M
   if (id !== "en") return [{ url: absoluteUrl(`/${id}`), changeFrequency: "weekly" as const, priority: 0.9 }, ...surahs, ...ayat];
   return [
     { url: absoluteUrl("/"), changeFrequency: "weekly", priority: 1 },
+    { url: absoluteUrl("/credits"), changeFrequency: "monthly", priority: 0.3 },
     ...surahs,
     ...Array.from({ length: 30 }, (_, i) => ({ url: absoluteUrl(`/juz/${i + 1}`), changeFrequency: "monthly" as const, priority: 0.8 })),
     ...Array.from({ length: 604 }, (_, i) => ({ url: absoluteUrl(`/page/${i + 1}`), changeFrequency: "yearly" as const, priority: 0.5 })),

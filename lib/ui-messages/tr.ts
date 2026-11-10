@@ -176,7 +176,7 @@ export const tr: Messages = {
     title: "Allah’ın Kitabı için sakin bir yer",
     intro: "Reklam yok, akış yok, sizi suçlu hissettiren seriler yok. Yalnızca metin, anlamı ve onu korumak için araçlar.",
     items: [
-      { title: "Tasarımı gereği gizli", text: "Hesap yok, takip yok. Yer imleri, notlar ve ezberiniz bu tarayıcıda kalır." },
+      { title: "Tasarımı gereği gizli", text: "Hesap yok, reklam takibi yok: yalnızca anonim, çerezsiz ziyaret istatistikleri. Yer imleri, notlar ve ezberiniz bu tarayıcıda kalır." },
       { title: "Bağlantı olmadan hazır", text: "Mishkah’ı yükleyin ve her sureyi meali ve tefsiriyle birlikte uçak veya cami için kaydedin." },
       { title: "Her okuyucu için", text: "On meal, gereken yerde sağdan sola yazım, klavye kısayolları ve ayarlarınıza saygı duyan animasyonlar." },
       { title: "Doğrulanabilir kaynaklar", text: "Her metin, meal, zamanlama ve açıklama açık lisanslıdır ve veri kümesine kadar kaynağı belirtilir." },

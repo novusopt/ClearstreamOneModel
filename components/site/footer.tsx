@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/base/buttons/button";
 import { Logo } from "@/components/site/logo";
@@ -50,7 +51,11 @@ export function Footer({ chrome }: { chrome: Record<Lang, ChromeMessages> }) {
           </ul>
         </div>
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-primary">{f.credits}</h2>
+          <h2 className="text-sm font-semibold text-primary">
+            <Link href="/credits" className="rounded outline-focus-ring hover:text-brand-secondary hover:underline focus-visible:outline-2">
+              {f.credits}
+            </Link>
+          </h2>
           <ul className="flex flex-col items-start gap-2.5">
             {creditsFor(f).map((c) => (
               <li key={c.href} className="flex flex-col items-start">

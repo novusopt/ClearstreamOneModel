@@ -176,7 +176,7 @@ export const es: Messages = {
     title: "Un lugar sereno para el Libro de Dios",
     intro: "Sin anuncios, sin muros de noticias, sin rachas que te hagan sentir culpable. Solo el texto, su significado y las herramientas para conservarlo.",
     items: [
-      { title: "Privado por diseño", text: "Sin cuenta y sin rastreo. Marcadores, notas y tu memorización se quedan en este navegador." },
+      { title: "Privado por diseño", text: "Sin cuenta ni rastreo publicitario: solo estadísticas de visitas anónimas y sin cookies. Marcadores, notas y tu memorización se quedan en este navegador." },
       { title: "Listo sin conexión", text: "Instala Mishkah y guarda cada sura, con tu traducción y el tafsir, para el avión o la mezquita." },
       { title: "Pensado para cada lector", text: "Diez traducciones, escritura de derecha a izquierda donde corresponde, atajos de teclado y animaciones que respetan tu configuración." },
       { title: "Fuentes que puedes comprobar", text: "Cada texto, traducción, tiempo y explicación tiene licencia abierta y se cita, hasta el conjunto de datos." },

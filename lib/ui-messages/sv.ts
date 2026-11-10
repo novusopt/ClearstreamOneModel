@@ -176,7 +176,7 @@ export const sv: Messages = {
     title: "En lugn plats för Guds bok",
     intro: "Inga annonser, inga flöden, inga sviter som skuldbelägger dig. Bara texten, dess betydelse och verktygen för att bevara den.",
     items: [
-      { title: "Privat från grunden", text: "Inget konto, ingen spårning. Bokmärken, anteckningar och din memorering stannar i den här webbläsaren." },
+      { title: "Privat från grunden", text: "Inget konto och ingen annonsspårning: bara anonym besöksstatistik utan cookies. Bokmärken, anteckningar och din memorering stannar i den här webbläsaren." },
       { title: "Redo utan uppkoppling", text: "Installera Mishkah och spara varje sura, med din översättning och tafsir, för flyget eller moskén." },
       { title: "Gjord för varje läsare", text: "Tio översättningar, höger-till-vänster där det hör hemma, kortkommandon och animationer som respekterar dina inställningar." },
       { title: "Källor du kan granska", text: "Varje text, översättning, tidsangivelse och förklaring är öppet licensierad och angiven, ända ner till datamängden." },
