@@ -105,9 +105,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <ServiceWorker />
           <Toaster position="bottom-center" offset={112} toastOptions={{ unstyled: true }} />
         </Providers>
-        {/* Vercel Web Analytics + Speed Insights: cookie-free, anonymous page views and Core Web Vitals. */}
-        <Analytics />
-        <SpeedInsights />
+        {/* Vercel Web Analytics + Speed Insights: cookie-free, anonymous page views and Core Web Vitals.
+            Vercel serves their scripts, so they only render in builds made on Vercel. */}
+        {process.env.VERCEL && (
+          <>
+            <Analytics />
+            <SpeedInsights />
+          </>
+        )}
       </body>
     </html>
   );
