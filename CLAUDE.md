@@ -198,7 +198,7 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
 - Surah names in copy use the dataset's plain transliteration (`Al-Fatihah`, `An-Nur`, `Ya-Sin`), the same as
   `chapters.json` `nameSimple`; diacritics stay for terms and titles (Qurʾān, Juzʾ, Ḥizb, Āyat al-Kursī, Al-Mukhtaṣar).
 - Nothing is greyed out to show focus (reader, mushaf, home scroll story): the current ayah gets a soft gold ground.
-- Page headers share one anatomy (surah, juzʾ): number medallion, title, subtitle, badges, Arabic name beside.
+- Page headers share one anatomy (surah, localized surah, juzʾ): number medallion, title, subtitle, badges, Arabic name beside.
 - Empty data shows an Untitled UI `EmptyState` with one next step, not zeros and empty charts.
 
 ## Accessibility

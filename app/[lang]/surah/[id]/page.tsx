@@ -62,9 +62,11 @@ export default async function LocalizedSurahPage({ params }: { params: Params })
   const next = getChapter(id + 1);
   const basmala = id !== 1 && id !== 9 ? (await getSurah(1)).verses[0].w.map((w) => w.a).join(" ") : null;
   const rtl = s.dir === "rtl";
+  const firstJuz = juzOf(id, 1);
+  const lastJuz = juzOf(id, chapter.versesCount);
 
   return (
-    <article lang={s.code} dir={s.dir} className="relative overflow-hidden pt-28 pb-32 md:pt-32">
+    <article lang={s.code} dir={s.dir} className="relative overflow-hidden pt-24 pb-32 md:pt-28">
       <HtmlLang lang={s.code} />
       <JsonLd
         data={[
@@ -76,7 +78,7 @@ export default async function LocalizedSurahPage({ params }: { params: Params })
         ]}
       />
       <div aria-hidden="true" className="absolute inset-x-0 top-0 -z-10 h-80 bg-gradient-to-b from-brand-50/70 to-transparent dark:from-brand-950/60" />
-      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm">
           <Button href="/#surahs" color="link-gray" size="sm">
             {s.surahs}
@@ -87,34 +89,41 @@ export default async function LocalizedSurahPage({ params }: { params: Params })
           </span>
         </nav>
 
-        <header className="mt-6 flex flex-col gap-6 border-b border-secondary pb-8 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="font-display text-display-sm font-medium tracking-tight text-primary md:text-display-md">{s.surahHeading(chapter)}</h1>
-            <p className="mt-1 text-lg text-tertiary">{meaning}</p>
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              <Badge type="pill-color" size="sm" color={chapter.revelation === "meccan" ? "warning" : "brand"}>
-                {chapter.revelation === "meccan" ? s.meccan : s.medinan}
-              </Badge>
-              <Badge type="modern" size="sm">
-                {s.ayat(chapter.versesCount)}
-              </Badge>
-              <Badge type="modern" size="sm">
-                {s.juz} {juzOf(id, 1)}
-              </Badge>
-              {chapter.pages && (
-                <Badge type="modern" size="sm">
-                  {s.page} {chapter.pages[0]}
-                  {chapter.pages[1] !== chapter.pages[0] ? `–${chapter.pages[1]}` : ""}
+        {/* Same anatomy as the English surah header (components/quran/surah-hero.tsx). */}
+        <header className="mt-4 flex items-end justify-between gap-4 border-b border-secondary pb-5">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+            <span aria-hidden="true" className="relative flex size-10 shrink-0 items-center justify-center sm:size-12">
+              <span className="absolute inset-[6px] rotate-45 rounded-lg bg-brand-solid shadow-md sm:inset-[7px]" />
+              <span className="relative font-display text-md font-medium text-white tabular-nums sm:text-lg">{id}</span>
+            </span>
+            <div className="min-w-0">
+              <h1 className="font-display text-display-xs font-medium tracking-tight text-primary sm:text-display-sm">{s.surahHeading(chapter)}</h1>
+              <p className="mt-0.5 text-md text-tertiary">{meaning}</p>
+              <div className="mt-2.5 flex flex-wrap gap-1.5">
+                <Badge type="pill-color" size="sm" color={chapter.revelation === "meccan" ? "warning" : "brand"}>
+                  {chapter.revelation === "meccan" ? s.meccan : s.medinan}
                 </Badge>
-              )}
+                <Badge type="modern" size="sm">
+                  {s.ayat(chapter.versesCount)}
+                </Badge>
+                <Badge type="modern" size="sm">
+                  {s.juz} {firstJuz === lastJuz ? firstJuz : `${firstJuz}–${lastJuz}`}
+                </Badge>
+                {chapter.pages && (
+                  <Badge type="modern" size="sm">
+                    {s.page} {chapter.pages[0]}
+                    {chapter.pages[1] !== chapter.pages[0] ? `–${chapter.pages[1]}` : ""}
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
-          <p lang="ar" dir="rtl" className="font-quran text-6xl leading-none text-brand-secondary md:text-7xl">
+          <p lang="ar" dir="rtl" className="shrink-0 self-start font-quran text-4xl leading-none text-brand-secondary sm:self-end sm:text-5xl md:text-6xl">
             {chapter.nameArabic}
           </p>
         </header>
 
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
           <Button size="lg" href={`${surahPath(id)}?t=${lang}`} iconLeading={<BookOpen01 data-icon aria-hidden="true" className="size-5" />}>
             {s.openReader}
           </Button>
@@ -131,11 +140,11 @@ export default async function LocalizedSurahPage({ params }: { params: Params })
 
         <ol className="mt-8 divide-y divide-secondary rounded-3xl border border-secondary bg-primary shadow-xs">
           {verses.map((v, i) => (
-            <li key={v.n} id={`v-${v.n}`} className="scroll-mt-28 px-4 py-7 [contain-intrinsic-size:auto_16rem] [content-visibility:auto] sm:px-8">
-              <Link href={localePath(lang, ayahPath(id, v.n))} prefetch={false} dir="ltr" className="font-display text-sm font-medium text-secondary tabular-nums hover:text-brand-secondary">
+            <li key={v.n} id={`v-${v.n}`} className="scroll-mt-28 px-4 py-5 [contain-intrinsic-size:auto_14rem] [content-visibility:auto] sm:px-8 sm:py-6">
+              <Link href={localePath(lang, ayahPath(id, v.n))} prefetch={false} dir="ltr" className="font-display text-sm font-semibold text-tertiary tabular-nums hover:text-brand-secondary">
                 {id}:{v.n}
               </Link>
-              <p dir="rtl" lang="ar" className="mt-4 font-quran text-3xl leading-[2.2] text-primary sm:text-4xl">
+              <p dir="rtl" lang="ar" className="mt-3 font-quran text-3xl leading-[2.2] text-primary sm:text-4xl">
                 {v.w.map((w) => w.a).join(" ")}
                 <span className="font-quran">
                   <AyahMarker n={v.n} />
