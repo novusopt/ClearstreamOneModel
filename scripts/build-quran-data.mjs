@@ -6,6 +6,8 @@
  *  - github.com/ivosetyadi/quran-recital (MIT): per-word Uthmani text, transliteration,
  *    English gloss and recitation timings (Mahmoud Khalil al-Husary), plus per-word
  *    tajweed markup (originally sourced from the Quran.com API).
+ *  - api.quran.com (v4, cached per surah): each word's position in Quran.com's word audio
+ *    (pause marks take positions, so it differs from the word index), and its gloss for verification.
  *  - npm quran-json@3.1.2 (CC-BY-4.0): surah metadata, full-verse transliteration
  *    (tanzil.net) and translations (Saheeh International for English, tanzil.net).
  *
@@ -24,6 +26,7 @@ const ROOT = process.cwd();
 const CACHE = join(ROOT, ".cache", "quran-sources");
 const RECITAL = join(CACHE, "quran-recital");
 const QURAN_JSON = join(CACHE, "quran-json", "package", "dist");
+const QURANCOM = join(CACHE, "qurancom");
 
 const LANGS = ["fr", "es", "id", "tr", "ur", "bn", "ru", "zh", "sv"];
 
@@ -44,7 +47,29 @@ function fetchSources() {
     sh("npm", ["pack", "quran-json@3.1.2", "--silent"], dir);
     sh("tar", ["xzf", "quran-json-3.1.2.tgz"], dir);
   }
+  // Word positions (for word audio) and glosses from the Quran.com API, one cached file per surah.
+  mkdirSync(QURANCOM, { recursive: true });
+  for (let ch = 1; ch <= 114; ch++) {
+    const file = join(QURANCOM, `${ch}.json`);
+    if (existsSync(file)) continue;
+    const verses = [];
+    for (let page = 1; ; page++) {
+      const url = `https://api.quran.com/api/v4/verses/by_chapter/${ch}?words=true&word_fields=text_uthmani&per_page=50&page=${page}&language=en`;
+      const json = JSON.parse(execFileSync("curl", ["-sf", "--retry", "4", "--max-time", "60", url], { maxBuffer: 1 << 26 }).toString());
+      for (const v of json.verses) {
+        verses.push({
+          n: v.verse_number,
+          w: v.words.filter((w) => w.char_type_name === "word").map((w) => ({ p: w.position, a: w.text_uthmani, e: w.translation?.text ?? null, t: w.transliteration?.text ?? null, audio: w.audio_url })),
+        });
+      }
+      if (!json.pagination?.next_page) break;
+    }
+    writeFileSync(file, JSON.stringify(verses));
+  }
 }
+
+/** Position of a word's recording in Quran.com's word audio (wbw/SSS_AAA_PPP.mp3), or 0 when it has none. */
+const audioPosition = (w) => Number(w?.audio?.match(/_(\d{3})\.mp3$/)?.[1] ?? 0);
 
 const readJson = (p) => JSON.parse(readFileSync(p, "utf8"));
 const pad = (n) => String(n).padStart(3, "0");
@@ -266,16 +291,22 @@ function main() {
   writeFileSync(join(outQuran, "chapters.json"), JSON.stringify(chapters));
 
   let words = 0;
-  const integrity = { corrected: [], merged: [], ya: [], plain: [], timings: 0 };
+  const integrity = { corrected: [], merged: [], ya: [], plain: [], timings: 0, glosses: [] };
   for (const ch of chapters) {
     const n = ch.id;
     const src = readJson(join(RECITAL, "data", `${pad(n)}.json`));
     const tj = readJson(join(RECITAL, "data", "tajweed", `${pad(n)}.json`));
+    const qc = readJson(join(QURANCOM, `${n}.json`));
     if (src.ayat.length !== ch.versesCount) throw new Error(`verse count mismatch in ${n}`);
 
     const verses = src.ayat.map((a, i) => {
       const tjw = tj[String(a.ayah)] ?? [];
       if (tjw.length !== a.words.length) throw new Error(`tajweed word mismatch ${n}:${a.ayah}`);
+      const qcw = qc[i]?.n === a.ayah ? qc[i].w : null;
+      if (!qcw || qcw.length !== a.words.length) throw new Error(`Quran.com word count mismatch ${n}:${a.ayah}`);
+      a.words.forEach((w, j) => {
+        if ((w.en ?? "").trim() !== (qcw[j].e ?? "").trim()) integrity.glosses.push(`${n}:${a.ayah}:${j + 1}`);
+      });
       words += a.words.length;
       a.words.forEach((w, j) => {
         const fix = PLAIN_CORRECTIONS[`${n}:${a.ayah}:${j + 1}`];
@@ -300,7 +331,12 @@ function main() {
         tr: translit[n - 1].verses[i].transliteration,
         en: en[n - 1].verses[i].translation,
         w: a.words.map((w, j) => {
-          const word = { a: w.ar, t: w.tr, e: w.en, j: aligned[j] };
+          // Trim stray whitespace upstream left on some glosses.
+          const word = { a: w.ar, t: w.tr, e: (w.en ?? "").trim(), j: aligned[j] };
+          // Word audio is numbered by position, and pause marks (ۖ ۚ ۛ …), ۞ and ۩ take positions of
+          // their own; store the real position when it differs from the index (0 = no recording).
+          const k = audioPosition(qcw[j]);
+          if (k !== j + 1) word.k = k;
           if (w.start != null && w.end != null) {
             word.s = w.start;
             word.f = w.end;
@@ -323,7 +359,7 @@ function main() {
     `Text integrity: ${integrity.corrected.length} corrections (${integrity.corrected.join(", ")}), ` +
       `${integrity.merged.length} split tajweed words merged (${integrity.merged.join(", ")}), ` +
       `${integrity.ya.length} dropped yāʾ restored, ${integrity.plain.length} words shown without tajweed (${integrity.plain.join(", ")}), ` +
-      `${integrity.timings} word timings repaired.`,
+      `${integrity.timings} word timings repaired, ${integrity.glosses.length} glosses differing from Quran.com.`,
   );
 }
 

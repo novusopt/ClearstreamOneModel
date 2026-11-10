@@ -11,7 +11,8 @@
  * tajweed rendering letter-for-letter against the reference (consonantal skeleton, hamza seats and
  * dotless forms unified); the basmala; juzʾ starts, ḥizb quarters, pages and sajdahs; translations
  * identical to their sources; tafsir and similar-ayat integrity; the search index; and Qurʾān text
- * typed into the site's source, which must occur verbatim in an ayah; and word timings (all words timed, in order).
+ * typed into the site's source, which must occur verbatim in an ayah; word timings (all words timed, in order); and
+ * word-by-word glosses, transliteration and word-audio positions against Quran.com (api.quran.com, cached).
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -76,6 +77,26 @@ if (skeleton(surahs[0].verses[0].w.map((w) => w.a).join("")) !== bism) fail("bas
 surahs.slice(1).forEach((s) => {
   if (skeleton(s.verses[0].w.map((w) => w.a).join("")).startsWith(bism)) fail("basmala", `${s.id}:1 includes the basmala`);
 });
+
+// Word-by-word glosses, transliteration and word audio vs Quran.com ------------------------------
+const QC = join(CACHE, "qurancom");
+if (existsSync(join(QC, "114.json"))) {
+  surahs.forEach((s, i) => {
+    const qc = read(join(QC, `${i + 1}.json`));
+    s.verses.forEach((v, k) => {
+      const qw = qc[k]?.w;
+      if (!qw || qw.length !== v.w.length) return fail("words", `${s.id}:${v.n}: ${v.w.length} words vs Quran.com ${qw?.length}`);
+      v.w.forEach((w, j) => {
+        const key = `${s.id}:${v.n} word ${j + 1}`;
+        if (w.e !== (qw[j].e ?? "").trim()) fail("gloss", `${key}: "${w.e}" vs Quran.com "${qw[j].e}"`);
+        if (!w.e) fail("gloss", `${key}: empty`);
+        if (w.t !== qw[j].t) fail("transliteration", `${key}`);
+        const pos = Number(qw[j].audio?.match(/_(\d{3})\.mp3$/)?.[1] ?? 0);
+        if ((w.k ?? j + 1) !== pos) fail("word-audio", `${key}: plays ${w.k ?? j + 1}, recording is ${pos}`);
+      });
+    });
+  });
+} else fail("words", "Quran.com word cache missing (.cache/quran-sources/qurancom); run npm run data");
 
 // Mushaf structure ------------------------------------------------------------------------------
 const flat = surahs.flatMap((s) => s.verses.map((v) => ({ s: s.id, ...v })));
@@ -160,4 +181,4 @@ if (findings.length) {
   findings.slice(0, 50).forEach((f) => console.error("  " + f));
   process.exit(1);
 }
-console.log("Qurʾān data verified: 114 surahs, 6,236 ayat; text, tajweed, mushaf structure, translations, tafsir, similar ayat, search and site quotes all match their references.");
+console.log("Qurʾān data verified: 114 surahs, 6,236 ayat, 77,429 words; text, tajweed, mushaf structure, word timings, glosses, transliteration, word audio, translations, tafsir, similar ayat, search and site quotes all match their references.");

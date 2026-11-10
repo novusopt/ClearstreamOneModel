@@ -50,13 +50,15 @@ export const Word = memo(function Word({ word, surah, ayah, index, tajweed, word
   // First letter plus its vowel marks, for the "first letter" memorisation cue.
   const cue = hint && concealed ? (word.a.match(/^[\u0621-\u064A\u0671-\u06D3][\u064B-\u065F\u0670\u06D6-\u06ED]*/u)?.[0] ?? "") : "";
   const wake = showCard && !card ? () => setCard(true) : undefined;
+  // Position of this word's recording (see Word.k); 0 means there is none to play.
+  const audioPos = word.k ?? index + 1;
   return (
     <button
       type="button"
-      onClick={() => (concealed ? onReveal?.(index) : player.playWord(surah, ayah, index + 1))}
+      onClick={() => (concealed ? onReveal?.(index) : audioPos > 0 && player.playWord(surah, ayah, audioPos))}
       onPointerEnter={wake}
       onFocus={wake}
-      aria-label={concealed ? `Hidden word ${index + 1}. Reveal` : `${word.t}: ${word.e}. Play pronunciation`}
+      aria-label={concealed ? `Hidden word ${index + 1}. Reveal` : `${word.t}: ${word.e}${audioPos > 0 ? ". Play pronunciation" : ""}`}
       className={cx("qw", dense ? "qw-dense" : "qw-pad", active && "qw-on")}
     >
       {active && (

@@ -100,6 +100,8 @@ the generated files. Quote translations verbatim from the shipped translation (i
   evaluated and excluded (the available edition has contaminated text). No surah introductions: no licensed source.
 - Look-alike ayat (`public/data/similar/{n}.json`): `Waqar144/Quran_Mutashabihat_Data` (CC0, 0-based → +1).
 - Mushaf page (`p`) and hizb quarter (`q`) per verse: npm `quran-meta`.
+- Word audio position (`k`, only when it differs from index + 1; pause marks, ۞ and ۩ take positions; 0 = no recording)
+  and the gloss/transliteration check: Quran.com API v4 (`api.quran.com`, cached in `.cache/quran-sources/qurancom`).
 - Audio is streamed at runtime: `cdn.islamic.network` (primary) → EveryAyah mirrors (fallback);
   word pronunciation from `audio.qurancdn.com/wbw`. Word-sync highlighting is only available for
   Al-Husary (the reciter the timings were recorded against).

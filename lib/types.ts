@@ -13,6 +13,11 @@ export interface Word {
   /** Recitation timing (ms from start of the ayah audio) for the word-synced reciter. */
   s?: number;
   f?: number;
+  /**
+   * Position of the word's pronunciation in the word audio, when it isn't index + 1 (pause marks,
+   * ۞ and ۩ take positions of their own); 0 when there is no recording.
+   */
+  k?: number;
 }
 
 export interface Verse {
