@@ -11,7 +11,7 @@
  * tajweed rendering letter-for-letter against the reference (consonantal skeleton, hamza seats and
  * dotless forms unified); the basmala; juzʾ starts, ḥizb quarters, pages and sajdahs; translations
  * identical to their sources; tafsir and similar-ayat integrity; the search index; and Qurʾān text
- * typed into the site's source, which must occur verbatim in an ayah.
+ * typed into the site's source, which must occur verbatim in an ayah; and word timings (all words timed, in order).
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -60,6 +60,16 @@ surahs.forEach((s, i) => {
   });
 });
 if (g !== 6236) fail("structure", `${g} ayat`);
+
+// Word timings (word-by-word highlighting): every word timed, positive length, in order, no overlap.
+surahs.forEach((s) =>
+  s.verses.forEach((v) =>
+    v.w.forEach((w, i) => {
+      const prev = v.w[i - 1];
+      if (w.s == null || w.f == null || w.f <= w.s || (prev && w.s < prev.f)) fail("timings", `${s.id}:${v.n} word ${i + 1}: ${w.s}–${w.f}`);
+    }),
+  ),
+);
 const bism = skeleton("بسم الله الرحمن الرحيم");
 if (skeleton(surahs[0].verses[0].w.map((w) => w.a).join("")) !== bism) fail("basmala", "1:1 is not the basmala");
 surahs.slice(1).forEach((s) => {

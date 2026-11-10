@@ -189,6 +189,40 @@ function alignTajweed(key, plainWords, tokens, report) {
   return out;
 }
 
+/**
+ * Word timings drive the word-by-word highlight (audio-engine looks up the word whose [s, f) holds
+ * the playback time). A few upstream timings are missing, zero-length or out of order (e.g. 9:66
+ * word 7 ends before it starts), so those words never light up. Repair them from their neighbours:
+ * a bad word takes the gap between the previous word's end and the next word's start; with no gap,
+ * it borrows the start of the next word (up to 300 ms). Good timings are left untouched.
+ * Returns the number of words repaired.
+ */
+const GAP = 10;
+function repairTimings(words) {
+  let repaired = 0;
+  const valid = (w, prev) => w.s != null && w.f != null && w.f > w.s && (!prev || w.s >= prev.f);
+  for (let i = 0; i < words.length; i++) {
+    const w = words[i];
+    const prev = words[i - 1];
+    if (valid(w, prev)) continue;
+    const start = prev ? prev.f + GAP : 0;
+    const next = words.slice(i + 1).find((x) => x.s != null && x.f != null);
+    const end = next ? next.s - GAP : w.f;
+    if (end != null && end > start + 2 * GAP) {
+      w.s = start;
+      w.f = end;
+    } else if (next && next.f > start + 3 * GAP) {
+      // No room before the next word: take a short slice from its beginning.
+      const d = Math.min(300, Math.floor((next.f - start) / 3));
+      w.s = start;
+      w.f = start + d;
+      next.s = w.f + GAP;
+    } else continue;
+    repaired++;
+  }
+  return repaired;
+}
+
 function main() {
   fetchSources();
   const outQuran = join(ROOT, "data", "quran");
@@ -212,7 +246,7 @@ function main() {
   writeFileSync(join(outQuran, "chapters.json"), JSON.stringify(chapters));
 
   let words = 0;
-  const integrity = { corrected: [], merged: [], ya: [], plain: [] };
+  const integrity = { corrected: [], merged: [], ya: [], plain: [], timings: 0 };
   for (const ch of chapters) {
     const n = ch.id;
     const src = readJson(join(RECITAL, "data", `${pad(n)}.json`));
@@ -248,6 +282,7 @@ function main() {
         }),
       };
     });
+    for (const v of verses) integrity.timings += repairTimings(v.w);
     writeFileSync(join(outSurah, `${n}.json`), JSON.stringify({ id: n, verses }));
 
     for (const l of LANGS) {
@@ -260,7 +295,8 @@ function main() {
   console.log(
     `Text integrity: ${integrity.corrected.length} plain corrections (${integrity.corrected.join(", ")}), ` +
       `${integrity.merged.length} split tajweed words merged (${integrity.merged.join(", ")}), ` +
-      `${integrity.ya.length} dropped yāʾ restored, ${integrity.plain.length} words shown without tajweed (${integrity.plain.join(", ")}).`,
+      `${integrity.ya.length} dropped yāʾ restored, ${integrity.plain.length} words shown without tajweed (${integrity.plain.join(", ")}), ` +
+      `${integrity.timings} word timings repaired.`,
   );
 }
 
