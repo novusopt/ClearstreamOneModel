@@ -223,7 +223,7 @@ export const en = {
     ],
   },
   cta: {
-    verseGloss: "“Read in the name of your Lord” — Al-'Alaq 96:1",
+    verseGloss: "“Recite in the name of your Lord” — Al-'Alaq 96:1",
     title: "Begin today, one ayah at a time.",
     intro: "Free, private, and ready on any device. Pick up where you left off, whenever you return.",
     openFatihah: "Open Al-Fatihah",

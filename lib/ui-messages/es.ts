@@ -213,7 +213,7 @@ export const es: Messages = {
     ],
   },
   cta: {
-    verseGloss: "«¡Lee! En el nombre de tu Señor» — Al-'Alaq 96:1",
+    verseGloss: "«¡Lee! [¡oh, Mujámmad!] En el nombre de tu Señor» — Al-'Alaq 96:1",
     title: "Empieza hoy, una aleya a la vez.",
     intro: "Gratis, privado y listo en cualquier dispositivo. Retoma donde lo dejaste, cada vez que vuelvas.",
     openFatihah: "Abrir Al-Fatihah",

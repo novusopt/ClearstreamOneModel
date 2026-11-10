@@ -85,8 +85,6 @@ export const JUZ_STARTS: Array<[number, number]> = [
   [29, 46], [33, 31], [36, 28], [39, 32], [41, 47], [46, 1], [51, 31], [58, 1], [67, 1], [78, 1],
 ];
 
-export const BISMILLAH = "بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ";
-
 /** Ayat of prostration (sajdat at-tilāwah), as marked with ۩ in the mushaf: [surah, ayah]. */
 export const SAJDAH_AYAT: Array<[number, number]> = [
   [7, 206], [13, 15], [16, 50], [17, 109], [19, 58], [22, 18], [22, 77], [25, 60],
