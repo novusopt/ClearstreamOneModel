@@ -169,103 +169,119 @@ export default function CommandPaletteDialog({ chapters }: { chapters: Chapter[]
     >
       <Modal className="max-w-xl overflow-hidden">
         <Dialog aria-label="Go to surah or ayah">
-          <div className="border-b border-secondary p-4">
-            <AriaHeading slot="title" className="sr-only">
-              Go to surah or ayah
-            </AriaHeading>
-            <Input
-              autoFocus
-              size="md"
-              icon={SearchLg}
-              aria-label="Search surahs and ayat, or type a reference like 2:255"
-              placeholder="Search surahs, ayat or type 2:255"
-              value={query}
-              onChange={setQuery}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && results[0]) go(results[0].href);
-                if (e.key === "ArrowDown") {
-                  e.preventDefault();
-                  document.querySelector<HTMLElement>("#palette-results [role=option]")?.focus();
-                }
-              }}
-            />
-          </div>
-          {textLoading && <p className="px-6 pt-3 text-xs text-tertiary">Searching all 6,236 ayat…</p>}
-          {results.length > 0 ? (
-            <AriaListBox
-              id="palette-results"
-              aria-label="Results"
-              items={results}
-              selectionMode="none"
-              onAction={(key) => {
-                const r = results.find((x) => x.id === key);
-                if (r) go(r.href);
-              }}
-              className="max-h-[50vh] overflow-y-auto p-2 outline-hidden"
-            >
-              {(r) => (
-                <AriaListBoxItem
-                  id={r.id}
-                  textValue={r.title}
-                  className={({ isFocused }) =>
-                    cx("flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 outline-hidden transition-colors", isFocused && "bg-primary_hover")
+          {/* Escape: the search field and the results list both swallow it, so handle it first (capture):
+              with text in the field the first press clears it, otherwise it closes the palette. */}
+          <div
+            className="contents"
+            onKeyDownCapture={(e) => {
+              if (e.key !== "Escape") return;
+              e.preventDefault();
+              e.stopPropagation();
+              if (query && e.target instanceof HTMLInputElement) setQuery("");
+              else {
+                setOpen(false);
+                setQuery("");
+              }
+            }}
+          >
+            <div className="border-b border-secondary p-4">
+              <AriaHeading slot="title" className="sr-only">
+                Go to surah or ayah
+              </AriaHeading>
+              <Input
+                autoFocus
+                size="md"
+                icon={SearchLg}
+                aria-label="Search surahs and ayat, or type a reference like 2:255"
+                placeholder="Search surahs, ayat or type 2:255"
+                value={query}
+                onChange={setQuery}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && results[0]) go(results[0].href);
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    document.querySelector<HTMLElement>("#palette-results [role=option]")?.focus();
                   }
-                >
-                  {({ isFocused }) => (
-                    <>
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-secondary ring-1 ring-secondary">
-                        <r.icon className="size-4 text-fg-quaternary" />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-semibold text-primary">{r.title}</span>
-                        {r.snippet ? (
-                          <span className="line-clamp-2 text-xs text-tertiary">
-                            {r.snippet.before}
-                            <mark className="rounded bg-gold-200/70 px-0.5 text-primary dark:bg-gold-500/30">{r.snippet.match}</mark>
-                            {r.snippet.after}
-                          </span>
-                        ) : r.arabicSnippet ? (
-                          <span lang="ar" dir="rtl" className="block truncate font-quran text-lg text-tertiary">
-                            {r.arabicSnippet}
-                          </span>
-                        ) : (
-                          <span className="block truncate text-xs text-tertiary">{r.subtitle}</span>
-                        )}
-                      </span>
-                      {r.badge && (
-                        <Badge type="modern" size="sm" color="gray" className="hidden sm:flex">
-                          {r.badge}
-                        </Badge>
-                      )}
-                      {r.arabic && (
-                        <span lang="ar" dir="rtl" className="font-quran text-xl text-secondary">
-                          {r.arabic}
+                }}
+              />
+            </div>
+            {textLoading && <p className="px-6 pt-3 text-xs text-tertiary">Searching all 6,236 ayat…</p>}
+            {results.length > 0 ? (
+              <AriaListBox
+                id="palette-results"
+                aria-label="Results"
+                items={results}
+                selectionMode="none"
+                onAction={(key) => {
+                  const r = results.find((x) => x.id === key);
+                  if (r) go(r.href);
+                }}
+                className="max-h-[50vh] overflow-y-auto p-2 outline-hidden"
+              >
+                {(r) => (
+                  <AriaListBoxItem
+                    id={r.id}
+                    textValue={r.title}
+                    className={({ isFocused }) =>
+                      cx("flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 outline-hidden transition-colors", isFocused && "bg-primary_hover")
+                    }
+                  >
+                    {({ isFocused }) => (
+                      <>
+                        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-secondary ring-1 ring-secondary">
+                          <r.icon className="size-4 text-fg-quaternary" />
                         </span>
-                      )}
-                      <CornerDownLeft aria-hidden="true" className={cx("size-4 text-fg-quaternary", !isFocused && "invisible")} />
-                    </>
-                  )}
-                </AriaListBoxItem>
-              )}
-            </AriaListBox>
-          ) : (
-            <p className="px-6 py-10 text-center text-sm text-tertiary">
-              {textLoading ? "Searching…" : `Nothing matches “${query}”. Try a surah name, a reference like 18:10, or a word such as “patience” or “صبر”.`}
-            </p>
-          )}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-secondary bg-secondary px-4 py-2.5 text-xs text-tertiary">
-            <span>
-              <Kbd icon={CornerDownLeft} label="Enter" /> open
-            </span>
-            <span>
-              <Kbd icon={ArrowDown} label="Down arrow" /> <Kbd icon={ArrowUp} label="Up arrow" /> move
-            </span>
-            <span>
-              <Kbd>esc</Kbd> close
-            </span>
-            <span className="ml-auto hidden sm:inline">
-              In a surah: <Kbd>Space</Kbd> play · <Kbd>J</Kbd> next · <Kbd>K</Kbd> previous
-            </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-sm font-semibold text-primary">{r.title}</span>
+                          {r.snippet ? (
+                            <span className="line-clamp-2 text-xs text-tertiary">
+                              {r.snippet.before}
+                              <mark className="rounded bg-gold-200/70 px-0.5 text-primary dark:bg-gold-500/30">{r.snippet.match}</mark>
+                              {r.snippet.after}
+                            </span>
+                          ) : r.arabicSnippet ? (
+                            <span lang="ar" dir="rtl" className="block truncate font-quran text-lg text-tertiary">
+                              {r.arabicSnippet}
+                            </span>
+                          ) : (
+                            <span className="block truncate text-xs text-tertiary">{r.subtitle}</span>
+                          )}
+                        </span>
+                        {r.badge && (
+                          <Badge type="modern" size="sm" color="gray" className="hidden sm:flex">
+                            {r.badge}
+                          </Badge>
+                        )}
+                        {r.arabic && (
+                          <span lang="ar" dir="rtl" className="font-quran text-xl text-secondary">
+                            {r.arabic}
+                          </span>
+                        )}
+                        <CornerDownLeft aria-hidden="true" className={cx("size-4 text-fg-quaternary", !isFocused && "invisible")} />
+                      </>
+                    )}
+                  </AriaListBoxItem>
+                )}
+              </AriaListBox>
+            ) : (
+              <p className="px-6 py-10 text-center text-sm text-tertiary">
+                {textLoading ? "Searching…" : `Nothing matches “${query}”. Try a surah name, a reference like 18:10, or a word such as “patience” or “صبر”.`}
+              </p>
+            )}
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-secondary bg-secondary px-4 py-2.5 text-xs text-tertiary">
+              <span>
+                <Kbd icon={CornerDownLeft} label="Enter" /> open
+              </span>
+              <span>
+                <Kbd icon={ArrowDown} label="Down arrow" /> <Kbd icon={ArrowUp} label="Up arrow" /> move
+              </span>
+              <span>
+                <Kbd>esc</Kbd> close
+              </span>
+              <span className="ml-auto hidden sm:inline">
+                In a surah: <Kbd>Space</Kbd> play · <Kbd>J</Kbd> next · <Kbd>K</Kbd> previous
+              </span>
+            </div>
           </div>
         </Dialog>
       </Modal>
