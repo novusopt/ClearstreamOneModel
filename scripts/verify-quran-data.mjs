@@ -28,10 +28,11 @@ if (!existsSync(join(REF, "quran.json")) || !existsSync(join(CACHE, "qmeta-hafs.
 
 const skeleton = (t) =>
   t
-    .replace(/يٕ/g, "ئ").replace(/ىٕ/g, "ئ").replace(/و[ٕٔ]/g, "ؤ")
-    .replace(/أ/g, "أ").replace(/إ/g, "إ").replace(/ٮ/g, "ى")
-    .replace(/[ؐ-ًؚ-ٰٟۖ-ۭـ࣓-ࣿ‌-‏\s]/g, "")
-    .replace(/[ٱأإآ]/g, "ا").replace(/ى/g, "ي");
+    .replace(/\u0670\u0654/g, "\u0670\u0621") // hamza over a dagger alif is the letter hamza (2:72, KFGQPC)
+    .replace(/\u064A\u0655/g, "\u0626").replace(/\u0649\u0655/g, "\u0626").replace(/\u0648[\u0654\u0655]/g, "\u0624")
+    .replace(/\u0627\u0654/g, "\u0623").replace(/\u0627\u0655/g, "\u0625").replace(/\u066E/g, "\u0649")
+    .replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640\u08D3-\u08FF\u200C-\u200F\s]/g, "")
+    .replace(/[\u0671\u0623\u0625\u0622]/g, "\u0627").replace(/\u0649/g, "\u064A");
 const tajweedText = (j) => (typeof j === "string" ? j : j.map((r) => r[0]).join(""));
 
 const findings = [];

@@ -84,10 +84,11 @@ function parseTajweed(html) {
 /** Consonantal skeleton: hamza seats unified, dotless forms mapped, marks and spaces removed. */
 const skeleton = (t) =>
   t
-    .replace(/يٕ/g, "ئ").replace(/ىٕ/g, "ئ").replace(/و[ٕٔ]/g, "ؤ")
-    .replace(/أ/g, "أ").replace(/إ/g, "إ").replace(/ٮ/g, "ى")
-    .replace(/[ؐ-ًؚ-ٰٟۖ-ۭـ࣓-ࣿ‌-‏\s]/g, "")
-    .replace(/[ٱأإآ]/g, "ا").replace(/ى/g, "ي");
+    .replace(/\u0670\u0654/g, "\u0670\u0621") // hamza over a dagger alif is the letter hamza (2:72, KFGQPC)
+    .replace(/\u064A\u0655/g, "\u0626").replace(/\u0649\u0655/g, "\u0626").replace(/\u0648[\u0654\u0655]/g, "\u0624")
+    .replace(/\u0627\u0654/g, "\u0623").replace(/\u0627\u0655/g, "\u0625").replace(/\u066E/g, "\u0649")
+    .replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640\u08D3-\u08FF\u200C-\u200F\s]/g, "")
+    .replace(/[\u0671\u0623\u0625\u0622]/g, "\u0627").replace(/\u0649/g, "\u064A");
 
 /**
  * Upstream plain-text errors, corrected to the Madani mushaf (verified against quran-json's
@@ -96,9 +97,28 @@ const skeleton = (t) =>
  */
 const PLAIN_CORRECTIONS = {
   // دَآئِرَ ةٌ → دَآئِرَةٌ: stray space inside the word dāʾiratun
-  "5:52:12": ["دَآئِرَ ةٌۭ ۚ", "دَآئِرَةٌۭ ۚ"],
+  "5:52:12": ["\u062F\u064E\u0627\u0653\u0626\u0650\u0631\u064E \u0629\u064C\u06ED \u06DA", "\u062F\u064E\u0627\u0653\u0626\u0650\u0631\u064E\u0629\u064C\u06ED \u06DA"],
   // افْتَرَاهُ → ٱفْتَرَىٰهُ: written with alif waṣla and yāʾ + dagger alif in the mushaf
-  "11:13:3": ["افْتَرَاهُ ۖ", "ٱفْتَرَىٰهُ ۖ"],
+  "11:13:3": ["\u0627\u0641\u0652\u062A\u064E\u0631\u064E\u0627\u0647\u064F \u06D6", "\u0671\u0641\u0652\u062A\u064E\u0631\u064E\u0649\u0670\u0647\u064F \u06D6"],
+  // فَٱدَّٰرَٰٔتُمْ → فَٱدَّٰرَٰءْتُمْ: the hamza (sākin) is a letter on the line in the KFGQPC mushaf (QPC Hafs
+  // فَٱدَّٰرَٰءۡتُمۡ), not a mark stacked on the rāʾ
+  "2:72:4": [
+    "\u0641\u064E\u0671\u062F\u0651\u064E\u0670\u0631\u064E\u0670\u0654\u0652\u062A\u064F\u0645\u0652",
+    "\u0641\u064E\u0671\u062F\u0651\u064E\u0670\u0631\u064E\u0670\u0621\u0652\u062A\u064F\u0645\u0652",
+  ],
+};
+
+/**
+ * Upstream tajweed renderings to replace, keyed like PLAIN_CORRECTIONS: [original text, replacement runs].
+ * The original text must match exactly.
+ */
+const TAJWEED_CORRECTIONS = {
+  // 2:72 فَٱدَّٰرَٰءۡتُمۡ (QPC Hafs): upstream drops the fatḥa of the dāl and of the rāʾ and stacks the hamza on the
+  // rāʾ. Same rules as upstream: ikhfāʾ on the fāʾ, hamzat al-waṣl, natural madd on the dagger alif.
+  "2:72:4": [
+    "\u0641\u064E\u0671\u062F\u0651\u0670\u0631\u0670\u0654\u06E1\u062A\u064F\u0645\u06E1",
+    [["\u0641", "ikhafa"], ["\u064E"], ["\u0671", "ham_wasl"], ["\u062F\u0651\u064E"], ["\u0670", "madda_normal"], ["\u0631\u064E\u0670\u0621\u06E1\u062A\u064F\u0645\u06E1"]],
+  ],
 };
 
 const asRuns = (x) => (typeof x === "string" ? [[x]] : x);
@@ -267,6 +287,13 @@ function main() {
       // A few upstream tajweed strings carry HTML-entity residue (e.g. "&gt;" in 32:3): no markup for those.
       const parsed = tjw.map((h, j) => (/&[a-z#0-9]+;/i.test(h) ? a.words[j].ar : parseTajweed(h)));
       const aligned = alignTajweed(`${n}:${a.ayah}`, a.words.map((w) => w.ar), parsed, integrity);
+      aligned.forEach((tok, j) => {
+        const fix = TAJWEED_CORRECTIONS[`${n}:${a.ayah}:${j + 1}`];
+        if (!fix) return;
+        if (runsText(tok) !== fix[0]) throw new Error(`tajweed correction ${n}:${a.ayah}:${j + 1} no longer matches upstream: "${runsText(tok)}"`);
+        aligned[j] = fix[1];
+        integrity.corrected.push(`${n}:${a.ayah}:${j + 1} (tajweed)`);
+      });
       return {
         n: a.ayah,
         g: a.global,
@@ -293,7 +320,7 @@ function main() {
   }
   console.log(`Wrote ${chapters.length} surahs, ${words} words, ${LANGS.length + 1} translations.`);
   console.log(
-    `Text integrity: ${integrity.corrected.length} plain corrections (${integrity.corrected.join(", ")}), ` +
+    `Text integrity: ${integrity.corrected.length} corrections (${integrity.corrected.join(", ")}), ` +
       `${integrity.merged.length} split tajweed words merged (${integrity.merged.join(", ")}), ` +
       `${integrity.ya.length} dropped yāʾ restored, ${integrity.plain.length} words shown without tajweed (${integrity.plain.join(", ")}), ` +
       `${integrity.timings} word timings repaired.`,
