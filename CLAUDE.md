@@ -207,6 +207,9 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
 - Nothing is greyed out to show focus (reader, mushaf, home scroll story): the current ayah gets a soft gold ground.
 - Page headers share one anatomy (surah, localized surah, juzʾ): number medallion, title, subtitle, badges, Arabic name beside.
 - Empty data shows an Untitled UI `EmptyState` with one next step, not zeros and empty charts.
+- The audio player (`audio-player-bar-content.tsx`) is built from UUI Button/ButtonUtility/Slider/Dropdown/Badge: reciter
+  disc with a turning ring while playing, morphing play button (spinner while loading), live "now reciting" word for the
+  word-synced reciter (`AudioVerse.a`), surah progress along the top edge, speed menu; phones get two rows.
 
 ## Accessibility
 

@@ -79,7 +79,7 @@ export function SurahReader({ chapter, verses, prev, next, basmala, footer }: Su
   );
 
   const audioVerses = useMemo<AudioVerse[]>(
-    () => verses.map((v) => ({ n: v.n, g: v.g, t: v.w.map((w) => (w.s != null && w.f != null ? [w.s, w.f] : null)) })),
+    () => verses.map((v) => ({ n: v.n, g: v.g, t: v.w.map((w) => (w.s != null && w.f != null ? [w.s, w.f] : null)), a: v.w.map((w) => w.a) })),
     [verses],
   );
 

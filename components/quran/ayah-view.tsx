@@ -42,7 +42,7 @@ export function AyahView({ d }: { d: AyahData }) {
   const prev = ayah > 1 ? { s: id, a: ayah - 1, ch: chapter } : prevCh ? { s: prevCh.id, a: prevCh.versesCount, ch: prevCh } : null;
   const nextCh = ayah === chapter.versesCount ? getChapter(id + 1) : chapter;
   const next = ayah < chapter.versesCount ? { s: id, a: ayah + 1, ch: chapter } : nextCh ? { s: nextCh.id, a: 1, ch: nextCh } : null;
-  const audio = { n: verse.n, g: verse.g, t: verse.w.map((w) => (w.s != null && w.f != null ? ([w.s, w.f] as [number, number]) : null)) };
+  const audio = { n: verse.n, g: verse.g, t: verse.w.map((w) => (w.s != null && w.f != null ? ([w.s, w.f] as [number, number]) : null)), a: verse.w.map((w) => w.a) };
   const readerHref = lang === "en" ? `${surahPath(id)}#v-${ayah}` : `${surahPath(id)}?t=${lang}#v-${ayah}`;
   const translationRtl = s.dir === "rtl";
 

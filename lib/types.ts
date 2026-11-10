@@ -61,6 +61,8 @@ export interface AudioVerse {
   g: number;
   /** [start, end] ms per word, when the reciter has word timings. */
   t: Array<[number, number] | null>;
+  /** The ayah's words (Uthmani), for the player's "now reciting" display. */
+  a?: string[];
 }
 
 /** An ayah with near-identical wording (mutashabih). */
