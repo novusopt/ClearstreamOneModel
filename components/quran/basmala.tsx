@@ -46,7 +46,7 @@ interface BasmalaProps {
 }
 
 /**
- * The Basmala that opens each surah. Not shown for Al-Fātiḥah (where it is ayah 1) and replaced
+ * The Basmala that opens each surah. Not shown for Al-Fatihah (where it is ayah 1) and replaced
  * by a short note for At-Tawbah, which is the one surah revealed without it.
  */
 export function Basmala({ basmala, surah, variant = "panel" }: BasmalaProps) {

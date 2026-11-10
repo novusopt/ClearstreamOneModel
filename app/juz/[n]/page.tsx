@@ -75,7 +75,7 @@ export default async function JuzPage({ params }: { params: Params }) {
   const opening = firstWords(first.verse.w, 4);
 
   return (
-    <article className="relative overflow-hidden pt-28 pb-32 md:pt-32">
+    <article className="relative overflow-hidden pt-24 pb-32 md:pt-28">
       <JsonLd
         data={breadcrumbLd([
           { name: "Mishkah", path: "/" },
@@ -94,40 +94,46 @@ export default async function JuzPage({ params }: { params: Params }) {
           </span>
         </nav>
 
-        <header className="mt-6 flex flex-col gap-6 border-b border-secondary pb-8 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold text-gold-700 dark:text-gold-300">Part {juz} of 30</p>
-            <h1 className="mt-2 font-display text-display-md font-medium tracking-tight text-primary">
-              Juzʾ {juz}
-              {JUZ_NAMES[juz] && <span className="block text-display-xs text-tertiary">{JUZ_NAMES[juz]}</span>}
-            </h1>
-            <div className="mt-4 flex flex-wrap gap-1.5">
-              <Badge type="modern" size="sm">
-                {refs.length} ayat
-              </Badge>
-              <Badge type="modern" size="sm">
-                {surahs.length === 1 ? "1 surah" : `${surahs.length} surahs`}
-              </Badge>
-              <Badge type="modern" size="sm">
-                Pages {pages[0]}–{pages[pages.length - 1]}
-              </Badge>
-              <Badge type="pill-color" size="sm" color="warning">
-                Ḥizb {juz * 2 - 1}–{juz * 2}
-              </Badge>
+        {/* Same anatomy as the surah header: number medallion, title, subtitle and badges, Arabic name beside. */}
+        <header className="mt-4 border-b border-secondary pb-5">
+          <div className="flex items-end justify-between gap-4">
+            <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+              <span aria-hidden="true" className="relative flex size-10 shrink-0 items-center justify-center sm:size-12">
+                <span className="absolute inset-[6px] rotate-45 rounded-lg bg-brand-solid shadow-md sm:inset-[7px]" />
+                <span className="relative font-display text-md font-medium text-white tabular-nums sm:text-lg">{juz}</span>
+              </span>
+              <div className="min-w-0">
+                <h1 className="font-display text-display-xs font-medium tracking-tight text-primary sm:text-display-sm">Juzʾ {juz}</h1>
+                <p className="mt-0.5 text-md text-tertiary">{JUZ_NAMES[juz] ? `${JUZ_NAMES[juz]} · Part ${juz} of 30` : `Part ${juz} of 30`}</p>
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  <Badge type="modern" size="sm">
+                    {refs.length} ayat
+                  </Badge>
+                  <Badge type="modern" size="sm">
+                    {surahs.length === 1 ? "1 surah" : `${surahs.length} surahs`}
+                  </Badge>
+                  <Badge type="modern" size="sm">
+                    Pages {pages[0]}–{pages[pages.length - 1]}
+                  </Badge>
+                  <Badge type="pill-color" size="sm" color="warning">
+                    Ḥizb {juz * 2 - 1}–{juz * 2}
+                  </Badge>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="text-right">
-            <p lang="ar" dir="rtl" className="font-quran text-5xl text-brand-secondary md:text-6xl">
+            <p lang="ar" dir="rtl" className="shrink-0 self-start font-quran text-4xl leading-none text-brand-secondary sm:self-end sm:text-5xl md:text-6xl">
               الجزء {toArabicNumber(juz)}
             </p>
-            <p className="mt-3 text-xs font-semibold tracking-[0.08em] text-quaternary uppercase">Begins with</p>
-            <p lang="ar" dir="rtl" className="font-quran text-2xl text-primary">
-              {opening} …
-            </p>
           </div>
+          <p className="mt-4 flex flex-wrap items-baseline justify-end gap-x-3 gap-y-1">
+            <span className="text-xs font-semibold tracking-[0.08em] text-quaternary uppercase">Begins with</span>
+            <span lang="ar" dir="rtl" className="font-quran text-xl text-primary sm:text-2xl">
+              {opening} …
+            </span>
+          </p>
         </header>
 
-        <div className="mt-6 flex flex-wrap gap-2">
+        <div className="mt-5 flex flex-wrap gap-2">
           <Button size="lg" href={`${surahPath(first.s)}#v-${first.verse.n}`} iconLeading={<BookOpen01 data-icon aria-hidden="true" className="size-5" />}>
             Read Juzʾ {juz}
           </Button>

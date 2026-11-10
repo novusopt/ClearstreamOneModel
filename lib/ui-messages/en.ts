@@ -42,20 +42,20 @@ export const en = {
     },
   },
   hero: {
-    verseGloss: "“Allah is the Light of the heavens and the earth” — An-Nūr 24:35",
+    verseGloss: "“Allah is the Light of the heavens and the earth” — An-Nur 24:35",
     newBadge: "New",
     newText: "Tafsir in 9 languages and memorisation review",
     /** Headline words; words from `highlightFrom` on are set in gold italics. */
     headline: ["A", "lantern", "for", "the", "Qurʾān."],
     highlightFrom: 3,
     intro: "Read the Uthmani text, listen as every word lights up with the recitation, and understand it word by word, in ten languages, with tajweed in colour.",
-    openFatihah: "Open Al-Fātiḥah",
+    openFatihah: "Open Al-Fatihah",
     continueAt: "Continue {name} · {ref}",
     browse: "Browse all 114 surahs",
     trust: ["Free, no account", "Private: saved on your device", "Works offline"],
   },
   showcase: {
-    srOnly: "Preview of the Mishkah reader playing Al-Fātiḥah, with each word lighting up as it is recited.",
+    srOnly: "Preview of the Mishkah reader playing Al-Fatihah, with each word lighting up as it is recited.",
     position: "Ayah {ayah} of 7 · Page 1 · Juzʾ 1",
     listening: "Listening",
     studyPreset: "Study preset",
@@ -141,11 +141,11 @@ export const en = {
     inDays: "In {n} days",
     graded: "Graded “{g}”. Next review: {when}.",
     tryAgain: "Try again",
-    start: "Start with Al-Fātiḥah",
+    start: "Start with Al-Fatihah",
   },
   story: {
-    label: "Al-Fātiḥah, ayah by ayah",
-    eyebrow: "Scroll to recite · Al-Fātiḥah",
+    label: "Al-Fatihah, ayah by ayah",
+    eyebrow: "Scroll to recite · Al-Fatihah",
   },
   stats: { surahs: "Surahs", ayat: "Ayat", words: "Words with meanings", translations: "Translations" },
   continue: {
@@ -223,10 +223,10 @@ export const en = {
     ],
   },
   cta: {
-    verseGloss: "“Read in the name of your Lord” — Al-ʿAlaq 96:1",
+    verseGloss: "“Read in the name of your Lord” — Al-'Alaq 96:1",
     title: "Begin today, one ayah at a time.",
     intro: "Free, private, and ready on any device. Pick up where you left off, whenever you return.",
-    openFatihah: "Open Al-Fātiḥah",
+    openFatihah: "Open Al-Fatihah",
     browse: "Browse all surahs",
   },
 };

@@ -195,6 +195,11 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
   the ayah number once in the header (`VerseNumber compact`, a linked `2:255`) plus the marker that ends the Arabic.
 - On phones the header bar holds only logo, search, Read and the menu; language and theme live in the slideout footer.
 - Anything date-dependent on a prerendered page renders only after mount (the build date isn't today: hydration error).
+- Surah names in copy use the dataset's plain transliteration (`Al-Fatihah`, `An-Nur`, `Ya-Sin`), the same as
+  `chapters.json` `nameSimple`; diacritics stay for terms and titles (Qurʾān, Juzʾ, Ḥizb, Āyat al-Kursī, Al-Mukhtaṣar).
+- Nothing is greyed out to show focus (reader, mushaf, home scroll story): the current ayah gets a soft gold ground.
+- Page headers share one anatomy (surah, juzʾ): number medallion, title, subtitle, badges, Arabic name beside.
+- Empty data shows an Untitled UI `EmptyState` with one next step, not zeros and empty charts.
 
 ## Accessibility
 

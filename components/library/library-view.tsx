@@ -93,6 +93,100 @@ function ProgressTab({ chapters }: { chapters: Chapter[] }) {
   const days = streak(log);
   const status = plan ? planStatus(plan, { read, log }) : null;
   const surahsDone = chapters.filter((c) => (read[c.id]?.length ?? 0) >= c.versesCount).length;
+  // Nothing to show yet: one clear next step instead of a wall of zeros and an empty chart.
+  const empty = done === 0 && memorisedCount === 0 && !plan;
+
+  const planCard = (
+    <section aria-labelledby="plan-title" className="rounded-2xl border border-secondary bg-primary p-6 shadow-xs">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 id="plan-title" className="font-display text-xl font-medium text-primary">
+            Reading plan
+          </h3>
+          <p className="mt-1 text-sm text-tertiary">Complete the whole Qurʾān (a khatm) at a steady daily pace.</p>
+        </div>
+        <FeaturedIcon icon={Target04} color="brand" theme="light" size="md" />
+      </div>
+
+      {plan && status ? (
+        <div className="mt-6 space-y-5">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge type="pill-color" color="brand" size="md">
+              Day {status.day} of {plan.days}
+            </Badge>
+            <Badge type="pill-color" color={status.ahead >= 0 ? "success" : "warning"} size="md">
+              {status.ahead >= 0 ? `On track · ${status.ahead} ahead` : `${-status.ahead} ayat behind`}
+            </Badge>
+          </div>
+          <div>
+            <p className="mb-2 flex justify-between text-sm font-medium text-secondary">
+              Today’s goal
+              <span className="text-tertiary tabular-nums">
+                {status.todayCount} / {status.daily} ayat
+              </span>
+            </p>
+            <ProgressBar value={Math.min(status.todayCount, status.daily)} max={status.daily} />
+          </div>
+          <div>
+            <p className="mb-2 flex justify-between text-sm font-medium text-secondary">
+              Overall
+              <span className="text-tertiary tabular-nums">
+                {done} / {TOTAL_AYAT}
+              </span>
+            </p>
+            <ProgressBar value={done} max={TOTAL_AYAT} />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button href={lastRead ? `/surah/${lastRead.surah}#v-${lastRead.ayah}` : "/surah/1"} iconLeading={BookOpen01}>
+              Read today’s portion
+            </Button>
+            <Button color="tertiary" iconLeading={Flag05} onPress={stopPlan}>
+              End plan
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-6 space-y-4">
+          <ButtonGroup size="md" selectedKeys={[String(choice)]} disallowEmptySelection onSelectionChange={(k) => setChoice(Number([...k][0]))} aria-label="Plan length">
+            {PLANS.map((p) => (
+              <ButtonGroupItem key={p.days} id={String(p.days)}>
+                {p.label}
+              </ButtonGroupItem>
+            ))}
+          </ButtonGroup>
+          <p className="text-sm text-tertiary">
+            That’s about <strong className="text-secondary">{Math.ceil(TOTAL_AYAT / choice)} ayat a day</strong>, roughly{" "}
+            {Math.max(1, Math.round(Math.ceil(TOTAL_AYAT / choice) / 2))} minutes of reading.
+          </p>
+          <Button iconLeading={Target04} onPress={() => startPlan(choice)}>
+            Start plan
+          </Button>
+        </div>
+      )}
+    </section>
+  );
+
+  if (empty)
+    return (
+      <div className="space-y-6">
+        <EmptyState size="md" className="max-w-none overflow-hidden rounded-2xl border border-secondary bg-primary py-12 shadow-xs">
+          <EmptyState.Header pattern="circle">
+            <EmptyState.FeaturedIcon icon={BookOpen01} color="brand" theme="light" />
+          </EmptyState.Header>
+          <EmptyState.Content>
+            <EmptyState.Title>Your progress will appear here</EmptyState.Title>
+            <EmptyState.Description>Read a surah and Mishkah counts the ayat you read, your daily streak and how much of the Qurʾān you have completed. It all stays on this device.</EmptyState.Description>
+          </EmptyState.Content>
+          <EmptyState.Footer>
+            <Button href={lastRead ? `/surah/${lastRead.surah}#v-${lastRead.ayah}` : "/surah/1"} iconLeading={BookOpen01}>
+              Start reading
+            </Button>
+          </EmptyState.Footer>
+        </EmptyState>
+        {planCard}
+        <OfflineCard />
+      </div>
+    );
 
   return (
     <div className="space-y-6">
@@ -104,73 +198,7 @@ function ProgressTab({ chapters }: { chapters: Chapter[] }) {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-        <section aria-labelledby="plan-title" className="rounded-2xl border border-secondary bg-primary p-6 shadow-xs">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h3 id="plan-title" className="font-display text-xl font-medium text-primary">
-                Reading plan
-              </h3>
-              <p className="mt-1 text-sm text-tertiary">Complete the whole Qurʾān (a khatm) at a steady daily pace.</p>
-            </div>
-            <FeaturedIcon icon={Target04} color="brand" theme="light" size="md" />
-          </div>
-
-          {plan && status ? (
-            <div className="mt-6 space-y-5">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge type="pill-color" color="brand" size="md">
-                  Day {status.day} of {plan.days}
-                </Badge>
-                <Badge type="pill-color" color={status.ahead >= 0 ? "success" : "warning"} size="md">
-                  {status.ahead >= 0 ? `On track · ${status.ahead} ahead` : `${-status.ahead} ayat behind`}
-                </Badge>
-              </div>
-              <div>
-                <p className="mb-2 flex justify-between text-sm font-medium text-secondary">
-                  Today’s goal
-                  <span className="text-tertiary tabular-nums">
-                    {status.todayCount} / {status.daily} ayat
-                  </span>
-                </p>
-                <ProgressBar value={Math.min(status.todayCount, status.daily)} max={status.daily} />
-              </div>
-              <div>
-                <p className="mb-2 flex justify-between text-sm font-medium text-secondary">
-                  Overall
-                  <span className="text-tertiary tabular-nums">
-                    {done} / {TOTAL_AYAT}
-                  </span>
-                </p>
-                <ProgressBar value={done} max={TOTAL_AYAT} />
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <Button href={lastRead ? `/surah/${lastRead.surah}#v-${lastRead.ayah}` : "/surah/1"} iconLeading={BookOpen01}>
-                  Read today’s portion
-                </Button>
-                <Button color="tertiary" iconLeading={Flag05} onPress={stopPlan}>
-                  End plan
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="mt-6 space-y-4">
-              <ButtonGroup size="md" selectedKeys={[String(choice)]} disallowEmptySelection onSelectionChange={(k) => setChoice(Number([...k][0]))} aria-label="Plan length">
-                {PLANS.map((p) => (
-                  <ButtonGroupItem key={p.days} id={String(p.days)}>
-                    {p.label}
-                  </ButtonGroupItem>
-                ))}
-              </ButtonGroup>
-              <p className="text-sm text-tertiary">
-                That’s about <strong className="text-secondary">{Math.ceil(TOTAL_AYAT / choice)} ayat a day</strong>, roughly{" "}
-                {Math.max(1, Math.round(Math.ceil(TOTAL_AYAT / choice) / 2))} minutes of reading.
-              </p>
-              <Button iconLeading={Target04} onPress={() => startPlan(choice)}>
-                Start plan
-              </Button>
-            </div>
-          )}
-        </section>
+        {planCard}
 
         <div className="space-y-6">
           <div className="flex items-center justify-center rounded-2xl border border-secondary bg-primary p-6 shadow-xs">
@@ -240,7 +268,7 @@ function MemorisedTab({ chapters }: { chapters: Chapter[] }) {
           <EmptyState.Description>Switch a surah to Memorise mode, recite with the words hidden, and mark ayat as you learn them.</EmptyState.Description>
         </EmptyState.Content>
         <EmptyState.Footer>
-          <Button href="/surah/1">Start with Al-Fātiḥah</Button>
+          <Button href="/surah/1">Start with Al-Fatihah</Button>
         </EmptyState.Footer>
       </EmptyState>
     );

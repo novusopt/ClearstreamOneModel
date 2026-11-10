@@ -1,5 +1,5 @@
 /*
- * The hero illustration: the niche (mishkāh) of An-Nūr 24:35 — "the example of His light is like a niche
+ * The hero illustration: the niche (mishkāh) of An-Nur 24:35 — "the example of His light is like a niche
  * within which is a lamp; the lamp is within glass".
  *
  * Drawn as surfaces rather than outlines: a soft halo arch, a lit glass panel with one gilded edge, a faint

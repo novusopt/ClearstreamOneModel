@@ -1,6 +1,6 @@
 "use client";
 
-import { m, type MotionValue, useMotionValueEvent, useScroll, useTransform } from "motion/react";
+import { m, useMotionValueEvent, useScroll, useTransform } from "motion/react";
 import { useRef, useState } from "react";
 import { TajweedText } from "@/components/quran/tajweed-text";
 import { AyahMarker } from "@/components/quran/ayah-marker";
@@ -8,29 +8,26 @@ import type { Verse } from "@/lib/types";
 import { useUi } from "@/components/providers/ui-messages";
 import { cx } from "@/utils/cx";
 
-function StoryVerse({ verse, i, total, progress }: { verse: Verse; i: number; total: number; progress: MotionValue<number> }) {
-  const start = i / total;
-  const end = (i + 1) / total;
-  // Keyframe offsets must be strictly increasing and within [0, 1] for accelerated scroll animations.
-  const a = Math.max(0, start - 0.06);
-  const b = Math.max(a + 0.001, start);
-  const d = Math.min(1, end + 0.08);
-  const c = Math.min(d - 0.001, end);
-  const opacity = useTransform(progress, [a, b, c, d], [0.18, 1, 1, i === total - 1 ? 1 : 0.35]);
-  const scale = useTransform(progress, [a, b, c], [0.97, 1, 1]);
+function StoryVerse({ verse, active }: { verse: Verse; active: boolean }) {
+  // Every ayah stays at full strength; the one being recited gets a soft gold ground, as in the reader.
   return (
-    <m.span style={{ opacity, scale }} className="inline-block origin-center">
+    <span
+      className={cx(
+        "rounded-lg px-1 transition-colors duration-500 [box-decoration-break:clone]",
+        active ? "bg-gold-400/20 dark:bg-gold-400/15" : "bg-transparent",
+      )}
+    >
       {verse.w.map((w, j) => (
         <span key={j}>
           <TajweedText value={w.j} />{" "}
         </span>
       ))}
       <AyahMarker n={verse.n} />
-    </m.span>
+    </span>
   );
 }
 
-/** Sticky, scroll-driven walk through Al-Fātiḥah: each ayah lights up in turn. */
+/** Sticky, scroll-driven walk through Al-Fatihah: each ayah lights up in turn. */
 export function FatihahStory({ verses }: { verses: Verse[] }) {
   const { m: msg, fatihah: fatihahT } = useUi();
   const t = msg.story;
@@ -47,7 +44,7 @@ export function FatihahStory({ verses }: { verses: Verse[] }) {
         <p className="text-sm font-semibold text-brand-secondary">{t.eyebrow}</p>
         <p lang="ar" dir="rtl" className="mt-8 max-w-5xl text-center font-quran text-2xl leading-[2.2] text-primary sm:text-3xl lg:text-4xl">
           {verses.map((v, i) => (
-            <StoryVerse key={v.n} verse={v} i={i} total={verses.length} progress={scrollYProgress} />
+            <StoryVerse key={v.n} verse={v} active={i === active} />
           ))}
         </p>
         <div className="mt-10 h-24 w-full max-w-2xl text-center">

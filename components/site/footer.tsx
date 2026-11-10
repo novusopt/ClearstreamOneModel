@@ -10,8 +10,8 @@ import type { ChromeMessages } from "@/lib/ui-messages";
 type FooterStrings = ChromeMessages["footer"];
 
 const exploreFor = (f: FooterStrings, lang: Lang) => [
-  { href: localizeHref(lang, "/surah/1"), label: "Al-Fātiḥah" },
-  { href: localizeHref(lang, "/surah/36"), label: "Yā-Sīn" },
+  { href: localizeHref(lang, "/surah/1"), label: "Al-Fatihah" },
+  { href: localizeHref(lang, "/surah/36"), label: "Ya-Sin" },
   { href: localizeHref(lang, "/surah/67"), label: "Al-Mulk" },
   { href: localizeHref(lang, "/surah/18"), label: "Al-Kahf" },
   { href: "/review", label: f.review },

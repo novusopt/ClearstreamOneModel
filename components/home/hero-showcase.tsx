@@ -25,7 +25,7 @@ function useWordTrack(verses: Verse[]) {
 }
 
 /**
- * The hero's product shot: a live, miniature Mishkah reader playing Al-Fātiḥah. Words light up at the
+ * The hero's product shot: a live, miniature Mishkah reader playing Al-Fatihah. Words light up at the
  * real recitation pace and the word card follows. Purely illustrative: not focusable, described for
  * screen readers in one sentence.
  */
@@ -72,7 +72,7 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
             <span className="size-2.5 rounded-full bg-quaternary" />
           </div>
           <div className="mx-auto flex h-6 w-full max-w-xs items-center justify-center rounded-md bg-primary text-xs text-quaternary ring-1 ring-secondary">
-            mishkah · Al-Fātiḥah
+            mishkah · Al-Fatihah
           </div>
           <span className="w-10" />
         </div>
@@ -85,7 +85,7 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
                 الفاتحة
               </span>
               <div className="min-w-0 leading-tight">
-                <p className="text-sm font-semibold text-primary">Al-Fātiḥah</p>
+                <p className="text-sm font-semibold text-primary">Al-Fatihah</p>
                 <p className="text-xs text-tertiary tabular-nums">
                   {fmt(t.showcase.position, { ayah: verse?.n ?? 1 })}
                 </p>

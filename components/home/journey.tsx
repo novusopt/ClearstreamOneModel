@@ -44,7 +44,7 @@ function ReadPanel({ verse }: { verse: Verse }) {
     <Panel>
       <div className="flex flex-wrap items-center gap-2">
         <Badge type="pill-color" color="gray" size="sm">
-          Al-Fātiḥah 1:{verse.n}
+          Al-Fatihah 1:{verse.n}
         </Badge>
         <Badge type="pill-color" color="gray" size="sm">
           {fmt(useUi().m.showcase.position, { ayah: verse.n }).split(" · ").slice(1).join(" · ")}

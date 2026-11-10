@@ -1,6 +1,6 @@
 "use client";
 
-import { Bookmark, BookmarkCheck, CheckCircle, Copy01, Copy07, Edit05, Eye, EyeOff, Image01, Link01, PauseCircle, PlayCircle, Share07, Type01 } from "@untitledui/icons";
+import { Bookmark, BookmarkCheck, CheckCircle, DotsVertical, Copy01, Copy07, Edit05, Eye, EyeOff, Image01, Link01, PauseCircle, PlayCircle, Share07, Type01 } from "@untitledui/icons";
 import { m } from "motion/react";
 import { memo, useState } from "react";
 import { Button as AriaButton } from "react-aria-components";
@@ -182,7 +182,7 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
             }}
           />
           <Dropdown.Root>
-            <Dropdown.DotsButton className="ml-1 p-1.5" />
+            <ButtonUtility size="sm" color="tertiary" tooltip={`More actions for ${key}`} icon={DotsVertical} />
             <Dropdown.Popover className="w-56">
               <Dropdown.Menu onAction={(k) => onMenu(String(k))} aria-label={`Actions for ayah ${key}`}>
                 <Dropdown.Section>

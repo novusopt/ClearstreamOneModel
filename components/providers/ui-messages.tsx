@@ -10,7 +10,7 @@ interface UiValue {
   m: Messages;
   /** Localize an internal href for this language (see lib/locale-path.ts). */
   href: (path: string) => string;
-  /** Al-Fātiḥah's translation in this language (home demos), one string per ayah. */
+  /** Al-Fatihah's translation in this language (home demos), one string per ayah. */
   fatihah?: string[];
 }
 
