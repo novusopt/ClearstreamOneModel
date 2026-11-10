@@ -112,14 +112,14 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
       viewport={{ once: true, margin: "0px 0px -60px 0px" }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       className={cx(
-        "group/verse relative scroll-mt-36 border-b border-secondary px-4 py-7 transition-colors duration-500 last:border-b-0 sm:px-8 sm:py-9",
+        "group/verse relative scroll-mt-36 border-b border-secondary px-4 py-5 transition-colors duration-500 last:border-b-0 sm:px-8 sm:py-6",
         isCurrent ? "bg-brand-primary/50 dark:bg-brand-900/25" : "hover:bg-secondary/40",
       )}
     >
       {isCurrent && <m.span layoutId={`verse-indicator-${surah}`} className="absolute inset-y-0 left-0 w-0.5 bg-brand-solid" />}
-      <div className="mb-5 flex items-center justify-between gap-2">
+      <div className="mb-3 flex items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <VerseNumber surah={surah} ayah={verse.n} active={isCurrent} playing={isPlaying} href={ayahPath(surah, verse.n)} />
+          <VerseNumber compact surah={surah} ayah={verse.n} active={isCurrent} playing={isPlaying} href={ayahPath(surah, verse.n)} />
           {verse.q && (
             <Badge type="pill-color" color="warning" size="sm" className="gap-1">
               <span aria-hidden="true">۞</span> {quarterLabel(verse.q)}
@@ -207,7 +207,7 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
         </div>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-4">
           <div dir="rtl" lang="ar" className="flex flex-wrap items-start gap-x-1 gap-y-3">
             {verse.w.map((w, i) => (
               <Word

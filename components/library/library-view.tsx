@@ -3,7 +3,7 @@
 import { ArrowRight, BookOpen01, CheckCircle, RefreshCw01, Edit05, Flag05, Target04, Trash01, TrendUp01, Zap } from "@untitledui/icons";
 import { m } from "motion/react";
 import Link from "next/link";
-import { type FC, useState } from "react";
+import { type FC, useState, useSyncExternalStore } from "react";
 import { Alert } from "@/components/application/alerts/alert";
 import { EmptyState } from "@/components/application/empty-state/empty-state";
 import { Tabs } from "@/components/application/tabs/tabs";
@@ -43,8 +43,15 @@ function Stat({ icon, label, value, hint }: { icon: FC<{ className?: string }>; 
   );
 }
 
+const subscribeNone = () => () => {};
+
 function Activity({ log }: { log: Record<string, number> }) {
+  // The page is prerendered at build time, so dates may only be read in the browser: the server (and
+  // the hydration pass) render 14 neutral bars, then the real days fill in.
+  const mounted = useSyncExternalStore(subscribeNone, () => true, () => false);
+  const todayKey = mounted ? today() : "";
   const days = Array.from({ length: 14 }, (_, i) => {
+    if (!mounted) return { key: `day-${i}`, count: 0, label: "\u00a0" };
     const d = new Date();
     d.setDate(d.getDate() - (13 - i));
     const key = today(d);
@@ -65,7 +72,7 @@ function Activity({ log }: { log: Record<string, number> }) {
               animate={{ height: `${Math.max(4, (d.count / max) * 100)}%` }}
               transition={{ delay: i * 0.03, duration: 0.5 }}
               title={`${d.key}: ${d.count} ayat`}
-              className={cx("w-full rounded-md", d.count ? "bg-brand-solid" : "bg-quaternary", d.key === today() && "ring-2 ring-gold-400 ring-offset-1 ring-offset-bg-primary")}
+              className={cx("w-full rounded-md", d.count ? "bg-brand-solid" : "bg-quaternary", d.key === todayKey && "ring-2 ring-gold-400 ring-offset-1 ring-offset-bg-primary")}
             />
             <span className="text-[10px] text-quaternary">{d.label}</span>
           </div>

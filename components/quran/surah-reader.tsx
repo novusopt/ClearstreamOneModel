@@ -33,17 +33,17 @@ import { useRemote } from "@/lib/use-remote";
  */
 const PlainVerse = memo(function PlainVerse({ verse, surah }: { verse: Verse; surah: number }) {
   return (
-    <article id={`v-${verse.n}`} data-ayah={verse.n} aria-label={`Ayah ${surah}:${verse.n}`} className="scroll-mt-36 border-b border-secondary px-4 py-7 [contain-intrinsic-size:auto_22rem] [content-visibility:auto] last:border-b-0 sm:px-8 sm:py-9">
-      <Link href={ayahPath(surah, verse.n)} prefetch={false} className="font-display text-sm font-medium text-secondary tabular-nums hover:text-brand-secondary">
+    <article id={`v-${verse.n}`} data-ayah={verse.n} aria-label={`Ayah ${surah}:${verse.n}`} className="scroll-mt-36 border-b border-secondary px-4 py-5 [contain-intrinsic-size:auto_18rem] [content-visibility:auto] last:border-b-0 sm:px-8 sm:py-6">
+      <Link href={ayahPath(surah, verse.n)} prefetch={false} className="font-display text-sm font-semibold text-tertiary tabular-nums hover:text-brand-secondary">
         {surah}:{verse.n}
       </Link>
-      <p dir="rtl" lang="ar" className="mt-5 font-quran text-4xl leading-[2.2] text-primary sm:text-5xl">
+      <p dir="rtl" lang="ar" className="mt-3 font-quran text-4xl leading-[2.2] text-primary sm:text-5xl">
         {verse.w.map((w) => w.a).join(" ")}
         <span className="font-quran">
           <AyahMarker n={verse.n} />
         </span>
       </p>
-      <p className="mt-5 text-lg text-secondary">{verse.en}</p>
+      <p className="mt-4 text-lg text-secondary">{verse.en}</p>
     </article>
   );
 });

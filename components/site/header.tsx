@@ -45,7 +45,7 @@ function displayName(code: string, uiLang: string) {
  * flag, its own name and its name in the visitor's language, and opens the same page in that language
  * where one exists (else that language's home).
  */
-function LanguageMenu({ label, pathname }: { label: string; pathname: string }) {
+function LanguageMenu({ label, pathname, full = false }: { label: string; pathname: string; /** Show the language's name (phone menu). */ full?: boolean }) {
   const current = langFromPath(pathname);
   const currentLang = ALL_LANGUAGES.find((l) => l.id === current) ?? ALL_LANGUAGES[0];
   const currentCode = currentLang.code;
@@ -53,13 +53,19 @@ function LanguageMenu({ label, pathname }: { label: string; pathname: string }) 
     <Dropdown.Root>
       <Button
         size="sm"
-        color="tertiary"
-        aria-label={label}
+        color={full ? "secondary" : "tertiary"}
+        aria-label={full ? `${label}: ${currentLang.native}` : label}
         iconLeading={<LanguageFlag lang={current} />}
-        iconTrailing={<ChevronDown data-icon aria-hidden="true" className="hidden size-4 sm:block" />}
+        iconTrailing={<ChevronDown data-icon aria-hidden="true" className={cx("size-4", !full && "hidden sm:block")} />}
         className="gap-1.5 px-2 sm:px-2.5"
       >
-        <span className="hidden text-xs font-semibold tracking-wide uppercase sm:inline">{current}</span>
+        {full ? (
+          <span lang={currentCode} className="text-sm font-semibold">
+            {currentLang.native}
+          </span>
+        ) : (
+          <span className="hidden text-xs font-semibold tracking-wide uppercase sm:inline">{current}</span>
+        )}
       </Button>
       <Dropdown.Popover className="w-[min(30rem,calc(100vw-1.5rem))]" placement="bottom end">
         <div className="flex items-center gap-2.5 border-b border-secondary px-4 py-3">
@@ -98,7 +104,7 @@ function LanguageMenu({ label, pathname }: { label: string; pathname: string }) 
   );
 }
 
-function MobileMenu({ h, lang, due, readHref }: { h: HeaderStrings; lang: Lang; due: number; readHref: string }) {
+function MobileMenu({ h, lang, due, readHref, readLabel, pathname }: { h: HeaderStrings; lang: Lang; due: number; readHref: string; readLabel: string; pathname: string }) {
   return (
     <SlideoutMenu.Trigger>
       <ButtonUtility size="sm" color="tertiary" tooltip={h.openMenu} tooltipPlacement="bottom" icon={Menu02} className="md:hidden" />
@@ -131,16 +137,30 @@ function MobileMenu({ h, lang, due, readHref }: { h: HeaderStrings; lang: Lang; 
                     </li>
                   ))}
                   <li>
-                    <NavItemBase type="link" href="#" icon={SearchLg} onClick={() => (close(), openCommandPalette())}>
+                    <NavItemBase
+                      type="link"
+                      href="#"
+                      icon={SearchLg}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        close();
+                        openCommandPalette();
+                      }}
+                    >
                       {h.goTo}
                     </NavItemBase>
                   </li>
                 </ul>
               </nav>
             </SlideoutMenu.Content>
-            <SlideoutMenu.Footer>
-              <Button size="lg" href={readHref} iconLeading={BookOpen01} className="w-full" onPress={close}>
-                {h.start}
+            <SlideoutMenu.Footer className="flex flex-col gap-3">
+              {/* On phones the bar only has room for search, Read and this menu: language and theme live here. */}
+              <div className="flex items-center justify-between">
+                <LanguageMenu label={h.language} pathname={pathname} full />
+                <ThemeToggle />
+              </div>
+              <Button size="lg" href={readHref} iconLeading={PlayCircle} className="w-full" onPress={close}>
+                {readLabel}
               </Button>
             </SlideoutMenu.Footer>
           </>
@@ -228,19 +248,22 @@ export function Header({ chrome }: { chrome: Record<Lang, ChromeMessages> }) {
             </Kbd>
           </Button>
           <ButtonUtility size="sm" color="tertiary" tooltip={h.goToLabel} tooltipPlacement="bottom" icon={SearchLg} onPress={openCommandPalette} className="xl:hidden" />
-          <LanguageMenu label={h.language} pathname={pathname} />
-          <ThemeToggle />
+          <div className="hidden items-center gap-1.5 sm:flex">
+            <LanguageMenu label={h.language} pathname={pathname} />
+            <ThemeToggle />
+          </div>
           <span aria-hidden="true" className="mx-1 hidden h-6 w-px bg-border-secondary sm:block" />
           <Button size="sm" href={readHref} iconLeading={PlayCircle} className="shadow-sm">
             <span className="hidden sm:inline">{lastRead ? h.continue : h.start}</span>
-            <span className="sm:hidden">{h.read}</span>
+            {/* Icon-only on the narrowest phones; the name stays for screen readers. */}
+            <span className="sm:hidden max-[379px]:sr-only">{h.read}</span>
             {lastRead && (
               <span className="hidden rounded-md bg-white/15 px-1.5 py-0.5 text-xs font-medium tabular-nums lg:inline">
                 {lastRead.surah}:{lastRead.ayah}
               </span>
             )}
           </Button>
-          <MobileMenu h={h} lang={lang} due={due} readHref={readHref} />
+          <MobileMenu h={h} lang={lang} due={due} readHref={readHref} readLabel={lastRead ? h.continue : h.start} pathname={pathname} />
         </div>
       </div>
     </m.header>

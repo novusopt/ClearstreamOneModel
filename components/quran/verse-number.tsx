@@ -10,14 +10,45 @@ interface VerseNumberProps {
   playing?: boolean;
   /** Link the reference to the ayah's own page (internal linking for search and sharing). */
   href?: string;
+  /**
+   * Reference only ("2:255"), no medallion. For verse cards, whose Arabic already ends with the
+   * ayah marker, so the number isn't shown three times.
+   */
+  compact?: boolean;
 }
 
 /**
  * Header medallion for an ayah: the number set in a small rub el hizb (two layered squares),
  * with the surah:ayah reference beside it.
  */
-export function VerseNumber({ surah, ayah, active = false, playing = false, href }: VerseNumberProps) {
+export function VerseNumber({ surah, ayah, active = false, playing = false, href, compact = false }: VerseNumberProps) {
   const digits = String(ayah).length;
+  if (compact) {
+    const ref = (
+      <>
+        <span className="sr-only">Ayah </span>
+        {surah}
+        <span className="mx-0.5 text-gold-500">:</span>
+        {ayah}
+      </>
+    );
+    const cls = cx(
+      "rounded font-display text-sm font-semibold tabular-nums transition-colors",
+      active ? "text-brand-secondary" : "text-tertiary",
+    );
+    return href ? (
+      <Link
+        href={href}
+        prefetch={false}
+        title={`Open ayah ${surah}:${ayah} on its own page`}
+        className={cx(cls, "underline-offset-4 outline-focus-ring hover:text-brand-secondary hover:underline focus-visible:outline-2")}
+      >
+        {ref}
+      </Link>
+    ) : (
+      <span className={cls}>{ref}</span>
+    );
+  }
   return (
     <div className="flex items-center gap-3">
       <span className="relative grid size-11 shrink-0 place-items-center" aria-hidden="true">

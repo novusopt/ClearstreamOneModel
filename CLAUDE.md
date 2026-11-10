@@ -191,6 +191,10 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
   verse cards, one page sheet per row (no side-by-side spread) with the arch page-number medallion at the foot.
   Don't go back to one block per ayah.
 - The mushaf page header is not sticky, and pages don't animate in.
+- The text starts high: a compact surah header, first-visit tips as one dismissible `Alert`, and verse cards that show
+  the ayah number once in the header (`VerseNumber compact`, a linked `2:255`) plus the marker that ends the Arabic.
+- On phones the header bar holds only logo, search, Read and the menu; language and theme live in the slideout footer.
+- Anything date-dependent on a prerendered page renders only after mount (the build date isn't today: hydration error).
 
 ## Accessibility
 

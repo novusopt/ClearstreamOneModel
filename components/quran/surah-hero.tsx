@@ -20,7 +20,7 @@ export function SurahHero({ chapter }: { chapter: Chapter }) {
   const y = useTransform(scrollYProgress, [0, 1], [0, 40]);
 
   return (
-    <div ref={ref} className="relative overflow-hidden pt-28 pb-8 md:pt-32 md:pb-10">
+    <div ref={ref} className="relative overflow-hidden pt-24 pb-5 md:pt-28 md:pb-6">
       <div aria-hidden="true" className="absolute inset-x-0 top-0 -z-10 h-80 bg-gradient-to-b from-brand-50/70 to-transparent dark:from-brand-950/60" />
       <m.div style={{ opacity, y }} className="mx-auto max-w-5xl px-4 sm:px-6">
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm">
@@ -33,20 +33,21 @@ export function SurahHero({ chapter }: { chapter: Chapter }) {
           </span>
         </nav>
 
-        <div className="mt-6 flex flex-col gap-6 border-b border-secondary pb-8 sm:flex-row sm:items-end sm:justify-between">
-          <div className="flex items-center gap-4">
-            <span className="relative flex size-16 shrink-0 items-center justify-center">
-              <span className="absolute inset-[9px] rotate-45 rounded-xl bg-brand-solid shadow-md" />
-              <span className="relative font-display text-xl font-medium text-white tabular-nums">{chapter.id}</span>
+        {/* Compact so the reading starts high on the page; the Arabic name sits beside the title on every screen size. */}
+        <div className="mt-4 flex items-end justify-between gap-4 border-b border-secondary pb-5">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+            <span className="relative flex size-10 shrink-0 items-center justify-center sm:size-12">
+              <span className="absolute inset-[6px] rotate-45 rounded-lg bg-brand-solid shadow-md sm:inset-[7px]" />
+              <span className="relative font-display text-md font-medium text-white tabular-nums sm:text-lg">{chapter.id}</span>
             </span>
-            <div>
+            <div className="min-w-0">
               <h1
-                className="enter-visible font-display text-display-sm font-medium tracking-tight text-primary md:text-display-md"
+                className="enter-visible font-display text-display-xs font-medium tracking-tight text-primary sm:text-display-sm"
               >
                 {chapter.nameSimple}
               </h1>
-              <p className="mt-1 text-md text-tertiary">{chapter.nameTranslation}</p>
-              <div className="mt-3 flex flex-wrap gap-1.5">
+              <p className="mt-0.5 text-md text-tertiary">{chapter.nameTranslation}</p>
+              <div className="mt-2.5 flex flex-wrap gap-1.5">
                 <Badge type="pill-color" color={chapter.revelation === "meccan" ? "warning" : "brand"} size="sm">
                   {chapter.revelation === "meccan" ? "Meccan" : "Medinan"}
                 </Badge>
@@ -77,7 +78,7 @@ export function SurahHero({ chapter }: { chapter: Chapter }) {
           <p
             lang="ar"
             dir="rtl"
-            className="enter-sharpen font-quran text-6xl leading-none text-brand-secondary md:text-7xl"
+            className="enter-sharpen shrink-0 self-start font-quran text-4xl leading-none text-brand-secondary sm:self-end sm:text-5xl md:text-6xl"
           >
             {chapter.nameArabic}
             <span className="sr-only"> — surah {toArabicNumber(chapter.id)}</span>
