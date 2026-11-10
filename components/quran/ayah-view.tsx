@@ -107,7 +107,7 @@ export function AyahView({ d }: { d: AyahData }) {
             {verse.p && (
               <Link href={`/page/${verse.p}`} prefetch={false} className="rounded-md outline-focus-ring focus-visible:outline-2">
                 <Badge type="modern" size="sm">
-                  {s.page} {verse.p}
+                  {s.pages(verse.p, verse.p)}
                 </Badge>
               </Link>
             )}

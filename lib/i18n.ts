@@ -32,6 +32,12 @@ interface Strings {
   medinan: string;
   juz: string;
   page: string;
+  /** "Pages 293–304", or the singular label for a single page. */
+  pages: (from: number, to: number) => string;
+  /** Word count badge ("1,579 words"). */
+  words: (n: number) => string;
+  /** Prostration badge: "Sajdah" for one, a count for more. */
+  sajdah: (n: number) => string;
   translation: string;
   explanation: string;
   explanationEnglish: string;
@@ -67,6 +73,9 @@ const S: Record<Lang, Strings> = {
     medinan: "Medinan",
     juz: "Juzʾ",
     page: "Page",
+    pages: (a, b) => (a === b ? `Page ${a}` : `Pages ${a}–${b}`),
+    words: (n) => `${n.toLocaleString("en")} words`,
+    sajdah: (n) => (n === 1 ? "Sajdah" : `${n} sajdahs`),
     translation: "Translation",
     explanation: "Explanation (tafsir)",
     explanationEnglish: "Explanation (tafsir)",
@@ -100,6 +109,9 @@ const S: Record<Lang, Strings> = {
     medinan: "Médinoise",
     juz: "Juzʾ",
     page: "Page",
+    pages: (a, b) => (a === b ? `Page ${a}` : `Pages ${a}–${b}`),
+    words: (n) => `${n.toLocaleString("fr")} mots`,
+    sajdah: (n) => (n === 1 ? "Prosternation" : `${n} prosternations`),
     translation: "Traduction",
     explanation: "Explication (tafsir)",
     explanationEnglish: "Explication (tafsir, en anglais)",
@@ -133,6 +145,9 @@ const S: Record<Lang, Strings> = {
     medinan: "Medinense",
     juz: "Yuz",
     page: "Página",
+    pages: (a, b) => (a === b ? `Página ${a}` : `Páginas ${a}–${b}`),
+    words: (n) => `${n.toLocaleString("es")} palabras`,
+    sajdah: (n) => (n === 1 ? "Postración" : `${n} postraciones`),
     translation: "Traducción",
     explanation: "Explicación (tafsir)",
     explanationEnglish: "Explicación (tafsir, en inglés)",
@@ -166,6 +181,9 @@ const S: Record<Lang, Strings> = {
     medinan: "Madaniyah",
     juz: "Juz",
     page: "Halaman",
+    pages: (a, b) => (a === b ? `Halaman ${a}` : `Halaman ${a}–${b}`),
+    words: (n) => `${n.toLocaleString("id")} kata`,
+    sajdah: (n) => (n === 1 ? "Sajdah" : `${n} sajdah`),
     translation: "Terjemahan",
     explanation: "Tafsir",
     explanationEnglish: "Tafsir (bahasa Inggris)",
@@ -199,6 +217,9 @@ const S: Record<Lang, Strings> = {
     medinan: "Medeni",
     juz: "Cüz",
     page: "Sayfa",
+    pages: (a, b) => (a === b ? `Sayfa ${a}` : `Sayfalar ${a}–${b}`),
+    words: (n) => `${n.toLocaleString("tr")} kelime`,
+    sajdah: (n) => (n === 1 ? "Secde" : `${n} secde`),
     translation: "Meal",
     explanation: "Tefsir",
     explanationEnglish: "Tefsir (İngilizce)",
@@ -232,6 +253,9 @@ const S: Record<Lang, Strings> = {
     medinan: "مدنی",
     juz: "پارہ",
     page: "صفحہ",
+    pages: (a, b) => (a === b ? `صفحہ ${a}` : `صفحات ${a}–${b}`),
+    words: (n) => `${n.toLocaleString("en")} الفاظ`,
+    sajdah: (n) => (n === 1 ? "سجدہ" : `${n} سجدے`),
     translation: "ترجمہ",
     explanation: "تفسیر",
     explanationEnglish: "تفسیر (انگریزی)",
@@ -265,6 +289,9 @@ const S: Record<Lang, Strings> = {
     medinan: "মাদানী",
     juz: "পারা",
     page: "পৃষ্ঠা",
+    pages: (a, b) => (a === b ? `পৃষ্ঠা ${a}` : `পৃষ্ঠা ${a}–${b}`),
+    words: (n) => `${n.toLocaleString("en")}টি শব্দ`,
+    sajdah: (n) => (n === 1 ? "সিজদা" : `${n}টি সিজদা`),
     translation: "অনুবাদ",
     explanation: "তাফসীর",
     explanationEnglish: "তাফসীর (ইংরেজি)",
@@ -298,6 +325,9 @@ const S: Record<Lang, Strings> = {
     medinan: "Мединская",
     juz: "Джуз",
     page: "Страница",
+    pages: (a, b) => (a === b ? `Страница ${a}` : `Страницы ${a}–${b}`),
+    words: (n) => `Слов: ${n.toLocaleString("ru")}`,
+    sajdah: (n) => (n === 1 ? "Саджда" : `Саджды: ${n}`),
     translation: "Перевод",
     explanation: "Толкование (тафсир)",
     explanationEnglish: "Толкование (тафсир, на английском)",
@@ -331,6 +361,9 @@ const S: Record<Lang, Strings> = {
     medinan: "麦地那章",
     juz: "卷",
     page: "页",
+    pages: (a, b) => (a === b ? `第${a}页` : `第${a}–${b}页`),
+    words: (n) => `共${n.toLocaleString("en")}词`,
+    sajdah: (n) => (n === 1 ? "叩头处" : `${n}处叩头`),
     translation: "译文",
     explanation: "经注",
     explanationEnglish: "经注（英文）",
@@ -364,6 +397,9 @@ const S: Record<Lang, Strings> = {
     medinan: "Medinensisk",
     juz: "Juz",
     page: "Sida",
+    pages: (a, b) => (a === b ? `Sida ${a}` : `Sidor ${a}–${b}`),
+    words: (n) => `${n.toLocaleString("sv")} ord`,
+    sajdah: (n) => (n === 1 ? "Sajda" : `${n} sajdor`),
     translation: "Översättning",
     explanation: "Förklaring (tafsir)",
     explanationEnglish: "Förklaring (tafsir, på engelska)",

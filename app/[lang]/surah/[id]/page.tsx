@@ -8,7 +8,7 @@ import { AyahMarker } from "@/components/quran/ayah-marker";
 import { LanguageLinks } from "@/components/quran/language-links";
 import { HtmlLang } from "@/components/seo/html-lang";
 import { JsonLd } from "@/components/seo/json-ld";
-import { juzOf } from "@/lib/constants";
+import { juzOf, SAJDAH_AYAT } from "@/lib/constants";
 import { isLocale, languageAlternates, ogLocale, localePath, LOCALES, meaningIn, t, translator } from "@/lib/i18n";
 import { getChapter, getSurah, getTranslation, isValidSurahId } from "@/lib/quran";
 import { breadcrumbLd, surahLd } from "@/lib/seo";
@@ -64,6 +64,7 @@ export default async function LocalizedSurahPage({ params }: { params: Params })
   const rtl = s.dir === "rtl";
   const firstJuz = juzOf(id, 1);
   const lastJuz = juzOf(id, chapter.versesCount);
+  const sajdahs = SAJDAH_AYAT.filter(([sura]) => sura === id).length;
 
   return (
     <article lang={s.code} dir={s.dir} className="relative overflow-hidden pt-24 pb-32 md:pt-28">
@@ -111,8 +112,17 @@ export default async function LocalizedSurahPage({ params }: { params: Params })
                 </Badge>
                 {chapter.pages && (
                   <Badge type="modern" size="sm">
-                    {s.page} {chapter.pages[0]}
-                    {chapter.pages[1] !== chapter.pages[0] ? `–${chapter.pages[1]}` : ""}
+                    {s.pages(chapter.pages[0], chapter.pages[1])}
+                  </Badge>
+                )}
+                {chapter.words && (
+                  <Badge type="modern" size="sm">
+                    {s.words(chapter.words)}
+                  </Badge>
+                )}
+                {sajdahs > 0 && (
+                  <Badge type="pill-color" color="warning" size="sm" className="gap-1">
+                    <span aria-hidden="true">۩</span> {s.sajdah(sajdahs)}
                   </Badge>
                 )}
               </div>
