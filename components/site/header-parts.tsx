@@ -10,7 +10,7 @@ import { Dropdown } from "@/components/base/dropdown/dropdown";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { Kbd, openCommandPalette } from "@/components/site/command-palette";
 import { LanguageFlag } from "@/components/site/language-flag";
-import { Logo, LogoMark } from "@/components/site/logo";
+import { Logo } from "@/components/site/logo";
 import { ThemeToggle } from "@/components/site/theme-toggle";
 import { ALL_LANGUAGES, type Lang } from "@/lib/i18n";
 import { langFromPath, localizeHref, switchLanguagePath } from "@/lib/locale-path";
@@ -178,15 +178,15 @@ export interface HeaderCtx {
   isCurrent: (href: string) => boolean;
 }
 
-/** Link to the localized home with the full logo (or only the mark). */
-export function HomeLink({ ctx, markOnly = false, className }: { ctx: HeaderCtx; markOnly?: boolean; className?: string }) {
+/** Link to the localized home, with the logo. */
+export function HomeLink({ ctx, className }: { ctx: HeaderCtx; className?: string }) {
   return (
     <Link
       href={localizeHref(ctx.lang, "/")}
       className={cx("shrink-0 rounded-lg outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-4", className)}
       aria-label={ctx.h.home}
     >
-      {markOnly ? <LogoMark glow /> : <Logo />}
+      <Logo />
     </Link>
   );
 }

@@ -211,6 +211,7 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
 - The mushaf page header is not sticky, and pages don't animate in.
 - The text starts high: a compact surah header, first-visit tips as one dismissible `Alert`, and verse cards whose header
   keeps the ornamental rub el ḥizb medallion with the linked `2:255` (`VerseNumber compact`: no "Ayah" label).
+- The header is the Classic full-width bar (`components/site/header.tsx`, parts in `header-parts.tsx`): logo, nav with the current page underlined, search field from lg, language/theme, Read; it hides on scroll down.
 - On phones the header bar holds only logo, search, Read and the menu; language and theme live in the slideout footer.
 - Anything date-dependent on a prerendered page renders only after mount (the build date isn't today: hydration error).
 - Surah names in copy use the dataset's plain transliteration (`Al-Fatihah`, `An-Nur`, `Ya-Sin`), the same as
