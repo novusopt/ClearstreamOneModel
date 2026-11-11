@@ -199,7 +199,8 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
 
 - The Arabic text leads; everything else (translation, glosses, controls) is quieter and optional.
 - Always show where the reader is: surah, ayah and juzʾ in the reader bar; juzʾ dividers and sajdah (۩) badges in the text.
-- Prefer presets (Read / Study / Arabic only) over exposing every switch; detailed toggles live in Settings.
+- Prefer presets (Read / Study / Arabic only) over exposing every switch; detailed toggles live in Settings
+  (`reader-settings-panel.tsx`: live preview of 1:2, preset radio cards, Text / Meaning / Audio tabs of icon rows, reset with Undo).
 - The Basmala is Qurʾān text, not a page title: it opens the reading (verse and mushaf views) using the words
   of 1:1 (tajweed, meanings, word audio), is absent for Al-Fātiḥah (it is ayah 1) and replaced by a note for At-Tawbah.
 - The surah index is Mishkah's own: arched niches (Meccan = gold, Medinan = indigo) where reading
