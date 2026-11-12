@@ -13,6 +13,7 @@ import { isLocale, languageAlternates, ogLocale, localePath, LOCALES, meaningIn,
 import { getChapter, getSurah, getTranslation, isValidSurahId } from "@/lib/quran";
 import { breadcrumbLd, surahLd } from "@/lib/seo";
 import { ayahPath, surahPath } from "@/lib/site";
+import { arabicTitleStyle } from "@/lib/arabic-title-widths";
 
 /**
  * Localized surah pages (/fr/surah/18 …): the whole surah server-rendered with the Arabic and that
@@ -128,7 +129,7 @@ export default async function LocalizedSurahPage({ params }: { params: Params })
               </div>
             </div>
           </div>
-          <p lang="ar" dir="rtl" className="shrink-0 self-start font-quran text-4xl leading-none text-brand-secondary sm:self-end sm:text-5xl md:text-6xl">
+          <p lang="ar" dir="rtl" className="shrink-0 self-start font-quran text-4xl leading-none whitespace-nowrap text-brand-secondary sm:self-end sm:text-5xl md:text-6xl" style={arabicTitleStyle(chapter.nameArabic)}>
             {chapter.nameArabic}
           </p>
         </header>

@@ -2,22 +2,29 @@
 
 import { Command, CursorClick02 } from "@untitledui/icons";
 import { AnimatePresence, m } from "motion/react";
+import { useEffect } from "react";
 import { Alert } from "@/components/application/alerts/alert";
 import { Kbd } from "@/components/site/command-palette";
-import { setSettings, useSettings } from "@/lib/settings";
+import { setSettings, settingsStore, useSettings } from "@/lib/settings";
 
 /** Shown once, the first time someone opens a surah: one slim Untitled UI alert, so the text still starts high. */
 export function ReaderTips() {
   const seen = useSettings((s) => s.seenTips);
   const dismiss = () => setSettings({ seenTips: true });
+  // Tips switched back on in Settings: drop the pre-hydration "dismissed" mark that hides them (app/layout.tsx).
+  // Reads the store, not `seen`: during hydration `seen` is still the server default (false).
+  useEffect(() => {
+    if (!settingsStore.get().seenTips) delete document.documentElement.dataset.seenTips;
+  }, [seen]);
   return (
-    <AnimatePresence>
+    // initial={false}: visible from the first paint (it sits above the fold), animating only when dismissed.
+    <AnimatePresence initial={false}>
       {!seen && (
         <m.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-          className="mb-4 overflow-hidden"
+          className="reader-tips mb-4 overflow-hidden"
         >
           <Alert
             color="gray"

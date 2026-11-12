@@ -8,6 +8,7 @@ import { Button } from "@/components/base/buttons/button";
 import { juzOf, SAJDAH_AYAT } from "@/lib/constants";
 import type { Chapter } from "@/lib/types";
 import { toArabicNumber } from "@/lib/utils";
+import { arabicTitleStyle } from "@/lib/arabic-title-widths";
 
 export function SurahHero({ chapter }: { chapter: Chapter }) {
   const firstJuz = juzOf(chapter.id, 1);
@@ -78,7 +79,8 @@ export function SurahHero({ chapter }: { chapter: Chapter }) {
           <p
             lang="ar"
             dir="rtl"
-            className="enter-sharpen shrink-0 self-start font-quran text-4xl leading-none text-brand-secondary sm:self-end sm:text-5xl md:text-6xl"
+            className="enter-sharpen shrink-0 self-start font-quran text-4xl leading-none whitespace-nowrap text-brand-secondary sm:self-end sm:text-5xl md:text-6xl"
+            style={arabicTitleStyle(chapter.nameArabic)}
           >
             {chapter.nameArabic}
             <span className="sr-only"> — surah {toArabicNumber(chapter.id)}</span>

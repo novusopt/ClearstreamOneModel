@@ -260,3 +260,8 @@ input[type="search"]::-webkit-search-cancel-button {
 @media (prefers-reduced-motion: reduce) {
   .enter, .enter-up, .enter-word, .enter-blur, .enter-visible, .enter-word-visible, .enter-sharpen { animation: none; }
 }
+
+/* Reader tips already dismissed on this device: hidden before hydration (see the inline script in app/layout.tsx). */
+html[data-seen-tips] .reader-tips {
+  display: none;
+}

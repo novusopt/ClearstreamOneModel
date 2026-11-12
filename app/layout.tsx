@@ -23,11 +23,12 @@ const inter = localFont({
 });
 
 // Display face, split by unicode-range: Latin plus Latin-Extended (ā, ḥ, ʾ in transliterations).
+// Both files are trimmed by scripts/subset-fonts.py (weights 400-600, transliteration diacritics only).
 // Both are preloaded: headings use them above the fold, and a late swap shifts the layout.
 // No synthetic fallback on the first face, so the second one is reached in the font stack.
 const fraunces = localFont({
   src: "./fonts/fraunces-latin.woff2",
-  weight: "100 900",
+  weight: "400 600",
   variable: "--font-display-face",
   display: "swap",
   adjustFontFallback: false,
@@ -36,7 +37,7 @@ const fraunces = localFont({
 
 const frauncesExt = localFont({
   src: "./fonts/fraunces-latin-ext.woff2",
-  weight: "100 900",
+  weight: "400 600",
   variable: "--font-display-ext",
   display: "swap",
   adjustFontFallback: false,
@@ -44,12 +45,14 @@ const frauncesExt = localFont({
 });
 
 // Qurʾān face: Arabic plus its Latin set (the spaces inside Arabic text come from it), both preloaded
-// so the large Arabic text does not re-flow when the font arrives.
+// so the large Arabic text does not re-flow when the font arrives. The Arabic face uses `block`, not `swap`:
+// on a slow connection a fallback-font first paint re-wrapped the words when Amiri arrived (CLS 0.33 on
+// ayah pages); the Qurʾān text is never shown in another font.
 const amiriQuran = localFont({
   src: "./fonts/amiri-quran-arabic.woff2",
   weight: "400",
   variable: "--font-amiri-quran",
-  display: "swap",
+  display: "block",
   adjustFontFallback: false,
   declarations: [{ prop: "unicode-range", value: "U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0898-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC" }],
 });
@@ -88,6 +91,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${fraunces.variable} ${frauncesExt.variable} ${amiriQuran.variable} ${amiriQuranLatin.variable} antialiased`}>
       <body className="flex min-h-dvh flex-col bg-primary text-primary">
+        {/* Before first paint: mark returning readers who dismissed the reader tips, so the server-rendered tips
+            are hidden by CSS instead of collapsing after hydration (a layout shift on every surah page). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(JSON.parse(localStorage.getItem(${JSON.stringify(`${BRAND.storagePrefix}:settings:v1`)})||"{}").seenTips)document.documentElement.dataset.seenTips=""}catch(e){}`,
+          }}
+        />
         <Providers>
           <a
             href="#main"

@@ -1,5 +1,7 @@
 export const TOTAL_SURAHS = 114;
 export const TOTAL_AYAT = 6236;
+/** Ayat a long surah renders as interactive cards up front (server HTML and first paint); see use-progressive. */
+export const INITIAL_AYAT = 24;
 export const TOTAL_WORDS = 77429;
 
 export interface Reciter {

@@ -43,6 +43,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // React Compiler: measured off. It added 22-31 KB (gzip) of memo-cache code to every page with no
+  // gain in main-thread time, because the hot paths already subscribe to narrow store selectors. The code
+  // still follows its rules (eslint-plugin-react-hooks), so it can be switched on with babel-plugin-react-compiler.
+
   // Ayah pages and share images not prebuilt at build time render on first request, so the
   // files they read from disk must ship with those server functions.
   outputFileTracingIncludes: {

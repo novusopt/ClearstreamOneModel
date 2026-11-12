@@ -36,6 +36,19 @@ export interface Verse {
   q?: number;
 }
 
+/**
+ * What the server sends for ayat past the first batch of a long surah: just enough to render them as
+ * plain text (HTML for search engines and no-JS readers). The full word data loads from
+ * /api/surah/{n} once the page is idle (see SurahReader).
+ */
+export interface LiteVerse {
+  n: number;
+  /** Arabic words joined with spaces. */
+  a: string;
+  en: string;
+  p?: number;
+}
+
 export interface Chapter {
   id: number;
   nameArabic: string;

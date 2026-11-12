@@ -5,6 +5,7 @@ import { SurahReader } from "@/components/quran/surah-reader";
 import { ScrollProgress } from "@/components/site/scroll-progress";
 import { JsonLd } from "@/components/seo/json-ld";
 import { getChapter, getChapters, getSurah, isValidSurahId } from "@/lib/quran";
+import { INITIAL_AYAT } from "@/lib/constants";
 import { breadcrumbLd, surahLd } from "@/lib/seo";
 import { languageAlternates } from "@/lib/i18n";
 import { surahPath } from "@/lib/site";
@@ -36,6 +37,9 @@ export default async function SurahPage({ params }: PageProps<"/surah/[id]">) {
   if (!isValidSurahId(id)) notFound();
   const chapter = getChapter(id)!;
   const [{ verses }, fatihah] = await Promise.all([getSurah(id), getSurah(1)]);
+  // Long surahs: full data for the first cards only, the rest as plain text (see SurahReader).
+  const head = verses.slice(0, INITIAL_AYAT);
+  const rest = verses.slice(INITIAL_AYAT).map((v) => ({ n: v.n, a: v.w.map((w) => w.a).join(" "), en: v.en, p: v.p }));
 
   return (
     <>
@@ -52,7 +56,8 @@ export default async function SurahPage({ params }: PageProps<"/surah/[id]">) {
       <SurahHero chapter={chapter} />
       <SurahReader
         chapter={chapter}
-        verses={verses}
+        verses={head}
+        rest={rest}
         prev={getChapter(id - 1) ?? null}
         next={getChapter(id + 1) ?? null}
         basmala={fatihah.verses[0]}

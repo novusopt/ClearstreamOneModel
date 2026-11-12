@@ -1,13 +1,11 @@
 "use client";
 
-import type { ComponentProps, ComponentPropsWithRef, ReactNode } from "react";
-import { Children, createContext, isValidElement, useContext } from "react";
-import { FileIcon } from "@untitledui/file-icons";
+import type { ComponentPropsWithRef, ReactNode } from "react";
+import { createContext, useContext } from "react";
 import { SearchLg } from "@untitledui/icons";
 import { FeaturedIcon as FeaturedIconbase } from "@/components/foundations/featured-icon/featured-icon";
 import type { BackgroundPatternProps } from "@/components/shared-assets/background-patterns";
 import { BackgroundPattern } from "@/components/shared-assets/background-patterns";
-import { Illustration as Illustrations } from "@/components/shared-assets/illustrations";
 import { cx } from "@/utils/cx";
 
 interface RootContextProps {
@@ -33,34 +31,11 @@ const FeaturedIcon = ({ color = "gray", theme = "modern", icon = SearchLg, size,
     return <FeaturedIconbase {...props} {...{ color, theme, icon }} size={!size && rootSize === "lg" ? "xl" : size || "lg"} />;
 };
 
-const Illustration = ({ type = "cloud", color = "gray", size = "lg", ...props }: ComponentPropsWithRef<typeof Illustrations>) => {
-    const { size: rootSize } = useContext(RootContext);
-
-    return (
-        <Illustrations
-            role="img"
-            {...props}
-            {...{ type, color }}
-            size={rootSize === "sm" ? "sm" : rootSize === "md" ? "md" : size}
-            className={cx("z-10", props.className)}
-        />
-    );
-};
-
-interface FileTypeIconProps extends ComponentPropsWithRef<"div"> {
-    /** Which file type the icon depicts, forwarded to `FileIcon` from `@untitledui/file-icons`. */
-    type?: ComponentProps<typeof FileIcon>["type"];
-    /** Drawing style of the file icon, forwarded to `FileIcon` as its `variant`. */
-    theme?: ComponentProps<typeof FileIcon>["variant"];
-}
-
-const FileTypeIcon = ({ type = "folder", theme = "solid", ...props }: FileTypeIconProps) => {
-    return (
-        <div {...props} className={cx("relative z-10 flex rounded-full bg-linear-to-b from-neutral-50 to-neutral-200 p-8", props.className)}>
-            <FileIcon type={type} variant={theme} className="size-10 drop-shadow-sm" />
-        </div>
-    );
-};
+/*
+ * Mishkah: the kit's `Illustration` and `FileTypeIcon` sub-components are left out. They import every
+ * illustration and the whole `@untitledui/file-icons` set (~45 KB gzipped), which a static `EmptyState.X`
+ * property drags into every page that shows an empty state, used or not. Mishkah only uses `FeaturedIcon`.
+ */
 
 interface HeaderProps extends ComponentPropsWithRef<"div"> {
     /** Decorative background pattern drawn behind the header's icon or illustration and centred on it. Pass `"none"` to render the header without a pattern. */
@@ -71,8 +46,8 @@ interface HeaderProps extends ComponentPropsWithRef<"div"> {
 
 const Header = ({ pattern = "circle", patternSize = "md", ...props }: HeaderProps) => {
     const { size } = useContext(RootContext);
-    // Whether we are passing `Illustration` component as children.
-    const hasIllustration = Children.toArray(props.children).some((headerChild) => isValidElement(headerChild) && headerChild.type === Illustration);
+    // The kit enlarges the margin under an `Illustration`; Mishkah leaves illustrations out (see above).
+    const hasIllustration = false;
 
     return (
         <header
@@ -333,9 +308,7 @@ const EmptyState = Root as typeof Root & {
     Footer: typeof Footer;
     Content: typeof Content;
     Description: typeof Description;
-    Illustration: typeof Illustration;
     FeaturedIcon: typeof FeaturedIcon;
-    FileTypeIcon: typeof FileTypeIcon;
     AvatarRadius: typeof AvatarRadius;
     AvatarRow: typeof AvatarRow;
     AvatarGrid: typeof AvatarGrid;
@@ -346,9 +319,7 @@ EmptyState.Header = Header;
 EmptyState.Footer = Footer;
 EmptyState.Content = Content;
 EmptyState.Description = Description;
-EmptyState.Illustration = Illustration;
 EmptyState.FeaturedIcon = FeaturedIcon;
-EmptyState.FileTypeIcon = FileTypeIcon;
 EmptyState.AvatarRadius = AvatarRadius;
 EmptyState.AvatarRow = AvatarRow;
 EmptyState.AvatarGrid = AvatarGrid;

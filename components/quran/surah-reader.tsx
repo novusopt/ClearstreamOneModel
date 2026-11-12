@@ -21,24 +21,37 @@ import { setLastRead } from "@/lib/library";
 import { positionStore } from "@/lib/reader-position";
 import { setSettings, settingsStore, useSettings } from "@/lib/settings";
 import { dataUrl, pickSurah } from "@/lib/data-urls";
-import type { AudioVerse, Chapter, SimilarRef, Verse } from "@/lib/types";
+import type { AudioVerse, Chapter, LiteVerse, SimilarRef, SurahData, Verse } from "@/lib/types";
 import { ayahPath } from "@/lib/site";
 import { useProgressiveCount } from "@/lib/use-progressive";
-import { useRemote } from "@/lib/use-remote";
+import { fetchJson, useRemote } from "@/lib/use-remote";
+
+const toLite = (v: Verse): LiteVerse => ({ n: v.n, a: v.w.map((w) => w.a).join(" "), en: v.en, p: v.p });
+const toAudio = (verses: Verse[]): AudioVerse[] =>
+  verses.map((v) => ({ n: v.n, g: v.g, t: v.w.map((w) => (w.s != null && w.f != null ? [w.s, w.f] : null)), a: v.w.map((w) => w.a) }));
 
 /**
  * Lightweight, non-interactive ayah: Arabic, translation and a link to the ayah's page.
  * `content-visibility: auto` lets the browser skip layout/paint while it is off screen (it has no
  * overflowing hover cards, unlike the interactive cards).
  */
-const PlainVerse = memo(function PlainVerse({ verse, surah }: { verse: Verse; surah: number }) {
+const PlainVerse = memo(function PlainVerse({ verse, surah }: { verse: LiteVerse; surah: number }) {
   return (
-    <article id={`v-${verse.n}`} data-ayah={verse.n} aria-label={`Ayah ${surah}:${verse.n}`} className="scroll-mt-36 border-b border-secondary px-4 py-5 [contain-intrinsic-size:auto_18rem] [content-visibility:auto] last:border-b-0 sm:px-8 sm:py-6">
-      <Link href={ayahPath(surah, verse.n)} prefetch={false} className="font-display text-sm font-semibold text-tertiary tabular-nums hover:text-brand-secondary">
+    <article
+      id={`v-${verse.n}`}
+      data-ayah={verse.n}
+      aria-label={`Ayah ${surah}:${verse.n}`}
+      className="scroll-mt-36 border-b border-secondary px-4 py-5 [contain-intrinsic-size:auto_18rem] [content-visibility:auto] last:border-b-0 sm:px-8 sm:py-6"
+    >
+      <Link
+        href={ayahPath(surah, verse.n)}
+        prefetch={false}
+        className="font-display text-sm font-semibold text-tertiary tabular-nums hover:text-brand-secondary"
+      >
         {surah}:{verse.n}
       </Link>
       <p dir="rtl" lang="ar" className="mt-3 font-quran text-4xl leading-[2.2] text-primary sm:text-5xl">
-        {verse.w.map((w) => w.a).join(" ")}
+        {verse.a}
         <span className="font-quran">
           <AyahMarker n={verse.n} />
         </span>
@@ -50,7 +63,14 @@ const PlainVerse = memo(function PlainVerse({ verse, surah }: { verse: Verse; su
 
 interface SurahReaderProps {
   chapter: Chapter;
+  /**
+   * Full data for the first ayat (all of them for short surahs and in the single-page build). When it
+   * holds fewer than the surah has, `rest` carries the others as plain text and the full data is
+   * fetched from /api/surah/{n} after the first paint: Al-Baqarah's page would otherwise carry
+   * ~1 MB of word data (tajweed, timings, glosses) in its HTML.
+   */
   verses: Verse[];
+  rest?: LiteVerse[];
   prev: Chapter | null;
   next: Chapter | null;
   /** Ayah 1:1 — the Basmala shown at the top of every surah except 1 and 9. */
@@ -59,7 +79,7 @@ interface SurahReaderProps {
   footer?: React.ReactNode;
 }
 
-export function SurahReader({ chapter, verses, prev, next, basmala, footer }: SurahReaderProps) {
+export function SurahReader({ chapter, verses: initial, rest, prev, next, basmala, footer }: SurahReaderProps) {
   const lenis = useLenis();
   const viewMode = useSettings((s) => s.viewMode);
   const lang = useSettings((s) => s.translation);
@@ -67,8 +87,25 @@ export function SurahReader({ chapter, verses, prev, next, basmala, footer }: Su
   const similarRaw = useRemote<unknown>(dataUrl.similar(chapter.id));
   const similar = similarRaw ? pickSurah<Record<string, SimilarRef[]>>("similar", similarRaw, chapter.id) : null;
   const rtl = TRANSLATIONS.find((t) => t.id === lang)?.rtl ?? false;
+  const partial = initial.length < chapter.versesCount;
+  const surahUrl = partial ? dataUrl.surah(chapter.id) : null;
+  const remote = useRemote<SurahData>(surahUrl);
+  const verses = remote?.verses ?? initial;
   const { count, ensure } = useProgressiveCount(verses.length);
   const shown = useMemo(() => verses.slice(0, count), [verses, count]);
+  // Every ayah past the rendered cards, as plain text (from the full data once it is here).
+  const plain = useMemo(
+    () => (remote ? verses.slice(count).map(toLite) : [...initial.map(toLite), ...(rest ?? [])].slice(count)),
+    [remote, verses, initial, rest, count],
+  );
+  /** The whole surah's data: right away, or once /api/surah/{n} has loaded. */
+  const withAll = useCallback(
+    (run: (all: Verse[]) => void) => {
+      if (!surahUrl || remote) return run(verses);
+      void fetchJson<SurahData>(surahUrl).then((d) => run(d.verses));
+    },
+    [surahUrl, remote, verses],
+  );
   /** Render up to ayah `n`, then run `then` once it is in the DOM. */
   const reveal = useCallback(
     (n: number, then: () => void) => {
@@ -78,14 +115,9 @@ export function SurahReader({ chapter, verses, prev, next, basmala, footer }: Su
     [ensure],
   );
 
-  const audioVerses = useMemo<AudioVerse[]>(
-    () => verses.map((v) => ({ n: v.n, g: v.g, t: v.w.map((w) => (w.s != null && w.f != null ? [w.s, w.f] : null)), a: v.w.map((w) => w.a) })),
-    [verses],
-  );
-
   const playFrom = useCallback(
-    (index: number) => player.play(chapter.id, chapter.nameSimple, audioVerses, index),
-    [chapter.id, chapter.nameSimple, audioVerses],
+    (index: number) => withAll((all) => player.play(chapter.id, chapter.nameSimple, toAudio(all), index)),
+    [chapter.id, chapter.nameSimple, withAll],
   );
 
   // "?t=fr" (links from the localized pages): open with that translation selected, then tidy the URL.
@@ -174,7 +206,10 @@ export function SurahReader({ chapter, verses, prev, next, basmala, footer }: Su
           if (e.isIntersecting) {
             const ayah = Number(e.target.getAttribute("data-ayah"));
             positionStore.set({ surah: chapter.id, ayah });
-            timers.set(e.target, window.setTimeout(() => setLastRead(chapter.id, ayah), 1200));
+            timers.set(
+              e.target,
+              window.setTimeout(() => setLastRead(chapter.id, ayah), 1200),
+            );
           } else {
             window.clearTimeout(timers.get(e.target));
             timers.delete(e.target);
@@ -191,7 +226,7 @@ export function SurahReader({ chapter, verses, prev, next, basmala, footer }: Su
     // Re-observe as more ayat render.
   }, [chapter.id, viewMode, count]);
 
-  const pageList = useMemo(() => verses.map((v) => v.p), [verses]);
+  const pageList = useMemo(() => [...initial.map((v) => v.p), ...(rest ?? []).map((v) => v.p)], [initial, rest]);
   const togglePlay = () => (playerStore.get().surah === chapter.id ? player.toggle() : playFrom(0));
   const resume = (ayah: number) =>
     reveal(ayah, () => {
@@ -206,40 +241,43 @@ export function SurahReader({ chapter, verses, prev, next, basmala, footer }: Su
       <ReaderTips />
 
       {viewMode === "hifz" && (
-        <HifzPanel chapter={chapter} onRepeat={(from, to, times) => player.playRange(chapter.id, chapter.nameSimple, audioVerses, from, to, times)} />
+        <HifzPanel
+          chapter={chapter}
+          onRepeat={(from, to, times) => withAll((all) => player.playRange(chapter.id, chapter.nameSimple, toAudio(all), from, to, times))}
+        />
       )}
 
       {viewMode === "reading" ? (
         <ReadingView verses={shown} surah={chapter.id} basmala={<Basmala basmala={basmala} surah={chapter.id} variant="page" />} />
       ) : (
         <>
-        <Basmala basmala={basmala} surah={chapter.id} />
-        <div className="rounded-3xl border border-secondary bg-primary shadow-xs [&>*:first-child]:rounded-t-3xl [&>*:last-child]:rounded-b-3xl">
-          {shown.map((v, i) => {
-            const juz = juzStartingAt(chapter.id, v.n);
-            return (
-              <Fragment key={v.n}>
-                {juz && <JuzDivider juz={juz} />}
-                <VerseCard
-                  verse={v}
-                  index={i}
-                  surah={chapter.id}
-                  surahName={chapter.nameSimple}
-                  translation={texts ? texts[i] : lang === "en" ? v.en : null}
-                  translationRtl={rtl}
-                  sajdah={isSajdah(chapter.id, v.n)}
-                  similar={similar?.[v.n]}
-                  onPlay={playFrom}
-                />
-              </Fragment>
-            );
-          })}
-          {/* Ayat not yet upgraded to interactive cards: full text in the server HTML (search engines,
+          <Basmala basmala={basmala} surah={chapter.id} />
+          <div className="rounded-3xl border border-secondary bg-primary shadow-xs [&>*:first-child]:rounded-t-3xl [&>*:last-child]:rounded-b-3xl">
+            {shown.map((v, i) => {
+              const juz = juzStartingAt(chapter.id, v.n);
+              return (
+                <Fragment key={v.n}>
+                  {juz && <JuzDivider juz={juz} />}
+                  <VerseCard
+                    verse={v}
+                    index={i}
+                    surah={chapter.id}
+                    surahName={chapter.nameSimple}
+                    translation={texts ? texts[i] : lang === "en" ? v.en : null}
+                    translationRtl={rtl}
+                    sajdah={isSajdah(chapter.id, v.n)}
+                    similar={similar?.[v.n]}
+                    onPlay={playFrom}
+                  />
+                </Fragment>
+              );
+            })}
+            {/* Ayat not yet upgraded to interactive cards: full text in the server HTML (search engines,
               no-JS readers, find-in-page), replaced batch by batch as the cards render. */}
-          {verses.slice(count).map((v) => (
-            <PlainVerse key={v.n} verse={v} surah={chapter.id} />
-          ))}
-        </div>
+            {plain.map((v) => (
+              <PlainVerse key={v.n} verse={v} surah={chapter.id} />
+            ))}
+          </div>
         </>
       )}
 

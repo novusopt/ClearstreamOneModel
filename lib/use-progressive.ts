@@ -1,9 +1,10 @@
 "use client";
 
 import { startTransition, useCallback, useEffect, useState } from "react";
+import { INITIAL_AYAT } from "@/lib/constants";
 
 /** Ayat rendered up front (server HTML and first paint). */
-const INITIAL = 24;
+const INITIAL = INITIAL_AYAT;
 /** Ayat appended per idle slice afterwards. */
 const BATCH = 20;
 
@@ -17,10 +18,14 @@ type IdleWindow = Window & {
  * and hydrating them in one go blocks the main thread for seconds on a phone. This renders the
  * first `INITIAL` items immediately and appends the rest in small batches while the browser is
  * idle, as a transition, so input stays responsive. `ensure(n)` renders at least `n` items at once
- * (deep links, resume, following the recitation).
+ * (deep links, resume, following the recitation). `total` may grow later (long surahs get their full
+ * data after the first paint); a pending `ensure` is honoured as soon as the items exist.
  */
 export function useProgressiveCount(total: number) {
   const [count, setCount] = useState(() => Math.min(total, INITIAL));
+  const [want, setWant] = useState(0);
+  // Catch up with an ensure() that asked for more items than existed at the time.
+  if (want > count && total > count) setCount(Math.min(total, want));
 
   useEffect(() => {
     if (count >= total) return;
@@ -34,6 +39,12 @@ export function useProgressiveCount(total: number) {
     return () => window.clearTimeout(id);
   }, [count, total]);
 
-  const ensure = useCallback((n: number) => setCount((c) => (c >= n ? c : Math.min(total, n))), [total]);
+  const ensure = useCallback(
+    (n: number) => {
+      setWant((w) => Math.max(w, n));
+      setCount((c) => (c >= n ? c : Math.min(total, n)));
+    },
+    [total],
+  );
   return { count, ensure, done: count >= total };
 }

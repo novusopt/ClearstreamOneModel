@@ -26,10 +26,10 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
 
   return (
     <section ref={ref} className="relative isolate overflow-hidden pt-40 pb-16 md:pt-52 md:pb-24">
-      {/* Aurora backdrop */}
+      {/* Aurora backdrop. Offsets are fixed, not a % of the section: the section grows while it loads, and a %-based top moved the glow (CLS 0.26 on phones). */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-brand-50/60 via-transparent to-transparent dark:from-brand-950/80" />
-        <div className="absolute top-[18%] left-1/2 size-[38rem] -translate-x-1/2 animate-flicker rounded-full bg-gold-300/35 blur-3xl dark:bg-gold-500/15" />
+        <div className="absolute top-[17rem] left-1/2 size-[38rem] -translate-x-1/2 animate-flicker rounded-full bg-gold-300/35 blur-3xl dark:bg-gold-500/15" />
         <div className="absolute -top-40 -left-40 size-[34rem] animate-aurora rounded-full bg-brand-300/25 blur-3xl dark:bg-brand-700/25" />
         <div className="absolute -right-40 bottom-0 size-[30rem] animate-aurora rounded-full bg-brand-200/30 blur-3xl [animation-delay:-9s] dark:bg-brand-800/30" />
         <div className="absolute inset-0 bg-[radial-gradient(var(--color-border-secondary)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)] bg-[size:24px_24px]" />

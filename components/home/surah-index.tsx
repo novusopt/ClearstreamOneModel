@@ -195,8 +195,13 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
     });
   }, [chapters, deferred, filter, lang]);
 
+  // Rendering is skipped until the index nears the viewport (2,000+ elements, 14,000 px tall on phones);
+  // the intrinsic sizes are its measured heights, and `auto` keeps the real one once it has rendered.
   return (
-    <section id="surahs" className="scroll-mt-24 py-24">
+    <section
+      id="surahs"
+      className="scroll-mt-24 py-24 [contain-intrinsic-size:auto_13800px] [content-visibility:auto] sm:[contain-intrinsic-size:auto_10000px] md:[contain-intrinsic-size:auto_7700px] lg:[contain-intrinsic-size:auto_5200px]"
+    >
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <m.div initial={{ x: -24 }} whileInView={{ x: 0 }} viewport={{ once: true }}>
@@ -317,7 +322,10 @@ export function JuzIndex({ chapters }: { chapters: Chapter[] }) {
   const { m: msg } = useUi();
   const t = msg.index;
   return (
-    <section id="juz" className="scroll-mt-24 pb-24">
+    <section
+      id="juz"
+      className="scroll-mt-24 pb-24 [contain-intrinsic-size:auto_2200px] [content-visibility:auto] sm:[contain-intrinsic-size:auto_1530px] md:[contain-intrinsic-size:auto_1000px] lg:[contain-intrinsic-size:auto_860px]"
+    >
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <m.div initial={{ x: -24 }} whileInView={{ x: 0 }} viewport={{ once: true }}>
           <p className="text-sm font-semibold text-brand-secondary">{t.juzEyebrow}</p>

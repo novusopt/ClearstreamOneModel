@@ -10,6 +10,7 @@ import { getChapters, getJuz } from "@/lib/quran";
 import { breadcrumbLd, snippet } from "@/lib/seo";
 import { ayahPath, surahPath } from "@/lib/site";
 import { toArabicNumber } from "@/lib/utils";
+import { arabicTitleStyle } from "@/lib/arabic-title-widths";
 
 /** Landing page for each of the 30 juzʾ: surahs, ḥizb quarters, pages and where to start reading. */
 
@@ -121,7 +122,7 @@ export default async function JuzPage({ params }: { params: Params }) {
                 </div>
               </div>
             </div>
-            <p lang="ar" dir="rtl" className="shrink-0 self-start font-quran text-4xl leading-none text-brand-secondary sm:self-end sm:text-5xl md:text-6xl">
+            <p lang="ar" dir="rtl" className="shrink-0 self-start font-quran text-4xl leading-none whitespace-nowrap text-brand-secondary sm:self-end sm:text-5xl md:text-6xl" style={arabicTitleStyle(`الجزء ${toArabicNumber(juz)}`)}>
               الجزء {toArabicNumber(juz)}
             </p>
           </div>
