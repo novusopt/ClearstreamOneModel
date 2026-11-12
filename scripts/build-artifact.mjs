@@ -8,7 +8,6 @@
  *   data/tr-{lang}.json   one file per non-English translation (all surahs)
  *   data/home.json        Al-Fatihah + Ayat al-Kursi for the home page demos
  *   data/tafsir-{lang}.json  Al-Mukhtasar per language (array per surah)
- *   data/similar.json     look-alike ayat for all surahs
  *
  * Usage: npm run build:artifact
  */
@@ -89,9 +88,6 @@ for (const lang of readdirSync(join(ROOT, "public/data/tafsir"))) {
   for (let n = 1; n <= 114; n++) all.push(JSON.parse(readFileSync(join(ROOT, "public/data/tafsir", lang, `${n}.json`), "utf8")));
   writeFileSync(join(DATA, `tafsir-${lang}.json`), JSON.stringify(all));
 }
-const similar = {};
-for (let n = 1; n <= 114; n++) similar[n] = JSON.parse(readFileSync(join(ROOT, "public/data/similar", `${n}.json`), "utf8"));
-writeFileSync(join(DATA, "similar.json"), JSON.stringify(similar));
 
 // 4. Page (no <html>/<head>/<body>: the host wraps it)
 const html = `<meta charset="utf-8">

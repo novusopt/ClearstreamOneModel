@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, BookOpen02, ChevronRight, Copy07 } from "@untitledui/icons";
+import { ArrowLeft, ArrowRight, BookOpen02, ChevronRight } from "@untitledui/icons";
 import Link from "next/link";
 import { Badge } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
@@ -28,11 +28,10 @@ function SectionTitle({ icon: Icon, children }: { icon: typeof BookOpen02; child
 
 /**
  * One ayah page (English at /surah/2/255, localized at /fr/surah/2/255 …): the Arabic with tajweed,
- * transliteration, translation, word-by-word meanings, the Al-Mukhtaṣar tafsir and look-alike
- * ayat. Fully server-rendered; only the Listen/Share buttons are a client island.
+ * transliteration, translation, word-by-word meanings and the Al-Mukhtaṣar tafsir. Fully server-rendered; only the Listen/Share buttons are a client island.
  */
 export function AyahView({ d }: { d: AyahData }) {
-  const { chapter, verse, ayah, id, lang, similar } = d;
+  const { chapter, verse, ayah, id, lang } = d;
   const s = t(lang);
   const L = (path: string) => localePath(lang, path);
   const named = ayahName(id, ayah);
@@ -193,31 +192,6 @@ export function AyahView({ d }: { d: AyahData }) {
           </section>
         )}
 
-        {similar.length > 0 && (
-          <section aria-labelledby="similar" className="mt-12">
-            <SectionTitle icon={Copy07}>
-              <span id="similar">{s.similarWording}</span>
-            </SectionTitle>
-            <ul className="mt-4 space-y-2">
-              {similar.map((x) => (
-                <li key={`${x.s}:${x.a}`}>
-                  <Link
-                    href={L(ayahPath(x.s, x.a))}
-                    prefetch={false}
-                    className="flex items-center gap-4 rounded-2xl border border-secondary bg-primary px-4 py-3 outline-focus-ring transition hover:border-brand hover:bg-secondary/40 focus-visible:outline-2"
-                  >
-                    <span dir="ltr" className="shrink-0 text-sm font-semibold text-secondary tabular-nums">
-                      {x.n} {x.s}:{x.a}
-                    </span>
-                    <span dir="rtl" lang="ar" className="min-w-0 flex-1 truncate font-quran text-2xl text-primary">
-                      {x.t}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
 
         <nav aria-label={`${s.previousAyah} / ${s.nextAyah}`} className="mt-14 grid gap-3 border-t border-secondary pt-8 sm:grid-cols-2">
           {prev ? (

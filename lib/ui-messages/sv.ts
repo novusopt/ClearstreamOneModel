@@ -31,7 +31,6 @@ export const sv: Messages = {
       tanzil: "Översättningar och translitterering",
       quranenc: "Indonesisk och kinesisk översättning",
       tafsir: "Tafsir Center for Quranic Studies, 9 språk",
-      similar: "Liknande verser",
       audio: "Recitationsljud, med EveryAyah som reserv",
     },
   },
@@ -68,7 +67,6 @@ export const sv: Messages = {
     synced: "Synkad recitation",
     recitation: "Recitation",
     pages: "604 sidor",
-    lookalike: "Liknande verser",
   },
   bento: {
     eyebrow: "Allt i en läsare",
@@ -108,7 +106,7 @@ export const sv: Messages = {
         eyebrow: "Memorera",
         title: "Dölj orden, behåll första bokstaven, recitera",
         description: "Fyra sätt att dölja en vers, en reciterare som pausar så att du kan upprepa, och slingor över valfritt avsnitt.",
-        points: ["Alla ord, vartannat, andra halvan eller första bokstäverna", "En ”Din tur”-paus efter varje vers", "Liknande verser markeras innan du blandar ihop dem"],
+        points: ["Alla ord, vartannat, andra halvan eller första bokstäverna", "En ”Din tur”-paus efter varje vers", "Repetition med mellanrum så att det du lärt dig sitter kvar"],
       },
       {
         eyebrow: "Repetera",

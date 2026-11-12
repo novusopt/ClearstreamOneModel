@@ -1,6 +1,6 @@
 "use client";
 
-import { Bookmark, BookmarkCheck, CheckCircle, DotsVertical, Copy01, Copy07, Edit05, Eye, EyeOff, Image01, Link01, PauseCircle, PlayCircle, Share07, Type01 } from "@untitledui/icons";
+import { Bookmark, BookmarkCheck, CheckCircle, DotsVertical, Copy01, Edit05, Eye, EyeOff, Image01, Link01, PauseCircle, PlayCircle, Share07, Type01 } from "@untitledui/icons";
 import { m } from "motion/react";
 import { memo, useState } from "react";
 import { Button as AriaButton } from "react-aria-components";
@@ -19,7 +19,7 @@ import { openVerseDialog } from "@/components/quran/verse-dialogs";
 import { player, usePlayer, useTick } from "@/lib/audio-engine";
 import { toggleBookmark, toggleMemorised, useLibrary, verseKey } from "@/lib/library";
 import { ARABIC_SIZES, TRANSLATION_SIZES, useSettings } from "@/lib/settings";
-import type { SimilarRef, Verse } from "@/lib/types";
+import type { Verse } from "@/lib/types";
 import { ayahPath } from "@/lib/site";
 import { cx } from "@/utils/cx";
 
@@ -32,12 +32,10 @@ interface VerseCardProps {
   translationRtl: boolean;
   /** Ayah of prostration (۩). */
   sajdah?: boolean;
-  /** Ayat with near-identical wording. */
-  similar?: SimilarRef[];
   onPlay: (index: number) => void;
 }
 
-export const VerseCard = memo(function VerseCard({ verse, index, surah, surahName, translation, translationRtl, sajdah = false, similar, onPlay }: VerseCardProps) {
+export const VerseCard = memo(function VerseCard({ verse, index, surah, surahName, translation, translationRtl, sajdah = false, onPlay }: VerseCardProps) {
   const isCurrent = usePlayer((s) => s.surah === surah && s.index === index && s.status !== "idle");
   const isPlaying = usePlayer((s) => s.surah === surah && s.index === index && (s.status === "playing" || s.status === "loading" || s.status === "repeat"));
   const activeWord = useTick((s) => (isCurrent ? s.word : -1));
@@ -94,7 +92,6 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
     const target = { surah, ayah: verse.n, surahName, arabic, translation: text };
     if (action === "note") openVerseDialog(target, "note");
     if (action === "image") openVerseDialog(target, "image");
-    if (action === "similar") openVerseDialog({ ...target, similar }, "similar");
     if (action === "memorised") {
       const added = toggleMemorised(surah, verse.n);
       if (added) notify.success(`Ayah ${key} memorised`, { id: `mem-${key}`, description: "Keep going: it's added to your Library." });
@@ -124,17 +121,6 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
             <Badge type="pill-color" color="warning" size="sm" className="gap-1">
               <span aria-hidden="true">۞</span> {quarterLabel(verse.q)}
             </Badge>
-          )}
-          {similar && similar.length > 0 && (
-            <AriaButton
-              onPress={() => onMenu("similar")}
-              className="cursor-pointer rounded-full outline-focus-ring focus-visible:outline-2"
-              aria-label={`Similar wording: ${similar.length} ayat with near-identical wording`}
-            >
-              <BadgeWithIcon type="pill-color" color={hifz ? "warning" : "gray"} size="sm" iconLeading={Copy07} className="cursor-pointer">
-                Similar wording · {similar.length}
-              </BadgeWithIcon>
-            </AriaButton>
           )}
           {sajdah && (
             <Tooltip title="Ayah of prostration" description="It is recommended to prostrate (sajdat at-tilāwah) after reciting this ayah." placement="top">
@@ -197,7 +183,6 @@ export const VerseCard = memo(function VerseCard({ verse, index, surah, surahNam
                 </Dropdown.Section>
                 <Dropdown.Separator />
                 <Dropdown.Section>
-                  {similar && similar.length > 0 && <Dropdown.Item id="similar" icon={Copy07} label="Compare similar ayat" />}
                   <Dropdown.Item id="image" icon={Image01} label="Share as image" />
                   <Dropdown.Item id="share" icon={Share07} label="Share link…" />
                 </Dropdown.Section>

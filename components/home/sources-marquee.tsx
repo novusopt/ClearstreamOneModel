@@ -12,7 +12,6 @@ const sourcesFor = (t: Messages["sources"]): { name: string; note: string; recit
   { name: "Al-Mukhtaṣar", note: t.tafsir },
   ...RECITERS.map((r) => ({ name: r.name, note: r.wordSync ? t.synced : t.recitation, reciter: r })),
   { name: "Madani Mushaf", note: t.pages },
-  { name: "Mutashābihāt", note: t.lookalike },
 ];
 
 /** "Logo cloud" for a Qurʾān app: the sources the text, meaning and audio come from, on a slow loop. */

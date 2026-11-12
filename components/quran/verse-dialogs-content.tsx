@@ -8,7 +8,6 @@ import { Dialog, Modal, ModalOverlay } from "@/components/application/modals/mod
 import { Button } from "@/components/base/buttons/button";
 import { CloseButton } from "@/components/base/buttons/close-button";
 import { TextArea } from "@/components/base/textarea/textarea";
-import { SimilarAyat } from "@/components/quran/similar-ayat";
 import { BRAND } from "@/lib/brand";
 import { useStore } from "@/lib/create-store";
 import { closeVerseDialog as close, type DialogTarget, dialogStore, EMPTY_DIALOG as EMPTY } from "@/components/quran/verse-dialogs";
@@ -24,18 +23,6 @@ export default function VerseDialogsContent() {
         <Dialog aria-label={target.kind === "image" ? "Share as image" : "Note"}>
           {target.kind === "note" && <NoteEditor key={`${target.surah}:${target.ayah}`} target={target} />}
           {target.kind === "image" && <ImageCard key={`${target.surah}:${target.ayah}`} target={target} />}
-          {target.kind === "similar" && (
-            <>
-              <Header title="Similar wording" subtitle={`Ayat that are easy to mix up with ${target.surahName} ${target.surah}:${target.ayah}`} />
-              <div className="px-6 pt-5 pb-6">
-                <SimilarAyat
-                  current={{ s: target.surah, a: target.ayah, name: target.surahName, text: target.arabic }}
-                  items={target.similar ?? []}
-                  onNavigate={close}
-                />
-              </div>
-            </>
-          )}
         </Dialog>
       </Modal>
     </ModalOverlay>

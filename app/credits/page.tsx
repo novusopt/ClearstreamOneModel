@@ -143,12 +143,6 @@ export default function CreditsPage() {
                 href: TAFSIR_SOURCE.url,
                 role: `By the ${TAFSIR_SOURCE.author}, in nine languages; Urdu and Swedish readers see the English edition, labelled. Collected by spa5k/tafsir_api.`,
               },
-              {
-                name: "Quran Mutashabihat Data",
-                href: "https://github.com/Waqar144/Quran_Mutashabihat_Data",
-                role: "Ayat with near-identical wording (mutashābihāt), shown as “Similar wording”.",
-                licence: "CC0 1.0",
-              },
             ]}
           />
 

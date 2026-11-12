@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import chaptersJson from "@/data/quran/chapters.json";
 import { juzOf } from "@/lib/constants";
-import type { Chapter, SimilarRef, SurahData, Verse } from "@/lib/types";
+import type { Chapter, SurahData, Verse } from "@/lib/types";
 
 const chapters = chaptersJson as unknown as Chapter[];
 
@@ -31,11 +31,6 @@ export async function getTafsir(lang: string, id: number): Promise<string[]> {
   return JSON.parse(await readFile(file, "utf8")) as string[];
 }
 
-/** Look-alike ayat for a surah, keyed by ayah number. */
-export async function getSimilar(id: number): Promise<Record<string, SimilarRef[]>> {
-  const file = join(process.cwd(), "public", "data", "similar", `${id}.json`);
-  return JSON.parse(await readFile(file, "utf8")) as Record<string, SimilarRef[]>;
-}
 
 export interface VerseRef {
   /** Surah number. */

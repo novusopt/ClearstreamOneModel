@@ -2,7 +2,7 @@ import "server-only";
 import type { Metadata } from "next";
 import { ayahName } from "@/lib/ayah-names";
 import { hasTafsir, type Lang, languageAlternates, localePath, ogLocale, t } from "@/lib/i18n";
-import { getChapter, getSimilar, getSurah, getTafsir, getTranslation, isValidSurahId } from "@/lib/quran";
+import { getChapter, getSurah, getTafsir, getTranslation, isValidSurahId } from "@/lib/quran";
 import { snippet } from "@/lib/seo";
 import { ayahPath } from "@/lib/site";
 
@@ -14,11 +14,10 @@ export async function loadAyah(rawId: string, rawAyah: string, lang: Lang) {
   const chapter = getChapter(id)!;
   if (ayah < 1 || ayah > chapter.versesCount) return null;
   const tafsirLang = hasTafsir(lang) ? lang : "en";
-  const [{ verses }, translation, tafsir, similar] = await Promise.all([
+  const [{ verses }, translation, tafsir] = await Promise.all([
     getSurah(id),
     getTranslation(lang, id).catch(() => null),
     getTafsir(tafsirLang, id).catch(() => [] as string[]),
-    getSimilar(id).catch(() => ({}) as Awaited<ReturnType<typeof getSimilar>>),
   ]);
   const verse = verses[ayah - 1];
   return {
@@ -30,7 +29,6 @@ export async function loadAyah(rawId: string, rawAyah: string, lang: Lang) {
     translation: translation?.[ayah - 1] ?? verse.en,
     tafsir: tafsir[ayah - 1] as string | undefined,
     tafsirLang,
-    similar: similar[String(ayah)] ?? [],
   };
 }
 

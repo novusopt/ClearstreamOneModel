@@ -36,7 +36,7 @@ export function OfflineCard() {
       const [pages, data] = await Promise.all([caches.open(PAGES), caches.open(STATIC)]);
       let done = 0;
       const one = async (n: number) => {
-        const urls = [`/api/surah/${n}`, `/data/similar/${n}.json`, `/data/tafsir/${tafsirLang}/${n}.json`];
+        const urls = [`/api/surah/${n}`, `/data/tafsir/${tafsirLang}/${n}.json`];
         if (lang !== "en") urls.push(`/data/translations/${lang}/${n}.json`);
         await Promise.all([pages.add(`/surah/${n}`), data.addAll(urls)]);
         done += 1;

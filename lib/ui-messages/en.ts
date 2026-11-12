@@ -37,7 +37,6 @@ export const en = {
       tanzil: "Translations and transliteration",
       quranenc: "Indonesian and Chinese translations",
       tafsir: "Tafsir Center for Quranic Studies, 9 languages",
-      similar: "Look-alike ayat",
       audio: "Recitation audio, with EveryAyah as fallback",
     },
   },
@@ -75,7 +74,6 @@ export const en = {
     synced: "Word-synced recitation",
     recitation: "Recitation",
     pages: "604 pages",
-    lookalike: "Look-alike ayat",
   },
   bento: {
     eyebrow: "Everything in one reader",
@@ -115,7 +113,7 @@ export const en = {
         eyebrow: "Memorise",
         title: "Hide the words, keep the first letter, recite it back",
         description: "Four ways to hide an ayah, a reciter who pauses so you can repeat, and loops of any range of ayat.",
-        points: ["All words, every other, second half or first letters", "“Your turn” pause after each ayah", "Look-alike ayat flagged before you mix them up"],
+        points: ["All words, every other, second half or first letters", "“Your turn” pause after each ayah", "Spaced-repetition reviews keep what you memorised firm"],
       },
       {
         eyebrow: "Review",

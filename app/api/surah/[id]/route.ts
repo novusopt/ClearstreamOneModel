@@ -1,6 +1,6 @@
 import { getChapters, getSurah, isValidSurahId } from "@/lib/quran";
 
-/** Pre-rendered per-surah JSON for client features (review sessions, look-alike ayat). */
+/** Pre-rendered per-surah JSON for client features (long surahs after first paint, review sessions, offline). */
 export const dynamic = "force-static";
 export const dynamicParams = false;
 

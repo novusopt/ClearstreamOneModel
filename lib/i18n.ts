@@ -54,7 +54,6 @@ interface Strings {
   linkCopied: string;
   surahs: string;
   otherLanguages: string;
-  similarWording: string;
 }
 
 const S: Record<Lang, Strings> = {
@@ -92,7 +91,6 @@ const S: Record<Lang, Strings> = {
     linkCopied: "Link copied",
     surahs: "Surahs",
     otherLanguages: "Other languages",
-    similarWording: "Ayat with similar wording",
   },
   fr: {
     code: "fr",
@@ -128,7 +126,6 @@ const S: Record<Lang, Strings> = {
     linkCopied: "Lien copié",
     surahs: "Sourates",
     otherLanguages: "Autres langues",
-    similarWording: "Versets à la formulation proche",
   },
   es: {
     code: "es",
@@ -164,7 +161,6 @@ const S: Record<Lang, Strings> = {
     linkCopied: "Enlace copiado",
     surahs: "Suras",
     otherLanguages: "Otros idiomas",
-    similarWording: "Aleyas de redacción similar",
   },
   id: {
     code: "id",
@@ -200,7 +196,6 @@ const S: Record<Lang, Strings> = {
     linkCopied: "Tautan disalin",
     surahs: "Surat",
     otherLanguages: "Bahasa lain",
-    similarWording: "Ayat dengan redaksi mirip",
   },
   tr: {
     code: "tr",
@@ -236,7 +231,6 @@ const S: Record<Lang, Strings> = {
     linkCopied: "Bağlantı kopyalandı",
     surahs: "Sureler",
     otherLanguages: "Diğer diller",
-    similarWording: "Benzer ifadeli ayetler",
   },
   ur: {
     code: "ur",
@@ -272,7 +266,6 @@ const S: Record<Lang, Strings> = {
     linkCopied: "لنک کاپی ہو گیا",
     surahs: "سورتیں",
     otherLanguages: "دیگر زبانیں",
-    similarWording: "ملتے جلتے الفاظ والی آیات",
   },
   bn: {
     code: "bn",
@@ -308,7 +301,6 @@ const S: Record<Lang, Strings> = {
     linkCopied: "লিংক কপি হয়েছে",
     surahs: "সূরাসমূহ",
     otherLanguages: "অন্যান্য ভাষা",
-    similarWording: "একই রকম শব্দের আয়াত",
   },
   ru: {
     code: "ru",
@@ -344,7 +336,6 @@ const S: Record<Lang, Strings> = {
     linkCopied: "Ссылка скопирована",
     surahs: "Суры",
     otherLanguages: "Другие языки",
-    similarWording: "Аяты со сходной формулировкой",
   },
   zh: {
     code: "zh-Hans",
@@ -380,7 +371,6 @@ const S: Record<Lang, Strings> = {
     linkCopied: "链接已复制",
     surahs: "章目",
     otherLanguages: "其他语言",
-    similarWording: "措辞相近的经文",
   },
   sv: {
     code: "sv",
@@ -416,7 +406,6 @@ const S: Record<Lang, Strings> = {
     linkCopied: "Länken kopierad",
     surahs: "Suror",
     otherLanguages: "Andra språk",
-    similarWording: "Verser med liknande ordalydelse",
   },
 };
 

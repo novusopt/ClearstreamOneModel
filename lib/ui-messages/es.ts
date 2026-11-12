@@ -31,7 +31,6 @@ export const es: Messages = {
       tanzil: "Traducciones y transliteración",
       quranenc: "Traducciones al indonesio y al chino",
       tafsir: "Tafsir Center for Quranic Studies, 9 idiomas",
-      similar: "Aleyas parecidas",
       audio: "Audio de recitación, con EveryAyah como respaldo",
     },
   },
@@ -68,7 +67,6 @@ export const es: Messages = {
     synced: "Recitación sincronizada",
     recitation: "Recitación",
     pages: "604 páginas",
-    lookalike: "Aleyas parecidas",
   },
   bento: {
     eyebrow: "Todo en un solo lector",
@@ -108,7 +106,7 @@ export const es: Messages = {
         eyebrow: "Memorizar",
         title: "Oculta las palabras, conserva la primera letra y recita",
         description: "Cuatro formas de ocultar una aleya, un recitador que hace una pausa para que repitas y bucles de cualquier tramo de aleyas.",
-        points: ["Todas las palabras, una de cada dos, la segunda mitad o las primeras letras", "Pausa de «Tu turno» después de cada aleya", "Aleyas parecidas señaladas antes de que las confundas"],
+        points: ["Todas las palabras, una de cada dos, la segunda mitad o las primeras letras", "Pausa de «Tu turno» después de cada aleya", "Repasos espaciados para afianzar lo que has memorizado"],
       },
       {
         eyebrow: "Repasar",

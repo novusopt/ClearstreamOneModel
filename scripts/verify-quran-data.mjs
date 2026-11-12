@@ -10,7 +10,7 @@
  * Checks: 114 surahs / 6,236 ayat with contiguous numbering; every ayah's plain Uthmani text and its
  * tajweed rendering letter-for-letter against the reference (consonantal skeleton, hamza seats and
  * dotless forms unified); the basmala; juzʾ starts, ḥizb quarters, pages and sajdahs; translations
- * identical to their sources; tafsir and similar-ayat integrity; the search index; and Qurʾān text
+ * identical to their sources; tafsir integrity; the search index; and Qurʾān text
  * typed into the site's source, which must occur verbatim in an ayah; word timings (all words timed, in order); and
  * word-by-word glosses, transliteration and word-audio positions against Quran.com (api.quran.com, cached).
  */
@@ -120,7 +120,7 @@ flat.forEach((v) => {
   if (v.p !== page) fail("page", `${v.s}:${v.n} page ${v.p}, reference ${page}`);
 });
 
-// Translations, tafsir, similar ayat, search ------------------------------------------------------
+// Translations, tafsir, search ---------------------------------------------------------------
 const enRef = read(join(REF, "quran_en.json"));
 surahs.forEach((s, i) => s.verses.forEach((v, k) => v.en !== enRef[i].verses[k].translation && fail("translation", `en ${s.id}:${v.n}`)));
 for (const lang of readdirSync(join(ROOT, "public/data/translations"))) {
@@ -137,17 +137,6 @@ for (const lang of readdirSync(join(ROOT, "public/data/tafsir"))) {
     if (t.length !== c.versesCount) fail("tafsir", `${lang} ${c.id}: ${t.length} entries`);
   });
 }
-chapters.forEach((c) => {
-  const f = join(ROOT, `public/data/similar/${c.id}.json`);
-  if (!existsSync(f)) return;
-  for (const [a, list] of Object.entries(read(f))) {
-    for (const x of list) {
-      const target = surahs[x.s - 1]?.verses[x.a - 1];
-      if (!target || +a > c.versesCount) fail("similar", `${c.id}:${a} → ${x.s}:${x.a} out of range`);
-      else if (x.t && x.t !== target.w.map((w) => w.a).join(" ")) fail("similar", `${c.id}:${a} → ${x.s}:${x.a} quotes different text`);
-    }
-  }
-});
 const search = read(join(ROOT, "public/data/search.json"));
 if (search.length !== 6236) fail("search", `${search.length} entries`);
 search.forEach(([s, a, en, ar]) => {
@@ -181,4 +170,4 @@ if (findings.length) {
   findings.slice(0, 50).forEach((f) => console.error("  " + f));
   process.exit(1);
 }
-console.log("Qurʾān data verified: 114 surahs, 6,236 ayat, 77,429 words; text, tajweed, mushaf structure, word timings, glosses, transliteration, word audio, translations, tafsir, similar ayat, search and site quotes all match their references.");
+console.log("Qurʾān data verified: 114 surahs, 6,236 ayat, 77,429 words; text, tajweed, mushaf structure, word timings, glosses, transliteration, word audio, translations, tafsir, search and site quotes all match their references.");

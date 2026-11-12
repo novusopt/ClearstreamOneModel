@@ -24,7 +24,6 @@ const creditsFor = (f: FooterStrings) => [
   { href: "https://tanzil.net", label: "Tanzil", note: f.notes.tanzil },
   { href: "https://quranenc.com", label: "QuranEnc", note: f.notes.quranenc },
   { href: "https://github.com/spa5k/tafsir_api", label: "Al-Mukhtaṣar tafsir", note: f.notes.tafsir },
-  { href: "https://github.com/Waqar144/Quran_Mutashabihat_Data", label: "Quran Mutashabihat Data (CC0)", note: f.notes.similar },
   { href: "https://alquran.cloud", label: "Islamic Network", note: f.notes.audio },
 ];
 

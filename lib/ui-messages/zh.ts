@@ -30,7 +30,6 @@ export const zh: Messages = {
       tanzil: "译文与音译",
       quranenc: "印尼文与中文译文",
       tafsir: "Tafsir Center for Quranic Studies，9 种语言",
-      similar: "相似经文",
       audio: "诵读音频，备用来源 EveryAyah",
     },
   },
@@ -67,7 +66,6 @@ export const zh: Messages = {
     synced: "逐词同步诵读",
     recitation: "诵读",
     pages: "604 页",
-    lookalike: "相似经文",
   },
   bento: {
     eyebrow: "一个阅读器，应有尽有",
@@ -107,7 +105,7 @@ export const zh: Messages = {
         eyebrow: "背记",
         title: "隐去词语，保留首字母，背诵出来",
         description: "四种隐藏经文的方式，诵读者停顿让你复述，并可循环播放任意段落。",
-        points: ["全部隐藏、隔词隐藏、隐藏后半或只留首字母", "每节之后“轮到你了”的停顿", "在混淆之前标出相似经文"],
+        points: ["全部隐藏、隔词隐藏、隐藏后半或只留首字母", "每节之后“轮到你了”的停顿", "间隔复习，让背过的经文牢固不忘"],
       },
       {
         eyebrow: "复习",

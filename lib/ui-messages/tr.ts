@@ -31,7 +31,6 @@ export const tr: Messages = {
       tanzil: "Mealler ve transliterasyon",
       quranenc: "Endonezce ve Çince mealler",
       tafsir: "Tafsir Center for Quranic Studies, 9 dil",
-      similar: "Benzer ayetler",
       audio: "Tilavet sesi, yedek olarak EveryAyah",
     },
   },
@@ -68,7 +67,6 @@ export const tr: Messages = {
     synced: "Kelime senkronlu tilavet",
     recitation: "Tilavet",
     pages: "604 sayfa",
-    lookalike: "Benzer ayetler",
   },
   bento: {
     eyebrow: "Hepsi tek okuyucuda",
@@ -108,7 +106,7 @@ export const tr: Messages = {
         eyebrow: "Ezberle",
         title: "Kelimeleri gizleyin, ilk harfi bırakın, okuyun",
         description: "Bir ayeti gizlemenin dört yolu, tekrar etmeniz için duraklayan bir kâri ve istediğiniz ayet aralığı için döngüler.",
-        points: ["Tüm kelimeler, birer atlayarak, ikinci yarı veya ilk harfler", "Her ayetten sonra “Sıra sizde” duraklaması", "Karıştırmadan önce işaretlenen benzer ayetler"],
+        points: ["Tüm kelimeler, birer atlayarak, ikinci yarı veya ilk harfler", "Her ayetten sonra “Sıra sizde” duraklaması", "Ezberlediklerinizi sağlam tutan aralıklı tekrarlar"],
       },
       {
         eyebrow: "Tekrar et",

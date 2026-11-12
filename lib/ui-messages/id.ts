@@ -31,7 +31,6 @@ export const id: Messages = {
       tanzil: "Terjemahan dan transliterasi",
       quranenc: "Terjemahan Indonesia dan Tionghoa",
       tafsir: "Tafsir Center for Quranic Studies, 9 bahasa",
-      similar: "Ayat-ayat yang mirip",
       audio: "Audio murotal, dengan EveryAyah sebagai cadangan",
     },
   },
@@ -68,7 +67,6 @@ export const id: Messages = {
     synced: "Murotal sinkron per kata",
     recitation: "Murotal",
     pages: "604 halaman",
-    lookalike: "Ayat-ayat mirip",
   },
   bento: {
     eyebrow: "Semua dalam satu pembaca",
@@ -108,7 +106,7 @@ export const id: Messages = {
         eyebrow: "Menghafal",
         title: "Sembunyikan kata, sisakan huruf pertama, lalu baca",
         description: "Empat cara menyembunyikan ayat, qari yang berhenti sejenak agar Anda mengulang, dan pengulangan untuk rentang ayat mana pun.",
-        points: ["Semua kata, selang-seling, separuh akhir, atau huruf pertama", "Jeda “Giliran Anda” setelah setiap ayat", "Ayat-ayat mirip ditandai sebelum Anda tertukar"],
+        points: ["Semua kata, selang-seling, separuh akhir, atau huruf pertama", "Jeda “Giliran Anda” setelah setiap ayat", "Pengulangan berjarak agar hafalan tetap kuat"],
       },
       {
         eyebrow: "Muraja’ah",

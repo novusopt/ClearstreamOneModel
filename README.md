@@ -23,10 +23,9 @@ and Motion.
 - **Explanation (tafsir)**: Al-Mukhtaṣar fī Tafsīr al-Qurʾān under any ayah in 9 languages (en, ar, fr, es, id, tr, ru, bn, zh), following your translation language by default.
 - **Memorise (hifz) mode**: hide all words, every other word, the second half or all but the first letters; tap a word to peek, reveal a whole ayah to check yourself, mark ayat as memorised, and loop a range of ayat 1–10 times.
 - **Spaced-repetition review** (`/review`): memorised ayat come back at growing intervals (SM-2 style: Again / Hard / Good / Easy, keys 1–4).
-- **Look-alike ayat (mutashābihāt)**: a “Similar wording” badge on 1,550 ayat opens a comparison with the differing words highlighted; review warns you when an ayah is easy to confuse.
 - **Teaching recitation**: pause after each ayah (5 s, 10 s or as long as the ayah) so you can recite it back.
 - **Mushaf pages**: the reading view follows the 604-page Madani mushaf, with page numbers, ḥizb quarter marks (۞) and page/juzʾ in the reader bar.
-- **Ayah pages & SEO**: every ayah has its own page (`/surah/2/255`) with Arabic, translation, word-by-word meanings, tafsir and similar ayat; sitemap, robots, canonical URLs, Open Graph cards and schema.org structured data.
+- **Ayah pages & SEO**: every ayah has its own page (`/surah/2/255`) with Arabic, translation, word-by-word meanings and tafsir; sitemap, robots, canonical URLs, Open Graph cards and schema.org structured data.
 - **In 10 languages**: every surah and ayah page also exists in French, Spanish, Indonesian, Turkish, Urdu, Bengali, Russian, Chinese and Swedish (`/fr/surah/18`, `/id/surah/36/1` …), linked with hreflang.
 - **Installable & offline**: a PWA with a service worker; “Read offline” in the Library saves every surah with your translation and tafsir.
 - **Reading plans & progress**: complete the Qurʾān in a week, 30 days, 2 months or a year; daily goal, pace (ahead/behind), day streak, 14-day activity and per-surah progress on the index.
@@ -68,7 +67,6 @@ The dataset is committed. To regenerate it from upstream run `npm run data`, whi
 - Word data, timings and tajweed markup come from [ivosetyadi/quran-recital](https://github.com/ivosetyadi/quran-recital) (MIT), which is itself derived from the Quran.com API.
 - Per-word pronunciation clips are streamed from the public word-by-word audio CDN.
 - Tafsir: Al-Mukhtaṣar fī Tafsīr al-Qurʾān (Tafsir Center for Quranic Studies) via [spa5k/tafsir_api](https://github.com/spa5k/tafsir_api).
-- Look-alike ayat: [Quran Mutashabihat Data](https://github.com/Waqar144/Quran_Mutashabihat_Data) (CC0).
 - Mushaf page and ḥizb boundaries: npm `quran-meta` (MIT).
 - Translations and transliteration come from [quran-json](https://github.com/risan/quran-json) (CC-BY-4.0), sourced from Tanzil.net and QuranEnc.
 - Audio is streamed from Islamic Network CDN and EveryAyah.

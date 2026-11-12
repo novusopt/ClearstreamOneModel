@@ -20,8 +20,8 @@ import { isSajdah, juzStartingAt, TRANSLATIONS } from "@/lib/constants";
 import { setLastRead } from "@/lib/library";
 import { positionStore } from "@/lib/reader-position";
 import { setSettings, settingsStore, useSettings } from "@/lib/settings";
-import { dataUrl, pickSurah } from "@/lib/data-urls";
-import type { AudioVerse, Chapter, LiteVerse, SimilarRef, SurahData, Verse } from "@/lib/types";
+import { dataUrl } from "@/lib/data-urls";
+import type { AudioVerse, Chapter, LiteVerse, SurahData, Verse } from "@/lib/types";
 import { ayahPath } from "@/lib/site";
 import { useProgressiveCount } from "@/lib/use-progressive";
 import { fetchJson, useRemote } from "@/lib/use-remote";
@@ -84,8 +84,6 @@ export function SurahReader({ chapter, verses: initial, rest, prev, next, basmal
   const viewMode = useSettings((s) => s.viewMode);
   const lang = useSettings((s) => s.translation);
   const { texts } = useTranslationText(chapter.id, lang);
-  const similarRaw = useRemote<unknown>(dataUrl.similar(chapter.id));
-  const similar = similarRaw ? pickSurah<Record<string, SimilarRef[]>>("similar", similarRaw, chapter.id) : null;
   const rtl = TRANSLATIONS.find((t) => t.id === lang)?.rtl ?? false;
   const partial = initial.length < chapter.versesCount;
   const surahUrl = partial ? dataUrl.surah(chapter.id) : null;
@@ -266,7 +264,6 @@ export function SurahReader({ chapter, verses: initial, rest, prev, next, basmal
                     translation={texts ? texts[i] : lang === "en" ? v.en : null}
                     translationRtl={rtl}
                     sajdah={isSajdah(chapter.id, v.n)}
-                    similar={similar?.[v.n]}
                     onPlay={playFrom}
                   />
                 </Fragment>

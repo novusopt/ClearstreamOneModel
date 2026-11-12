@@ -31,7 +31,6 @@ export const fr: Messages = {
       tanzil: "Traductions et translittération",
       quranenc: "Traductions indonésienne et chinoise",
       tafsir: "Tafsir Center for Quranic Studies, 9 langues",
-      similar: "Versets semblables",
       audio: "Récitations audio, avec EveryAyah en secours",
     },
   },
@@ -68,7 +67,6 @@ export const fr: Messages = {
     synced: "Récitation synchronisée",
     recitation: "Récitation",
     pages: "604 pages",
-    lookalike: "Versets semblables",
   },
   bento: {
     eyebrow: "Tout dans un seul lecteur",
@@ -108,7 +106,7 @@ export const fr: Messages = {
         eyebrow: "Mémoriser",
         title: "Masquez les mots, gardez la première lettre, récitez",
         description: "Quatre façons de masquer un verset, un récitateur qui marque une pause pour que vous répétiez, et des boucles sur n’importe quel passage.",
-        points: ["Tous les mots, un sur deux, la seconde moitié ou les premières lettres", "Une pause « À vous » après chaque verset", "Les versets semblables signalés avant que vous ne les confondiez"],
+        points: ["Tous les mots, un sur deux, la seconde moitié ou les premières lettres", "Une pause « À vous » après chaque verset", "Des révisions espacées pour consolider ce que vous avez mémorisé"],
       },
       {
         eyebrow: "Réviser",

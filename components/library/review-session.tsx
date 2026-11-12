@@ -1,21 +1,19 @@
 "use client";
 
-import { ArrowLeft, CheckCircle, Copy07, Eye, GraduationHat01, RefreshCw01 } from "@untitledui/icons";
+import { ArrowLeft, CheckCircle, Eye, GraduationHat01, RefreshCw01 } from "@untitledui/icons";
 import { AnimatePresence, m } from "motion/react";
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
-import { Alert } from "@/components/application/alerts/alert";
 import { EmptyState } from "@/components/application/empty-state/empty-state";
 import { Button } from "@/components/base/buttons/button";
 import { ProgressBar } from "@/components/base/progress-indicators/progress-indicators";
 import { Kbd } from "@/components/site/command-palette";
 import { AyahMarker } from "@/components/quran/ayah-marker";
-import { openVerseDialog, VerseDialogs } from "@/components/quran/verse-dialogs";
 import { VerseNumber } from "@/components/quran/verse-number";
 import { Word } from "@/components/quran/word";
-import { dataUrl, pickSurah } from "@/lib/data-urls";
+import { dataUrl } from "@/lib/data-urls";
 import { dueReviews, type Grade, gradeReview, libraryStore, nextReviewDate, schedule, today, useLibrary } from "@/lib/library";
 import { ARABIC_SIZES, useSettings } from "@/lib/settings";
-import type { Chapter, SimilarRef, SurahData } from "@/lib/types";
+import type { Chapter, SurahData } from "@/lib/types";
 import { useRemote } from "@/lib/use-remote";
 import { cx } from "@/utils/cx";
 
@@ -40,8 +38,6 @@ function ReviewCard({ refKey, chapters, onGraded }: { refKey: string; chapters: 
   const [s, a] = refKey.split(":").map(Number);
   const chapter = chapters[s - 1];
   const surahData = useRemote<SurahData>(dataUrl.surah(s));
-  const similarRaw = useRemote<unknown>(dataUrl.similar(s));
-  const similar = similarRaw ? pickSurah<Record<string, SimilarRef[]>>("similar", similarRaw, s)?.[a] : undefined;
   const verse = surahData?.verses[a - 1];
   const tajweed = useSettings((x) => x.tajweed);
   const size = useSettings((x) => ARABIC_SIZES[x.arabicSize - 1] ?? ARABIC_SIZES[2]);
@@ -122,29 +118,6 @@ function ReviewCard({ refKey, chapters, onGraded }: { refKey: string; chapters: 
         {shown && verse && (
           <m.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
             <p className="mx-auto mt-5 max-w-2xl text-center text-md text-secondary">{verse.en}</p>
-            {similar && similar.length > 0 && (
-              <Alert
-                color="warning"
-                icon={Copy07}
-                className="mt-5"
-                title="Easy to confuse"
-                description={`Similar wording in ${similar.map((x) => `${x.n} ${x.s}:${x.a}`).join(", ")}.`}
-                actions={
-                  <Button
-                    size="sm"
-                    color="link-color"
-                    onPress={() =>
-                      openVerseDialog(
-                        { surah: s, ayah: a, surahName: chapter.nameSimple, arabic: verse.w.map((w) => w.a).join(" "), translation: verse.en, similar },
-                        "similar",
-                      )
-                    }
-                  >
-                    Compare the differences
-                  </Button>
-                }
-              />
-            )}
           </m.div>
         )}
       </AnimatePresence>
@@ -242,7 +215,6 @@ export function ReviewSession({ chapters }: { chapters: Chapter[] }) {
       <AnimatePresence mode="wait">
         <ReviewCard key={current} refKey={current} chapters={chapters} onGraded={() => setDone((n) => n + 1)} />
       </AnimatePresence>
-      <VerseDialogs />
     </div>
   );
 }

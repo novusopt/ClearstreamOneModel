@@ -78,12 +78,3 @@ export interface AudioVerse {
   a?: string[];
 }
 
-/** An ayah with near-identical wording (mutashabih). */
-export interface SimilarRef {
-  s: number;
-  a: number;
-  /** Surah name. */
-  n: string;
-  /** Arabic text. */
-  t: string;
-}

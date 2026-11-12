@@ -39,7 +39,7 @@ app/
   page.tsx                # landing: hero + live reader preview, sources marquee, bento, journey (sticky steps),
                           # Al-Fātiḥah scroll story, stats, surah/juz index, principles, FAQ, closing CTA
   surah/[id]/page.tsx     # reader (generateStaticParams → 114 static pages)
-  surah/[id]/[ayah]/page.tsx  # ayah page (SEO): Arabic + tajweed, translation, word by word, tafsir, similar ayat,
+  surah/[id]/[ayah]/page.tsx  # ayah page (SEO): Arabic + tajweed, translation, word by word, tafsir,
                           # prev/next; ~90 popular ayat prebuilt, the rest generated on first request (ISR)
   [lang]/page.tsx         # localized home (/fr …): components/home/home-page.tsx renders the same sections
   [lang]/surah/[id]/…     # localized surah + ayah pages for the 9 translation languages (fr es id tr ur bn ru zh sv):
@@ -61,7 +61,7 @@ components/
                           # surah-index, continue-reading, principles, faq, final-cta
   quran/                  # surah-reader, reader-bar (position + Display presets), resume-banner,
                           # reader-tips, juz-divider, surah-end, basmala (opening of each surah), verse-card, word, tajweed-text, reading-view, hifz-panel,
-                          # verse-dialogs (note, share image, similar), tafsir-section, similar-ayat, hizb-mark, reader-settings, tajweed-legend,
+                          # verse-dialogs (note, share image), tafsir-section, hizb-mark, reader-settings, tajweed-legend,
                           # audio-player-bar, bookmark-list, reciter-avatar (Arabic-initial emblem; `photo` when licensed)
   library/                # library-view (progress, plan, notes, memorised), review-session (/review), offline-card
   site/command-palette    # ⌘K: surah/ayah jump + full-text search (public/data/search.json)
@@ -74,12 +74,12 @@ lib/
   settings.ts             # persisted reader settings (view mode: verse | reading | hifz) + display presets
   reader-position.ts      # live "ayah on the reading line" store (reader bar)
   library.ts              # persisted bookmarks, notes, memorised (+ SM-2 reviews), read ayat, daily log, plan, streak
-  data-urls.ts            # client data URLs (surah / tafsir / similar) for the Next app and the artifact build
+  data-urls.ts            # client data URLs (surah / tafsir) for the Next app and the artifact build
   use-remote.ts           # cached client JSON fetch hook
   create-store.ts         # tiny useSyncExternalStore-based store
 data/quran/               # generated: chapters.json, surah/{n}.json
 public/data/translations/ # generated: {lang}/{n}.json, fetched on demand
-scripts/build-quran-data.mjs, build-search-index.mjs, build-study-data.mjs (tafsir, similar ayat, pages/hizb)
+scripts/build-quran-data.mjs, build-search-index.mjs, build-study-data.mjs (tafsir, pages/hizb)
 ```
 
 Path alias: `@/*` → repo root.
@@ -99,7 +99,6 @@ the generated files. Quote translations verbatim from the shipped translation (i
   Tanzil / QuranEnc).
 - Tafsir (`public/data/tafsir/{lang}/{n}.json`): Al-Mukhtasar via `spa5k/tafsir_api`. Asbāb al-nuzūl was
   evaluated and excluded (the available edition has contaminated text). No surah introductions: no licensed source.
-- Look-alike ayat (`public/data/similar/{n}.json`): `Waqar144/Quran_Mutashabihat_Data` (CC0, 0-based → +1).
 - Mushaf page (`p`) and hizb quarter (`q`) per verse: npm `quran-meta`.
 - Word audio position (`k`, only when it differs from index + 1; pause marks, ۞ and ۩ take positions; 0 = no recording)
   and the gloss/transliteration check: Quran.com API v4 (`api.quran.com`, cached in `.cache/quran-sources/qurancom`).
