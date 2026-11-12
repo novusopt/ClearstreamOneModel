@@ -60,37 +60,38 @@ export function OfflineCard() {
   };
 
   return (
-    <section aria-labelledby="offline-title" className="rounded-2xl border border-secondary bg-primary p-6 shadow-xs">
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
-        <FeaturedIcon icon={WifiOff} color="brand" theme="light" size="lg" />
+    <section aria-labelledby="offline-title" className="flex flex-col rounded-2xl bg-primary shadow-xs ring-1 ring-secondary">
+      <header className="flex items-start gap-4 border-b border-secondary px-5 py-4 md:px-6">
+        <FeaturedIcon icon={WifiOff} color="gray" theme="modern" size="md" className="shrink-0" />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 id="offline-title" className="font-display text-xl font-medium text-primary">
+            <h2 id="offline-title" className="text-lg font-semibold text-primary">
               Read offline
-            </h3>
+            </h2>
             {offlineAt && (
               <BadgeWithIcon type="pill-color" color="success" size="sm" iconLeading={CheckCircle}>
                 Saved {new Date(offlineAt).toLocaleDateString("en", { day: "numeric", month: "short" })}
               </BadgeWithIcon>
             )}
           </div>
-          <p className="mt-1 max-w-xl text-sm text-tertiary">
-            Install Mishkah from your browser’s menu (“Install app” or “Add to Home Screen”), then save every surah with your translation and tafsir,
-            about 25 MB. Recitation audio still needs a connection.
-          </p>
+          <p className="mt-0.5 text-sm text-tertiary">Every surah on this device, about 25 MB.</p>
+        </div>
+      </header>
+      <div className="flex flex-1 flex-col gap-4 p-5 md:p-6">
+        <p className="text-sm text-tertiary">
+          Install Mishkah from your browser’s menu (“Install app” or “Add to Home Screen”), then save every surah with your translation and tafsir. Recitation
+          audio still needs a connection.
+        </p>
+        <Badge type="modern" color="gray" size="sm" className="self-start">
+          Translation: {lang.toUpperCase()} · Tafsir: {tafsirLang.toUpperCase()}
+        </Badge>
+        <div className="mt-auto">
           {progress !== null ? (
-            <div className="mt-4 max-w-md">
-              <ProgressBar value={progress} max={TOTAL_SURAHS} labelPosition="right" valueFormatter={(v) => `${v}/${TOTAL_SURAHS}`} />
-            </div>
+            <ProgressBar value={progress} max={TOTAL_SURAHS} labelPosition="right" valueFormatter={(v) => `${v}/${TOTAL_SURAHS}`} />
           ) : (
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <Button size="sm" iconLeading={Download01} onPress={save}>
-                {offlineAt ? "Update offline copy" : "Save all surahs"}
-              </Button>
-              <Badge type="modern" color="gray" size="sm">
-                Translation: {lang.toUpperCase()} · Tafsir: {tafsirLang.toUpperCase()}
-              </Badge>
-            </div>
+            <Button size="md" color="secondary" iconLeading={Download01} onPress={save} className="w-full">
+              {offlineAt ? "Update offline copy" : "Save all surahs"}
+            </Button>
           )}
         </div>
       </div>

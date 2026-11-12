@@ -49,7 +49,8 @@ app/
   page/[n]/page.tsx       # mushaf page landing (604): StaticMushafPage + translation; popular pages prebuilt, rest ISR
   robots.ts, sitemap.ts   # robots + one sitemap per language (/sitemap/en.xml … /sitemap/sv.xml)
   **/opengraph-image.tsx  # share cards via lib/og/og-card.tsx (Satori; Latin only, it cannot shape Arabic)
-  library/page.tsx        # progress & reading plan, bookmarks, notes, memorised (UUI Tabs)
+  library/page.tsx        # dashboard: continue card, metrics, activity chart, khatm, plan, surahs in progress;
+                          # bookmarks / notes / memorised as card grids (components/library, UUI Tabs + Card/Metric parts)
   bookmarks/page.tsx      # same view, Bookmarks tab
   globals.css             # Tailwind import, tajweed colour tokens (light + dark), Lenis CSS
 components/

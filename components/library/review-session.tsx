@@ -83,7 +83,9 @@ function ReviewCard({ refKey, chapters, onGraded }: { refKey: string; chapters: 
           <VerseNumber surah={s} ayah={a} />
           <span className="text-sm font-medium text-tertiary">{chapter.nameSimple}</span>
         </div>
-        <span className="text-xs text-quaternary">{review && review.n > 0 ? `Reviewed ${review.n}× · every ${review.i} day${review.i === 1 ? "" : "s"}` : "First review"}</span>
+        <span className="text-xs text-quaternary">
+          {review && review.n > 0 ? `Reviewed ${review.n}× · every ${review.i} day${review.i === 1 ? "" : "s"}` : "First review"}
+        </span>
       </div>
 
       <p className="mt-6 text-center text-sm font-medium text-tertiary">{shown ? "Check your recitation" : "Recite from memory. Tap a word to peek."}</p>
@@ -175,7 +177,11 @@ function ReviewCard({ refKey, chapters, onGraded }: { refKey: string; chapters: 
 
 /** Spaced-repetition review of memorised ayat due today. */
 export function ReviewSession({ chapters }: { chapters: Chapter[] }) {
-  const mounted = useSyncExternalStore(noop, () => true, () => false);
+  const mounted = useSyncExternalStore(
+    noop,
+    () => true,
+    () => false,
+  );
   // Freeze today's queue when the session starts (grading changes due dates as we go).
   const [queue, setQueue] = useState<string[] | null>(null);
   const [done, setDone] = useState(0);
