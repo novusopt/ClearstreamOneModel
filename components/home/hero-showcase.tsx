@@ -1,9 +1,10 @@
 "use client";
 
-import { Headphones02, Palette, PlayCircle } from "@untitledui/icons";
-import { AnimatePresence, m, useInView, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { Headphones02, Palette, PauseCircle, PlayCircle } from "@untitledui/icons";
+import { AnimatePresence, m, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Badge, BadgeWithIcon } from "@/components/base/badges/badges";
+import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { ProgressBarBase } from "@/components/base/progress-indicators/progress-indicators";
 import { AyahMarker } from "@/components/quran/ayah-marker";
 import { TajweedText } from "@/components/quran/tajweed-text";
@@ -13,15 +14,27 @@ import { fmt } from "@/lib/ui-format";
 import type { Verse } from "@/lib/types";
 import { cx } from "@/utils/cx";
 
-/** Flattened word list with each word's recited length (Al-Husary timings). */
+/** Breath between ayat, after the last word's recited length. */
+const AYAH_GAP = 650;
+
+/**
+ * Flattened word list with how long each word stays lit: Al-Husary's own pace, from one word's start to
+ * the next (pauses included), so the light moves exactly as the recitation does.
+ */
 function useWordTrack(verses: Verse[]) {
-  return useMemo(
-    () =>
-      verses.flatMap((v, vi) =>
-        v.w.map((w, wi) => ({ vi, wi, ms: w.s != null && w.f != null ? Math.min(1300, Math.max(380, w.f - w.s)) : 650 })),
-      ),
-    [verses],
-  );
+  return useMemo(() => {
+    const track: { vi: number; wi: number; ms: number; at: number }[] = [];
+    let at = 0;
+    for (const [vi, v] of verses.entries()) {
+      for (const [wi, w] of v.w.entries()) {
+        const next = v.w[wi + 1];
+        const ms = Math.max(120, w.s != null && next?.s != null ? next.s - w.s : w.s != null && w.f != null ? w.f - w.s + AYAH_GAP : 650);
+        track.push({ vi, wi, ms, at });
+        at += ms;
+      }
+    }
+    return track;
+  }, [verses]);
 }
 
 /**
@@ -37,47 +50,37 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
   const track = useWordTrack(verses);
   // Start on a word in ayah 2 so a still frame (reduced motion, thumbnails) shows a lit word.
   const [pos, setPos] = useState(() => Math.max(0, track.findIndex((t) => t.vi === 1)));
+  // Plays while on screen; the reader can pause it, and reduced motion leaves it paused until asked.
+  const [paused, setPaused] = useState<boolean | null>(null);
+  const playing = inView && track.length > 0 && (paused === null ? !reduce : !paused);
 
   useEffect(() => {
-    if (!inView || reduce || track.length === 0) return;
+    if (!playing) return;
     const id = window.setTimeout(() => setPos((p) => (p + 1) % track.length), track[pos]?.ms ?? 650);
     return () => window.clearTimeout(id);
-  }, [inView, reduce, pos, track]);
-
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "start 0.25"] });
-  const rotateX = useTransform(scrollYProgress, [0, 1], [22, 0]);
-  const scale = useTransform(scrollYProgress, [0, 1], [0.9, 1]);
+  }, [playing, pos, track]);
 
   const cur = track[pos] ?? { vi: 0, wi: 0 };
   const verse = verses[cur.vi];
   const word = verse?.w[cur.wi];
   const rules = word && typeof word.j !== "string" ? rulesIn(word.j) : [];
-  const progress = track.length ? (pos + 1) / track.length : 0;
+  const total = track.length ? track[track.length - 1].at + track[track.length - 1].ms : 1;
+  const progress = track.length ? (track[pos].at + track[pos].ms) / total : 0;
 
   return (
-    <div ref={ref} className="relative isolate mx-auto mt-16 max-w-6xl [perspective:1600px] md:mt-20">
+    <div ref={ref} className="relative isolate mx-auto mt-16 max-w-6xl md:mt-20">
       {/* Lantern glow under the window */}
       <div aria-hidden="true" className="absolute inset-x-[12%] top-[8%] bottom-0 -z-10 rounded-full bg-gold-400/30 blur-3xl dark:bg-gold-500/15" />
       <p className="sr-only">{t.showcase.srOnly}</p>
-      <m.div
-        aria-hidden="true"
-        style={{ rotateX, scale, transformOrigin: "50% 0%" }}
-        className="overflow-hidden rounded-2xl border border-secondary bg-primary text-left shadow-3xl ring-1 ring-black/5 md:rounded-3xl dark:ring-white/5"
+      <div
+        className="relative overflow-hidden rounded-2xl border border-secondary bg-primary text-left shadow-3xl ring-1 ring-black/5 md:rounded-3xl dark:ring-white/5"
       >
-        {/* Window chrome */}
-        <div className="flex h-10 items-center gap-3 border-b border-secondary bg-secondary px-4">
-          <div className="flex gap-1.5">
-            <span className="size-2.5 rounded-full bg-quaternary" />
-            <span className="size-2.5 rounded-full bg-quaternary" />
-            <span className="size-2.5 rounded-full bg-quaternary" />
-          </div>
-          <div className="mx-auto flex h-6 w-full max-w-xs items-center justify-center rounded-md bg-primary text-xs text-quaternary ring-1 ring-secondary">
-            mishkah · Al-Fatihah
-          </div>
-          <span className="w-10" />
+        {/* Surah progress along the top edge, at the recitation's pace. */}
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 z-10 h-0.5 bg-secondary">
+          <div className="h-full origin-left bg-gold-500 transition-transform duration-300 ease-linear" style={{ transform: `scaleX(${progress})` }} />
         </div>
 
-        <div className="grid lg:grid-cols-[1fr_17rem]">
+        <div aria-hidden="true" className="grid lg:grid-cols-[1fr_17rem]">
           <div className="min-w-0">
             {/* Reader bar */}
             <div className="flex items-center gap-3 border-b border-secondary px-4 py-3 md:px-6">
@@ -110,8 +113,8 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
                     <span key={wi}>
                       <span
                         className={cx(
-                          "rounded-lg px-0.5 transition-colors duration-300",
-                          vi === cur.vi && wi === cur.wi ? "bg-gold-100 dark:bg-gold-500/20" : vi === cur.vi ? "" : "opacity-55",
+                          "rounded-lg px-0.5 transition-colors duration-300 [box-decoration-break:clone]",
+                          vi === cur.vi && wi === cur.wi ? "bg-gold-200/80 dark:bg-gold-500/30" : vi === cur.vi ? "bg-gold-50 dark:bg-gold-500/10" : "",
                         )}
                       >
                         <TajweedText value={w.j} />
@@ -141,7 +144,7 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
 
           {/* Side panel: the word being recited */}
           <div className="hidden flex-col gap-3 border-l border-secondary bg-secondary/50 p-4 lg:flex">
-            <p className="text-xs font-semibold tracking-wide text-quaternary uppercase">{t.showcase.nowReciting}</p>
+            <p className="text-xs font-medium text-tertiary">{t.showcase.nowReciting}</p>
             <div className="rounded-xl border border-secondary bg-primary p-4 text-center shadow-xs">
               <m.div key={`${cur.vi}-${cur.wi}`} initial={{ opacity: 0.4, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.25 }}>
                   <p lang="ar" dir="rtl" className="font-quran text-4xl leading-[1.8] text-primary">
@@ -180,9 +183,16 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
           </div>
         </div>
 
-        {/* Player */}
+        {/* Player: the one real control in the preview. */}
         <div className="flex items-center gap-3 border-t border-secondary bg-secondary/60 px-4 py-3 md:px-6">
-          <PlayCircle className="size-7 shrink-0 text-fg-brand-primary" />
+          <ButtonUtility
+            size="sm"
+            color="tertiary"
+            icon={playing ? PauseCircle : PlayCircle}
+            tooltip={playing ? t.showcase.pause : t.showcase.play}
+            onPress={() => setPaused(playing)}
+            className="shrink-0 *:data-icon:size-6 *:data-icon:text-fg-brand-primary"
+          />
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2 text-xs">
               <span className="truncate font-semibold text-secondary">Mahmoud Khalil Al-Husary</span>
@@ -192,11 +202,15 @@ export function HeroShowcase({ verses }: { verses: Verse[] }) {
           </div>
           <span className="flex h-5 items-end gap-0.5" aria-hidden="true">
             {[0, 1, 2, 3].map((i) => (
-              <span key={i} className="w-1 animate-equalizer rounded-full bg-fg-brand-secondary motion-reduce:animate-none" style={{ height: "100%", animationDelay: `${i * -0.25}s` }} />
+              <span
+                key={i}
+                className={cx("w-1 origin-bottom rounded-full bg-fg-brand-secondary motion-reduce:animate-none", playing ? "animate-equalizer" : "scale-y-50")}
+                style={{ height: "100%", animationDelay: `${i * -0.25}s` }}
+              />
             ))}
           </span>
         </div>
-      </m.div>
+      </div>
     </div>
   );
 }

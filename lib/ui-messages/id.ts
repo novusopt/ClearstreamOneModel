@@ -57,6 +57,8 @@ export const id: Messages = {
     today: "Hari ini",
     ayatToday: "{n} / 7 ayat",
     synced: "Sinkron per kata · 1×",
+    play: "Putar pratinjau",
+    pause: "Jeda pratinjau",
   },
   sources: {
     title: "Dibangun dari sumber tepercaya berlisensi terbuka",

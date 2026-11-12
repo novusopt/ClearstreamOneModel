@@ -57,6 +57,8 @@ export const fr: Messages = {
     today: "Aujourd’hui",
     ayatToday: "{n} / 7 versets",
     synced: "Synchronisé mot à mot · 1×",
+    play: "Lire l’aperçu",
+    pause: "Mettre l’aperçu en pause",
   },
   sources: {
     title: "Fondé sur des sources fiables et sous licence libre",

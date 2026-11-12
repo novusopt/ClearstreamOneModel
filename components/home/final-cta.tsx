@@ -19,7 +19,7 @@ export function FinalCta() {
         className="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-brand-section px-6 py-16 text-center md:py-24"
       >
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-          <div className="absolute top-1/2 left-1/2 size-[32rem] -translate-x-1/2 -translate-y-1/2 animate-flicker rounded-full bg-gold-400/15 blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 size-[32rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold-400/15 blur-3xl" />
           <svg viewBox="0 0 200 260" className="absolute top-1/2 left-1/2 h-[140%] -translate-x-1/2 -translate-y-1/2 text-white/10">
             <g fill="none" stroke="currentColor">
               <path d="M20 258 V110 C20 60 60 22 100 4 C140 22 180 60 180 110 V258" strokeWidth="0.8" />

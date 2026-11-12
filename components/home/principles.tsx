@@ -20,22 +20,22 @@ export function Principles() {
           </h2>
           <p className="mt-4 text-lg text-tertiary">{t.intro}</p>
         </div>
-        <ul className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {PRINCIPLES.map((p, i) => (
-            <m.li
-              key={p.title}
-              initial={{ y: 24 }}
-              whileInView={{ y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ delay: i * 0.08, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="border-t border-secondary pt-6"
-            >
+        {/* One reveal for the group, not one per item. */}
+        <m.ul
+          initial={{ y: 24 }}
+          whileInView={{ y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4"
+        >
+          {PRINCIPLES.map((p) => (
+            <li key={p.title} className="border-t border-secondary pt-6">
               <FeaturedIcon icon={p.icon} color="gray" theme="modern" size="lg" />
               <h3 className="mt-5 text-lg font-semibold text-primary">{p.title}</h3>
               <p className="mt-2 text-md text-tertiary">{p.text}</p>
-            </m.li>
+            </li>
           ))}
-        </ul>
+        </m.ul>
       </div>
     </section>
   );

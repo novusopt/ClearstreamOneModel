@@ -57,6 +57,8 @@ export const tr: Messages = {
     today: "Bugün",
     ayatToday: "{n} / 7 ayet",
     synced: "Kelime senkronlu · 1×",
+    play: "Önizlemeyi oynat",
+    pause: "Önizlemeyi duraklat",
   },
   sources: {
     title: "Güvenilir ve açık lisanslı kaynaklar üzerine kurulu",

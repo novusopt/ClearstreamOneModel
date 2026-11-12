@@ -1,7 +1,7 @@
 "use client";
 
 import { BookOpen01, CheckCircle, GraduationHat01, Lightbulb02, Microphone01, RefreshCw01 } from "@untitledui/icons";
-import { AnimatePresence, m, useInView } from "motion/react";
+import { useInView } from "motion/react";
 import { type FC, useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/base/badges/badges";
 import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
@@ -226,16 +226,10 @@ function StepPanel({ index, verse, load }: { index: number; verse: Verse; load: 
   return <ReviewPanel verse={verse} />;
 }
 
-function StepBlock({ step, index, active, onActive, verse, load }: { step: Step; index: number; active: boolean; onActive: (i: number) => void; verse: Verse; load: boolean }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { margin: "-45% 0px -45% 0px" });
-  useEffect(() => {
-    if (inView) onActive(index);
-  }, [inView, index, onActive]);
-
+function StepBlock({ step, index, verse, load }: { step: Step; index: number; verse: Verse; load: boolean }) {
   return (
-    <div ref={ref} className="flex flex-col justify-center py-10 lg:min-h-[75vh] lg:py-0">
-      <div className={cx("transition-opacity duration-500", active ? "lg:opacity-100" : "lg:opacity-40")}>
+    <div className="grid items-center gap-x-16 gap-y-8 py-10 lg:grid-cols-2 lg:py-14">
+      <div className="min-w-0">
         <div className="flex items-center gap-3">
           <span className="flex size-8 items-center justify-center rounded-full bg-brand-solid font-display text-sm text-white tabular-nums">{index + 1}</span>
           <span className="text-sm font-semibold text-brand-secondary">{step.eyebrow}</span>
@@ -251,22 +245,19 @@ function StepBlock({ step, index, active, onActive, verse, load }: { step: Step;
           ))}
         </ul>
       </div>
-      {/* Phones: the panel sits under its step. */}
-      <div className="mt-8 lg:hidden">
+      <div className="min-w-0">
         <StepPanel index={index} verse={verse} load={load} />
       </div>
     </div>
   );
 }
 
-/** Scroll-driven walkthrough: steps on the left, a sticky live panel on the right that follows them. */
+/** The four steps (read, understand, memorise, review), each beside its own live panel; nothing is pinned. */
 export function Journey({ verse }: { verse: Verse }) {
   const { m: msg, href } = useUi();
   const STEPS = useSteps();
-  const [active, setActive] = useState(0);
   const ref = useRef<HTMLElement>(null);
   const near = useInView(ref, { once: true, margin: "400px 0px" });
-  const Icon = STEPS[active].icon;
 
   return (
     <section ref={ref} id="journey" className="relative scroll-mt-24 py-20 md:py-28">
@@ -281,36 +272,10 @@ export function Journey({ verse }: { verse: Verse }) {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-x-16 lg:mt-4 lg:grid-cols-2">
-          <div className="min-w-0">
-            {STEPS.map((s, i) => (
-              <StepBlock key={s.id} step={s} index={i} active={active === i} onActive={setActive} verse={verse} load={near} />
-            ))}
-          </div>
-          <div className="hidden min-w-0 lg:block">
-            <div className="sticky top-[calc(50vh-15rem)]">
-              <div className="mb-4 flex items-center gap-2">
-                {STEPS.map((s, i) => (
-                  <span key={s.id} className={cx("h-1 flex-1 rounded-full transition-colors duration-500", i <= active ? "bg-brand-solid" : "bg-quaternary")} />
-                ))}
-              </div>
-              <AnimatePresence mode="wait">
-                <m.div
-                  key={active}
-                  initial={{ opacity: 0, y: 24, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -16, scale: 0.98 }}
-                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <p className="mb-3 flex items-center gap-2 text-sm font-medium text-tertiary">
-                    <Icon aria-hidden="true" className="size-4 text-fg-brand-secondary" />
-                    {STEPS[active].eyebrow}
-                  </p>
-                  <StepPanel index={active} verse={verse} load={near} />
-                </m.div>
-              </AnimatePresence>
-            </div>
-          </div>
+        <div className="mt-8 divide-y divide-secondary lg:mt-12">
+          {STEPS.map((s, i) => (
+            <StepBlock key={s.id} step={s} index={i} verse={verse} load={near} />
+          ))}
         </div>
 
         <div className="mt-6 flex justify-center">

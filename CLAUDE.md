@@ -36,7 +36,7 @@ npm run build:artifact  # single-page build for the claude.ai-hosted version (di
 ```
 app/
   layout.tsx              # fonts (Inter, Amiri Quran — local), providers, header/footer, player bar
-  page.tsx                # landing: hero + live reader preview, sources marquee, bento, journey (sticky steps),
+  page.tsx                # landing: hero + live reader preview, sources marquee, bento, journey (step rows),
                           # Al-Fātiḥah scroll story, stats, surah/juz index, principles, FAQ, closing CTA
   surah/[id]/page.tsx     # reader (generateStaticParams → 114 static pages)
   surah/[id]/[ayah]/page.tsx  # ayah page (SEO): Arabic + tajweed, translation, word by word, tafsir,
@@ -207,7 +207,7 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
   `FileTypeIcon`: they imported `@untitledui/file-icons`, ~45 KB gzip; `BackgroundPattern` has no `grid-check`). Check
   with `npx next experimental-analyze`. The React Compiler was measured and left off (+22–31 KB per page, no TBT gain).
 - Very long, below-the-fold home sections (surah and juzʾ indexes) use `content-visibility: auto` with measured
-  `contain-intrinsic-size`; never on sticky or scroll-linked sections (journey, Fatihah story, bento).
+  `contain-intrinsic-size`; never on sticky or scroll-linked sections (Fatihah story, bento tajweed colour-in).
 
 ## Reading experience principles
 
@@ -234,6 +234,15 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
 - Nothing is greyed out to show focus (reader, mushaf, home scroll story): the current ayah gets a soft gold ground.
 - Page headers share one anatomy (surah, localized surah, juzʾ): number medallion, title, subtitle, badges, Arabic name beside.
 - Empty data shows an Untitled UI `EmptyState` with one next step, not zeros and empty charts.
+- Home page motion is two moments of light; keep the rest still. (1) "The lamp is lit" (`.kindle-*` in `globals.css`,
+  `hero.tsx`, `hero-niche.tsx`): once on load the flame kindles, light falls through the niche, An-Nur 24:35 brightens word by
+  word right to left, then the headline settles; afterwards only the flame breathes (9 s), paused off screen (`data-still`).
+  (2) "Recite along" (`hero-showcase.tsx`): the reader itself (no drawn browser window, no scroll tilt), the gold ground moving
+  at Al-Husary's real pace (word start to next word start), a progress spine, a real Play/Pause button, playing only on screen
+  and not by itself under reduced motion. One scroll story only (the pinned Al-Fatihah story; the journey is step rows). No
+  other endless loops (the marquee pauses on hover and focus), one reveal per section rather than per card, final numbers
+  without count-up, no cursor spotlight, demos that change on hover/press rather than on a timer. Scale-in effects start from a
+  sliver (0.02), not 0: an element with no area never fires `whileInView`.
 - The audio player (`audio-player-bar-content.tsx`) is built from UUI Button/ButtonUtility/Slider/Dropdown/Badge: reciter
   disc with a turning ring while playing, morphing play button (spinner while loading), live "now reciting" word for the
   word-synced reciter (`AudioVerse.a`), surah progress along the top edge, speed menu; phones get two rows.

@@ -54,21 +54,15 @@ function useReadPct(chapter: Chapter) {
  * A surah as a niche (mishkāh): arched tile, Arabic name as the hero, reading progress shown as
  * lantern light rising from the bottom.
  */
-function SurahNiche({ chapter, i }: { chapter: Chapter; i: number }) {
+function SurahNiche({ chapter }: { chapter: Chapter }) {
   const pct = useReadPct(chapter);
   const meccan = chapter.revelation === "meccan";
   const { m: msg, lang, href } = useUi();
   const t = msg.index;
   const meaning = meaningIn(chapter, lang);
   return (
-    <m.li
-      layout
-      initial={{ y: 28, scale: 0.97 }}
-      whileInView={{ y: 0, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      viewport={{ once: true, margin: "0px 0px -40px 0px" }}
-      transition={{ duration: 0.55, delay: (i % 6) * 0.05, ease: [0.22, 1, 0.36, 1] }}
-    >
+    // `layout` and `exit` animate filtering (a response to the visitor); niches no longer rise in on scroll.
+    <m.li layout exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}>
       <Link
         href={href(`/surah/${chapter.id}`)}
         aria-label={`${chapter.id}. ${chapter.nameSimple}, ${meaning}. ${fmt(t.ayat, { n: chapter.versesCount })}, ${meccan ? t.meccan : t.medinan}${pct ? `, ${fmt(t.read, { p: pct })}` : ""}`}
@@ -95,11 +89,13 @@ function SurahNiche({ chapter, i }: { chapter: Chapter; i: number }) {
         {pct > 0 && (
           <m.span
             aria-hidden="true"
-            initial={{ height: 0 }}
-            whileInView={{ height: `${Math.max(pct, 6)}%` }}
+            // From a sliver, not 0: an element with no area never counts as in view.
+            initial={{ scaleY: 0.02 }}
+            whileInView={{ scaleY: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-            className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-gold-300/45 via-gold-200/20 to-transparent dark:from-gold-500/25 dark:via-gold-500/10"
+            style={{ height: `${Math.max(pct, 6)}%` }}
+            className="pointer-events-none absolute inset-x-0 bottom-0 origin-bottom bg-gradient-to-t from-gold-300/45 via-gold-200/20 to-transparent dark:from-gold-500/25 dark:via-gold-500/10"
           />
         )}
 
@@ -127,21 +123,13 @@ function SurahNiche({ chapter, i }: { chapter: Chapter; i: number }) {
 }
 
 /** Table-of-contents (fihris) row: number, names joined by a dotted leader, ayah count. */
-function SurahIndexRow({ chapter, i }: { chapter: Chapter; i: number }) {
+function SurahIndexRow({ chapter }: { chapter: Chapter }) {
   const pct = useReadPct(chapter);
   const meccan = chapter.revelation === "meccan";
   const { m: msg, lang, href } = useUi();
   const t = msg.index;
   return (
-    <m.li
-      layout
-      initial={{ x: -12 }}
-      whileInView={{ x: 0 }}
-      exit={{ opacity: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4, delay: (i % 10) * 0.02 }}
-      className="break-inside-avoid"
-    >
+    <m.li layout exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="break-inside-avoid">
       <Link
         href={href(`/surah/${chapter.id}`)}
         className="group relative flex items-center gap-3 rounded-xl px-2 py-2.5 outline-focus-ring transition-colors hover:bg-primary_hover focus-visible:outline-2"
@@ -266,8 +254,8 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
               className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-6"
             >
               <AnimatePresence mode="popLayout">
-                {results.map((c, i) => (
-                  <SurahNiche key={c.id} chapter={c} i={i} />
+                {results.map((c) => (
+                  <SurahNiche key={c.id} chapter={c} />
                 ))}
               </AnimatePresence>
             </m.ul>
@@ -280,8 +268,8 @@ export function SurahIndex({ chapters }: { chapters: Chapter[] }) {
               className="mt-6 gap-x-10 rounded-3xl border border-secondary bg-primary_alt p-3 sm:p-5 md:columns-2 xl:columns-3"
             >
               <AnimatePresence mode="popLayout">
-                {results.map((c, i) => (
-                  <SurahIndexRow key={c.id} chapter={c} i={i} />
+                {results.map((c) => (
+                  <SurahIndexRow key={c.id} chapter={c} />
                 ))}
               </AnimatePresence>
             </m.ol>
@@ -333,13 +321,7 @@ export function JuzIndex({ chapters }: { chapters: Chapter[] }) {
         </m.div>
         <ol className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6">
           {JUZ_STARTS.map(([s, a], i) => (
-            <m.li
-              key={i}
-              initial={{ scale: 0.9 }}
-              whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: (i % 6) * 0.04 }}
-            >
+            <li key={i}>
               <Link
                 href={`/juz/${i + 1}`}
                 className={cx(
@@ -359,7 +341,7 @@ export function JuzIndex({ chapters }: { chapters: Chapter[] }) {
                   {fmt(t.from, { ref: `${s}:${a}` })}
                 </span>
               </Link>
-            </m.li>
+            </li>
           ))}
         </ol>
       </div>

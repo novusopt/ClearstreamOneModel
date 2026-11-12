@@ -57,6 +57,8 @@ export const sv: Messages = {
     today: "I dag",
     ayatToday: "{n} / 7 verser",
     synced: "Synkad ord för ord · 1×",
+    play: "Spela upp förhandsvisningen",
+    pause: "Pausa förhandsvisningen",
   },
   sources: {
     title: "Byggd på pålitliga, öppet licensierade källor",

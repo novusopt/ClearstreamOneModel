@@ -56,6 +56,8 @@ export const ur: Messages = {
     today: "آج",
     ayatToday: "{n} / 7 آیات",
     synced: "لفظ بہ لفظ ہم آہنگ · 1×",
+    play: "پیش نظارہ چلائیں",
+    pause: "پیش نظارہ روکیں",
   },
   sources: {
     title: "معتبر اور کھلے لائسنس والے ماخذ پر مبنی",

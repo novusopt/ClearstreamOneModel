@@ -1,8 +1,7 @@
 "use client";
 
 import { ArrowRight, BookOpen01, CheckCircle } from "@untitledui/icons";
-import { m, useScroll, useTransform } from "motion/react";
-import { Fragment, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import { Badge } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
 import Link from "next/link";
@@ -14,6 +13,9 @@ import { useLibrary } from "@/lib/library";
 import { cx } from "@/utils/cx";
 import type { Chapter, Verse } from "@/lib/types";
 
+/** The opening of An-Nur 24:35, the verse Mishkah is named after (verbatim, checked by verify-quran-data). */
+const NUR = "ٱللَّهُ نُورُ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ";
+
 export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Verse[] }) {
   const { m: t, href, lang } = useUi();
   // Chinese headlines are not space-separated.
@@ -21,18 +23,20 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
   const lastRead = useLibrary((s) => s.lastRead);
   const resume = lastRead ? chapters[lastRead.surah - 1] : null;
   const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const arabicY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  // The flame's breathing loop pauses while the hero is off screen.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => el.toggleAttribute("data-still", !e.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   return (
     <section ref={ref} className="relative isolate overflow-hidden pt-40 pb-16 md:pt-52 md:pb-24">
-      {/* Aurora backdrop. Offsets are fixed, not a % of the section: the section grows while it loads, and a %-based top moved the glow (CLS 0.26 on phones). */}
+      {/* Still backdrop: the niche and its lamp are the only light (no drifting blobs or flicker). */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-brand-50/60 via-transparent to-transparent dark:from-brand-950/80" />
-        <div className="absolute top-[17rem] left-1/2 size-[38rem] -translate-x-1/2 animate-flicker rounded-full bg-gold-300/35 blur-3xl dark:bg-gold-500/15" />
-        <div className="absolute -top-40 -left-40 size-[34rem] animate-aurora rounded-full bg-brand-300/25 blur-3xl dark:bg-brand-700/25" />
-        <div className="absolute -right-40 bottom-0 size-[30rem] animate-aurora rounded-full bg-brand-200/30 blur-3xl [animation-delay:-9s] dark:bg-brand-800/30" />
-        <div className="absolute inset-0 bg-[radial-gradient(var(--color-border-secondary)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)] bg-[size:24px_24px]" />
         {/* Fade into the page so the backdrop has no hard bottom edge. */}
         <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-bg-primary" />
       </div>
@@ -40,17 +44,20 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
       <HeroNiche />
 
       <div className="mx-auto w-full max-w-7xl px-4 text-center md:px-8">
-        <m.p
-          style={{ y: arabicY }}
-          lang="ar"
-          dir="rtl"
-          className="font-quran text-3xl leading-tight sm:text-4xl"
-        >
-          <span className="enter-blur inline-block bg-gradient-to-br from-brand-700 via-brand-500 to-gold-500 bg-clip-text text-transparent dark:from-gold-200 dark:via-gold-300 dark:to-brand-300">
-            ٱللَّهُ نُورُ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ
-          </span>
-        </m.p>
-        <p className="enter mt-2 text-sm text-tertiary italic" style={{ animationDelay: "0.6s" }}>
+        {/* An-Nur 24:35, brightening word by word in reading order as the lamp's light reaches it (`.kindle-word`). */}
+        <p lang="ar" dir="rtl" className="font-quran text-3xl leading-tight sm:text-4xl">
+          {NUR.split(" ").map((w, i) => (
+            <Fragment key={i}>
+              <span
+                style={{ "--i": i } as React.CSSProperties}
+                className="kindle-word inline-block bg-gradient-to-br from-brand-700 via-brand-500 to-gold-500 bg-clip-text text-transparent dark:from-gold-200 dark:via-gold-300 dark:to-brand-300"
+              >
+                {w}
+              </span>{" "}
+            </Fragment>
+          ))}
+        </p>
+        <p className="enter mt-2 text-sm text-tertiary italic" style={{ animationDelay: "0.9s" }}>
           {t.hero.verseGloss}
         </p>
 
@@ -71,7 +78,7 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
           {t.hero.headline.map((word, i) => (
             <Fragment key={word}>
               <span
-                style={{ animationDelay: `${0.1 + i * 0.1}s` }}
+                style={{ animationDelay: `${0.8 + i * 0.06}s` }}
                 className={cx("enter-word-visible inline-block", lang !== "zh" && "mr-[0.15em]", i >= t.hero.highlightFrom && "bg-gradient-to-r from-gold-600 to-gold-400 bg-clip-text pr-1 text-transparent italic")}
               >
                 {word}

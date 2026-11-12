@@ -1,8 +1,10 @@
 "use client";
 
 import { BookOpen01, Headphones02, LayersThree01, Palette, Translate01, Type01 } from "@untitledui/icons";
-import { AnimatePresence, m, useMotionTemplate, useMotionValue, useScroll, useTransform } from "motion/react";
-import { type FC, type MouseEvent, type ReactNode, useEffect, useRef, useState } from "react";
+import { AnimatePresence, m, useMotionTemplate, useScroll, useTransform } from "motion/react";
+import { type FC, type ReactNode, useRef, useState } from "react";
+import { Button as AriaButton } from "react-aria-components";
+import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group";
 import { Badge } from "@/components/base/badges/badges";
 import { FeaturedIcon } from "@/components/foundations/featured-icon/featured-icon";
 import { useUi } from "@/components/providers/ui-messages";
@@ -13,11 +15,11 @@ import type { Verse } from "@/lib/types";
 import { cx } from "@/utils/cx";
 
 const SAMPLE_TRANSLATIONS = [
-  { lang: "English", text: "Allah — there is no deity except Him, the Ever-Living, the Sustainer of existence." },
-  { lang: "Français", text: "Allah ! Point de divinité à part Lui, le Vivant, Celui qui subsiste par lui-même." },
-  { lang: "Bahasa", text: "Allah, tidak ada tuhan selain Dia. Yang Mahahidup, yang terus menerus mengurus makhluk-Nya." },
-  { lang: "Türkçe", text: "Allah, kendisinden başka hiçbir ilah olmayandır. Diridir, kayyumdur." },
-  { lang: "Español", text: "¡Alá! No hay más dios que Él, el Viviente, el Subsistente." },
+  { lang: "English", code: "en", text: "Allah — there is no deity except Him, the Ever-Living, the Sustainer of existence." },
+  { lang: "Français", code: "fr", text: "Allah ! Point de divinité à part Lui, le Vivant, Celui qui subsiste par lui-même." },
+  { lang: "Bahasa", code: "id", text: "Allah, tidak ada tuhan selain Dia. Yang Mahahidup, yang terus menerus mengurus makhluk-Nya." },
+  { lang: "Türkçe", code: "tr", text: "Allah, kendisinden başka hiçbir ilah olmayandır. Diridir, kayyumdur." },
+  { lang: "Español", code: "es", text: "¡Alá! No hay más dios que Él, el Viviente, el Subsistente." },
 ];
 
 function BentoCard({
@@ -27,7 +29,6 @@ function BentoCard({
   title,
   description,
   children,
-  index,
 }: {
   className?: string;
   icon: FC<{ className?: string }>;
@@ -35,36 +36,14 @@ function BentoCard({
   title: string;
   description: string;
   children: ReactNode;
-  index: number;
 }) {
-  const mx = useMotionValue(-400);
-  const my = useMotionValue(-400);
-  const spotlight = useMotionTemplate`radial-gradient(420px circle at ${mx}px ${my}px, color-mix(in srgb, var(--color-brand-500) 14%, transparent), transparent 70%)`;
-
-  const onMove = (e: MouseEvent<HTMLDivElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    mx.set(e.clientX - r.left);
-    my.set(e.clientY - r.top);
-  };
-
   return (
-    <m.div
-      onMouseMove={onMove}
-      onMouseLeave={() => {
-        mx.set(-400);
-        my.set(-400);
-      }}
-      initial={{ y: 48, scale: 0.96 }}
-      whileInView={{ y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "0px 0px -80px 0px" }}
-      transition={{ duration: 0.7, delay: (index % 3) * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -4 }}
+    <div
       className={cx(
-        "group relative flex flex-col overflow-hidden rounded-3xl border border-secondary bg-primary p-6 shadow-xs transition-shadow duration-300 hover:shadow-xl md:p-8",
+        "group relative flex flex-col overflow-hidden rounded-3xl border border-secondary bg-primary p-6 shadow-xs transition-shadow duration-300 hover:shadow-lg md:p-8",
         className,
       )}
     >
-      <m.div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: spotlight }} />
       <div className="relative flex items-center gap-2 text-sm font-semibold text-brand-secondary">
         <FeaturedIcon icon={Icon} color="brand" theme="light" size="sm" />
         {eyebrow}
@@ -72,24 +51,16 @@ function BentoCard({
       <h3 className="relative mt-4 text-xl font-display font-medium tracking-tight text-primary md:text-display-xs">{title}</h3>
       <p className="relative mt-2 max-w-md text-md text-tertiary">{description}</p>
       <div className="relative mt-6 flex flex-1 items-end">{children}</div>
-    </m.div>
+    </div>
   );
 }
 
-/** Arabic text that "writes itself" as the card scrolls through the viewport. */
-function ScrollRevealArabic({ text }: { text: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.95", "start 0.35"] });
-  const clip = useTransform(scrollYProgress, [0, 1], ["inset(0 0 0 100%)", "inset(0 0 0 0%)"]);
+/** Āyat al-Kursī's opening, set large (still: the page keeps one scroll effect, the Al-Fatihah story). */
+function DisplayArabic({ text }: { text: string }) {
   return (
-    <div ref={ref} className="relative w-full">
-      <p lang="ar" dir="rtl" className="font-quran text-4xl text-quaternary/40 sm:text-5xl md:text-6xl" aria-hidden="true">
-        {text}
-      </p>
-      <m.p lang="ar" dir="rtl" style={{ clipPath: clip }} className="absolute inset-0 font-quran text-4xl text-primary sm:text-5xl md:text-6xl">
-        {text}
-      </m.p>
-    </div>
+    <p lang="ar" dir="rtl" className="w-full font-quran text-4xl text-primary sm:text-5xl md:text-6xl">
+      {text}
+    </p>
   );
 }
 
@@ -122,20 +93,17 @@ function TajweedDemo({ verse }: { verse: Verse }) {
 
 function WordByWordDemo({ verse }: { verse: Verse }) {
   const words = verse.w.slice(0, 6);
+  // Follows the visitor's hover and focus; no timer.
   const [active, setActive] = useState(0);
-  useEffect(() => {
-    const t = setInterval(() => setActive((a) => (a + 1) % words.length), 1400);
-    return () => clearInterval(t);
-  }, [words.length]);
   return (
     <div dir="rtl" className="flex w-full flex-wrap justify-center gap-2">
       {words.map((w, i) => (
-        <button
-          type="button"
+        <AriaButton
           key={i}
-          onMouseEnter={() => setActive(i)}
+          onHoverStart={() => setActive(i)}
           onFocus={() => setActive(i)}
-          className="relative flex min-w-20 flex-col items-center rounded-2xl px-3 py-2 outline-focus-ring focus-visible:outline-2"
+          onPress={() => setActive(i)}
+          className="relative flex min-w-20 cursor-pointer flex-col items-center rounded-2xl px-3 py-2 outline-focus-ring focus-visible:outline-2"
         >
           {active === i && (
             <m.span layoutId="bento-wbw" className="absolute inset-0 rounded-2xl bg-brand-primary ring-1 ring-brand" transition={{ type: "spring", stiffness: 400, damping: 32 }} />
@@ -149,7 +117,7 @@ function WordByWordDemo({ verse }: { verse: Verse }) {
           <span dir="ltr" className="relative text-xs text-tertiary">
             {w.e}
           </span>
-        </button>
+        </AriaButton>
       ))}
     </div>
   );
@@ -163,10 +131,11 @@ function AudioDemo() {
         {Array.from({ length: bars }).map((_, i) => (
           <m.span
             key={i}
-            className="w-full rounded-full bg-gradient-to-t from-brand-600 to-brand-300"
-            initial={{ height: "15%" }}
-            whileInView={{ height: ["15%", `${30 + ((i * 37) % 70)}%`, "20%", `${25 + ((i * 53) % 75)}%`, "15%"] }}
-            transition={{ duration: 2.4, repeat: Infinity, delay: i * 0.04, ease: "easeInOut" }}
+            className="h-full w-full rounded-full bg-gradient-to-t from-brand-600 to-brand-300"
+            initial={{ scaleY: 0.15 }}
+            whileInView={{ scaleY: [0.15, (30 + ((i * 37) % 70)) / 100, (25 + ((i * 53) % 75)) / 100] }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.6, delay: i * 0.03, ease: [0.22, 1, 0.36, 1] }}
           />
         ))}
       </div>
@@ -177,10 +146,12 @@ function AudioDemo() {
         </span>
         <span className="h-1 flex-1 overflow-hidden rounded-full bg-quaternary">
           <m.span
-            className="block h-full rounded-full bg-brand-solid"
-            initial={{ width: "0%" }}
-            whileInView={{ width: "100%" }}
-            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+            className="block h-full origin-left rounded-full bg-brand-solid"
+            // From a sliver, not 0: an element with no area never counts as in view.
+            initial={{ scaleX: 0.02 }}
+            whileInView={{ scaleX: 0.62 }}
+            viewport={{ once: true }}
+            transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
           />
         </span>
         <span className="flex items-center gap-2">
@@ -193,26 +164,40 @@ function AudioDemo() {
 }
 
 function TranslationDemo() {
-  const [i, setI] = useState(0);
-  useEffect(() => {
-    const t = setInterval(() => setI((x) => (x + 1) % SAMPLE_TRANSLATIONS.length), 2800);
-    return () => clearInterval(t);
-  }, []);
-  const item = SAMPLE_TRANSLATIONS[i];
+  // The visitor picks the language; nothing rotates on a timer.
+  const [lang, setLang] = useState(SAMPLE_TRANSLATIONS[0].lang);
+  const item = SAMPLE_TRANSLATIONS.find((x) => x.lang === lang) ?? SAMPLE_TRANSLATIONS[0];
   return (
-    <div className="relative min-h-36 w-full overflow-hidden rounded-2xl bg-secondary p-4 ring-1 ring-secondary">
-      <AnimatePresence mode="wait">
-        <m.div
-          key={item.lang}
-          initial={{ opacity: 0, y: 16, filter: "blur(6px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, y: -16, filter: "blur(6px)" }}
-          transition={{ duration: 0.45 }}
-        >
-          <span className="text-xs font-semibold text-brand-secondary">{item.lang}</span>
-          <p className="mt-1 text-sm text-secondary">{item.text}</p>
-        </m.div>
-      </AnimatePresence>
+    <div className="w-full space-y-3">
+      <ButtonGroup
+        size="sm"
+        selectedKeys={[lang]}
+        disallowEmptySelection
+        onSelectionChange={(k) => setLang(String([...k][0]))}
+        aria-label="Translation language"
+        className="max-w-full overflow-x-auto"
+      >
+        {SAMPLE_TRANSLATIONS.map((x) => (
+          <ButtonGroupItem key={x.lang} id={x.lang}>
+            {x.lang}
+          </ButtonGroupItem>
+        ))}
+      </ButtonGroup>
+      <div className="relative min-h-28 w-full overflow-hidden rounded-2xl bg-secondary p-4 ring-1 ring-secondary">
+        <AnimatePresence mode="wait" initial={false}>
+          <m.p
+            key={item.lang}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            lang={item.code}
+            className="text-sm text-secondary"
+          >
+            {item.text}
+          </m.p>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
@@ -221,20 +206,14 @@ function ModesDemo() {
   return (
     <div className="grid w-full grid-cols-2 gap-3">
       {useUi().m.bento.modes.map((label, i) => (
-        <m.div
-          key={label}
-          initial={{ y: 20 }}
-          whileInView={{ y: 0 }}
-          transition={{ delay: 0.2 + i * 0.15 }}
-          className="rounded-2xl bg-secondary p-3 ring-1 ring-secondary"
-        >
+        <div key={label} className="rounded-2xl bg-secondary p-3 ring-1 ring-secondary">
           <div className="space-y-1.5">
             {Array.from({ length: i ? 5 : 3 }).map((_, j) => (
               <span key={j} className={cx("block h-1.5 rounded-full bg-quaternary", i ? "w-full" : j === 2 ? "w-1/2" : "w-full")} />
             ))}
           </div>
           <p className="mt-3 text-xs font-medium text-tertiary">{label}</p>
-        </m.div>
+        </div>
       ))}
     </div>
   );
@@ -259,17 +238,15 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
 
         <div className="mt-16 grid auto-rows-[minmax(0,auto)] grid-cols-1 gap-4 md:grid-cols-6 md:gap-5">
           <BentoCard
-            index={0}
             className="md:col-span-4"
             icon={Type01}
             eyebrow={t.cards[0].eyebrow}
             title={t.cards[0].title}
             description={t.cards[0].description}
           >
-            <ScrollRevealArabic text="ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ" />
+            <DisplayArabic text="ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ" />
           </BentoCard>
           <BentoCard
-            index={1}
             className="md:col-span-2 md:row-span-2"
             icon={Palette}
             eyebrow={t.cards[1].eyebrow}
@@ -279,7 +256,6 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
             <TajweedDemo verse={sample} />
           </BentoCard>
           <BentoCard
-            index={2}
             className="md:col-span-4"
             icon={LayersThree01}
             eyebrow={t.cards[2].eyebrow}
@@ -289,7 +265,6 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
             <WordByWordDemo verse={sample} />
           </BentoCard>
           <BentoCard
-            index={3}
             className="md:col-span-3"
             icon={Headphones02}
             eyebrow={t.cards[3].eyebrow}
@@ -299,7 +274,6 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
             <AudioDemo />
           </BentoCard>
           <BentoCard
-            index={4}
             className="md:col-span-3"
             icon={Translate01}
             eyebrow={t.cards[4].eyebrow}
@@ -309,7 +283,6 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
             <TranslationDemo />
           </BentoCard>
           <BentoCard
-            index={5}
             className="md:col-span-3"
             icon={BookOpen01}
             eyebrow={t.cards[5].eyebrow}
@@ -319,7 +292,6 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
             <ModesDemo />
           </BentoCard>
           <BentoCard
-            index={6}
             className="md:col-span-3"
             icon={LayersThree01}
             eyebrow={t.cards[6].eyebrow}
@@ -327,14 +299,9 @@ export function BentoFeatures({ sample }: { sample: Verse }) {
             description={t.cards[6].description}
           >
             <div className="flex w-full items-center gap-3 rounded-2xl bg-secondary p-4 ring-1 ring-secondary">
-              <m.span
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 300, damping: 15, delay: 0.3 }}
-                className="flex size-10 items-center justify-center rounded-full bg-brand-solid text-white"
-              >
+              <span className="flex size-10 items-center justify-center rounded-full bg-brand-solid text-white">
                 <BookOpen01 className="size-5" />
-              </m.span>
+              </span>
               <div className="text-sm">
                 <p className="font-semibold text-primary">Al-Kahf · 18:10</p>
                 <p className="text-tertiary">{t.continueReading}</p>

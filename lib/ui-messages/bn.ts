@@ -56,6 +56,8 @@ export const bn: Messages = {
     today: "আজ",
     ayatToday: "{n} / ৭ আয়াত",
     synced: "শব্দে শব্দে সমন্বিত · ১×",
+    play: "প্রিভিউ চালান",
+    pause: "প্রিভিউ থামান",
   },
   sources: {
     title: "বিশ্বস্ত ও মুক্ত লাইসেন্সের উৎসের উপর নির্মিত",

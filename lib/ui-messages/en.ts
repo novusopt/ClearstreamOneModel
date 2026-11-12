@@ -64,6 +64,8 @@ export const en = {
     today: "Today",
     ayatToday: "{n} / 7 ayat",
     synced: "Word-synced · 1×",
+    play: "Play preview",
+    pause: "Pause preview",
   },
   sources: {
     title: "Built on trusted, openly licensed sources",

@@ -56,6 +56,8 @@ export const zh: Messages = {
     today: "今天",
     ayatToday: "{n} / 7 节",
     synced: "逐词同步 · 1×",
+    play: "播放预览",
+    pause: "暂停预览",
   },
   sources: {
     title: "基于可信、开放许可的资料",

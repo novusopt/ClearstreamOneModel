@@ -6,6 +6,10 @@
  * khātam star hood and a hanging mosque lamp. It sits below the header (never behind the menu bar) and
  * dissolves into the page towards the bottom.
  *
+ * Motion ("the lamp is lit", `.kindle-*` in globals.css): on load the flame kindles, its glow opens and the
+ * light falls through the panel, once; afterwards only the flame breathes (9 s), paused while the hero is
+ * off screen (`data-still` on the hero section). Reduced motion shows the lit lamp, still.
+ *
  * Geometry (viewBox 600 × 720, axis x = 300, springing line y = 300): each pointed arch is two circular
  * arcs centred on the springing line past the axis, r = (w² + h²) / 2w for half-width w and rise h.
  */
@@ -109,17 +113,17 @@ export function HeroNiche() {
         <path d={HALO} fill="url(#niche-halo-fill)" />
         {/* The lit glass panel, its star hood and its single gilded edge. */}
         <path d={PANEL} fill="url(#niche-glass-fill)" />
-        <path d={PANEL} fill="url(#niche-light)" className="dark:opacity-70" />
+        <path d={PANEL} fill="url(#niche-light)" className="kindle-wash dark:opacity-70" />
         <g clipPath="url(#niche-panel)" mask="url(#niche-hood-mask)" opacity="0.35">
           <rect width="600" height="720" fill="url(#niche-khatam)" />
         </g>
         <path d={PANEL} fill="none" stroke="url(#niche-edge-stroke)" strokeWidth="1.25" />
       </g>
 
-      {/* The lamp hangs from the apex and sways gently (still under reduced motion). */}
-      <g className="animate-sway" style={{ transformOrigin: `${AXIS}px ${APEX}px` }}>
+      {/* The lamp hangs from the apex. */}
+      <g>
         <g transform={`translate(${AXIS} ${APEX}) scale(0.8) translate(-40 -40)`}>
-          <circle cx="40" cy="116" r="64" fill="url(#lamp-glow)" className="animate-glow" />
+          <circle cx="40" cy="116" r="64" fill="url(#lamp-glow)" className="kindle-halo" />
           <g fill="none" className="stroke-gold-600/70 dark:stroke-gold-300/60" strokeWidth="0.9">
             <path d="M40 40 V64" />
             <circle cx="40" cy="67" r="3" />
@@ -137,7 +141,7 @@ export function HeroNiche() {
             <path d="M26 104 Q40 109 54 104" />
             <path d="M19 118 Q40 124 61 118" />
           </g>
-          <path d="M40 106 C45 112 46 120 40 126 C34 120 35 112 40 106 Z" fill="url(#lamp-flame)" className="animate-glow" />
+          <path d="M40 106 C45 112 46 120 40 126 C34 120 35 112 40 106 Z" fill="url(#lamp-flame)" className="kindle-flame" />
           <path d="M24 114 C24 108 27 106 30 105" fill="none" stroke="white" strokeOpacity="0.6" strokeWidth="1.2" strokeLinecap="round" />
         </g>
       </g>

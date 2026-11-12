@@ -41,8 +41,9 @@ export function SourcesMarquee() {
         {m.sources.title}
       </h2>
       <div className="group relative mt-6 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
-        {/* Two copies side by side; the track slides by half its width for a seamless loop. */}
-        <div className="flex w-max animate-marquee group-hover:[animation-play-state:paused] motion-reduce:animate-none">
+        {/* Two copies side by side; the track slides by half its width for a seamless loop, and stops
+            while the pointer or keyboard focus is on it. */}
+        <div className="flex w-max animate-marquee group-hover:[animation-play-state:paused] group-focus-within:[animation-play-state:paused] motion-reduce:animate-none">
           {list(false)}
           {list(true)}
         </div>

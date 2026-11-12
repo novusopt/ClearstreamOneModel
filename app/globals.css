@@ -261,6 +261,30 @@ input[type="search"]::-webkit-search-cancel-button {
   .enter, .enter-up, .enter-word, .enter-blur, .enter-visible, .enter-word-visible, .enter-sharpen { animation: none; }
 }
 
+/*
+ * Home hero, "the lamp is lit" (An-Nur 24:35): once on load the flame kindles, its glow opens, light falls
+ * through the niche and the verse brightens word by word, right to left; then the headline settles
+ * (.enter-word-visible, delayed). Afterwards only the flame breathes, 9 s, paused while the hero is off
+ * screen ([data-still]). Everything starts visible and reduced motion shows the end state.
+ */
+@keyframes kindle-flame { from { transform: scale(0.35); opacity: 0.2; } 60% { transform: scale(1.08); } }
+@keyframes kindle-halo { from { transform: scale(0.45); opacity: 0; } }
+@keyframes kindle-wash { from { transform: translateY(-28%); opacity: 0; } }
+@keyframes kindle-word { from { opacity: 0.18; transform: translateY(6px); } }
+@keyframes breathe-flame { to { transform: scale(1.06, 1.1); } }
+@keyframes breathe-halo { to { transform: scale(1.06); opacity: 0.75; } }
+.kindle-flame, .kindle-halo, .kindle-wash { transform-box: fill-box; }
+.kindle-flame { transform-origin: 50% 90%; }
+.kindle-halo { transform-origin: 50% 50%; }
+.kindle-wash { transform-origin: 50% 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .kindle-flame { animation: kindle-flame 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards, breathe-flame 9s cubic-bezier(0.65, 0, 0.35, 1) 1.2s infinite alternate; }
+  .kindle-halo { animation: kindle-halo 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards, breathe-halo 9s cubic-bezier(0.65, 0, 0.35, 1) 1.2s infinite alternate; }
+  .kindle-wash { animation: kindle-wash 1s cubic-bezier(0.22, 1, 0.36, 1) 0.15s backwards; }
+  .kindle-word { animation: kindle-word 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards; animation-delay: calc(0.35s + var(--i) * 0.11s); }
+  [data-still] :is(.kindle-flame, .kindle-halo) { animation-play-state: paused; }
+}
+
 /* Reader tips already dismissed on this device: hidden before hydration (see the inline script in app/layout.tsx). */
 html[data-seen-tips] .reader-tips {
   display: none;

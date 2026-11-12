@@ -57,6 +57,8 @@ export const es: Messages = {
     today: "Hoy",
     ayatToday: "{n} / 7 aleyas",
     synced: "Sincronizado palabra a palabra · 1×",
+    play: "Reproducir la vista previa",
+    pause: "Pausar la vista previa",
   },
   sources: {
     title: "Basado en fuentes fiables y de licencia abierta",
