@@ -26,6 +26,9 @@ worth adopting **[call]**. What has to land with them:
   maintained by hand. (Owner's requirement.)
 - The contract carries the mapping from columns to business meaning, and that
   mapping is linked in OpenMetadata. (Owner's requirement.)
+- Tags and classification tags are defined in OpenMetadata; which tag applies
+  to which product, table or column is stated in the contract. (Owner's
+  requirement.)
 - Lineage is captured in OpenMetadata automatically. (Owner's requirement.)
 - Every product moves through one standardized lifecycle. (Owner's requirement.)
 - Governance is computational: global and domain policies are code, evaluated
@@ -100,8 +103,8 @@ These would make the demo a failure even if it technically works:
   standing in for a system.
 - **A second source of truth.** No database behind the UI. No hand edits to
   product metadata in OpenMetadata; the next publish would overwrite them.
-  (The business glossary is the one thing governed in OpenMetadata itself,
-  see 7.8.)
+  (Vocabulary — the business glossary, classifications and tags — is the one
+  thing governed in OpenMetadata itself, see 7.8.)
 - **Bespoke metadata formats.** Platform-specific settings live inside the
   standards' own extension points (`customProperties`), not in side files with
   an invented schema.
@@ -373,7 +376,7 @@ OpenMetadata mapping:
 | Output port | Output port → the Trino table (ingested from Trino first) |
 | Input port | Input port → the upstream product's table |
 | ODCS contract | Data Contract on the output table, via OpenMetadata's ODCS import |
-| ODCS classification (e.g. PII) | Tags on columns |
+| ODCS `classification` and `tags` on a column, table or contract | The OpenMetadata tags they name, applied to the column, table or Data Product (7.8) |
 | ODCS business-term link on a column | Glossary term attached to the column (7.8) |
 | Ports and transformation code | Lineage (7.9) |
 | Contract test result (from CI or Airflow) | Data Contract result on the contract |
@@ -385,7 +388,43 @@ validation is not relied on.
 All of this runs inside the deploy workflow and the Airflow DAG. Nobody opens
 OpenMetadata to enter product metadata.
 
-### 7.8 Semantics
+### 7.8 Semantics, classifications and tags
+
+One rule covers all three: **the vocabulary is defined in OpenMetadata; the
+mapping is stated in the contract.** (Owner's decision for tags and
+classifications; applied to business terms as well **[call]**.)
+
+| Vocabulary, defined in OpenMetadata | Mapping, stated in the contract (standard ODCS fields) |
+|---|---|
+| Glossary terms | `authoritativeDefinitions` on a column or table |
+| Classification tags (e.g. `PII.Sensitive`, `Confidentiality.Confidential`) | `classification` on a column |
+| Other tags (e.g. `Tier.Tier1`) | `tags` on a column, table or the contract |
+
+```yaml
+- name: counterparty_lei
+  logicalType: string
+  classification: Confidentiality.Confidential   # a tag defined in OpenMetadata
+  tags: [Tier.Tier1]
+```
+
+- **Publishing** applies the named tags to the matching column, table or Data
+  Product in OpenMetadata. Publishing makes OpenMetadata match the contract:
+  a tag on a product's asset that the contract does not name is removed
+  **[call]**, so tagging by hand in OpenMetadata does not stick.
+- **Validation** fails when a contract names a tag or classification that
+  does not exist in OpenMetadata. If a tag is later renamed or deleted in
+  OpenMetadata, the affected products show up as violations in the
+  compliance view.
+- **Policies** can refer to the vocabulary (for example "classification must
+  be a tag from the `Confidentiality` classification"); the tag and glossary
+  lists are made available to OPA alongside the contracts.
+- **In the UI** the contract editor's classification and tag fields are
+  pickers that search OpenMetadata, like the business-term picker.
+- **Starter vocabulary:** OpenMetadata's built-in `PII` and `Tier`
+  classifications plus a seeded `Confidentiality` classification **[call]**,
+  loaded when the stack first starts.
+
+Business terms in detail:
 
 - **Where business terms live [call]:** in an OpenMetadata glossary, because
   that is where data stewards govern vocabulary and where consumers look it
@@ -522,7 +561,7 @@ it warns until then and blocks afterwards.
   code in the UI or in an editor.
 
 **Query-time enforcement [call].** One access policy ships: columns the
-contract classifies as PII are masked in Trino unless the querying user
+contract classifies with a `PII` tag are masked in Trino unless the querying user
 belongs to the owning team or to governance. Trino asks OPA on each query;
 OPA knows the classifications because the deployed contracts are part of its
 data. Users are simulated by Trino user name, since the demo has no login.
@@ -572,8 +611,9 @@ Screens:
       and register the product as **Proposed**.
    3. Input ports — pick from existing Active products' output ports (or a
       raw source table, for a source-aligned template).
-   4. Output port and contract — columns, types, required/unique, PII
-      classification, business term, quality rules.
+   4. Output port and contract — columns, types, required/unique,
+      classification and tags (picked from OpenMetadata), business term,
+      quality rules.
    5. Transformation — a code editor for the output (SQL for dbt templates,
       PySpark for the Spark template), prefilled with a `select` over the
       chosen inputs **[call]**. Richer work happens on the PR branch in an
@@ -704,6 +744,8 @@ Each phase leaves a working demo.
   is represented on the OpenMetadata Data Product (native field if the pinned
   version has one, otherwise a tag).
 - The template manifest format and how far the wizard adapts to it.
+- How validation and OPA obtain the tag and glossary lists from OpenMetadata
+  (live lookup vs. a snapshot refreshed on deploy).
 - The exact shape of the product document, the YAML format of guided
   policies and of waivers, how the OPA bundle is refreshed, and which
   run-time checks Airflow takes from policies.
