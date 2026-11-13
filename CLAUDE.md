@@ -1,133 +1,88 @@
-# Clearstream — Modern Car Marketplace
+# Data Product Platform
 
-<!--
-MAINTENANCE NOTES
-- Keep this file under ~200 lines. Long CLAUDE.md files reduce adherence and eat context.
-- Add a rule when: (a) Claude made the same mistake twice, (b) a reviewer caught something
-  Claude should have known, (c) a new contributor would need the same context.
-- Prefer concrete, verifiable rules ("use 2-space indent") over vague ones ("write clean code").
-- Put personal overrides in CLAUDE.local.md (gitignored) — not here.
-- HTML comments are stripped before injection, so they don't cost tokens.
-- Reference: https://code.claude.com/docs/en/memory
--->
+## Project overview
 
-## Project Overview
+A platform for building data products as self-contained units, on open standards: the Open Data
+Product Standard (ODPS v1.0.0, Bitol) for the product spec and the Open Data Contract Standard
+(ODCS v3.1.0, Bitol) for data contracts. The spec and the contract are the source; everything else
+(dbt schema, Airflow DAG, OpenMetadata entries, policies' inputs) is derived from them.
 
-Clearstream is a buyer-side car marketplace: home, listings with URL-driven filters, car detail
-pages, and an inquiry dialog. It is a self-contained demo backed by a local JSON file — there
-is no real backend, no auth, no seller flow. The goal is a polished, accessible, responsive UI
-that a real API can slot into later without reshaping components.
+The full design, including what is decided and what is still open, is in
+`docs/superpowers/specs/2026-11-13-data-product-platform-design.md`. Read it before changing scope.
 
-## Tech Stack
+**What exists today:** the authoring UI in `ui/`, running on a mock backend. The stack (Trino,
+Airflow, OpenMetadata, OPA), the templates, the CLI and the GitHub workflows are designed but not
+built.
 
-- **Runtime**: Node 22, npm 10
-- **Framework**: Next.js 16 (App Router, React Server Components, Turbopack dev)
-- **Language**: TypeScript (strict)
-- **UI**: React 19, Tailwind CSS v4 (CSS-first config via `@theme` in `app/globals.css`)
-- **Primitives**: Radix UI (Dialog, Select, Slider, Label, Tabs, Checkbox, Dropdown, Slot)
-- **Forms**: react-hook-form + zod (via `@hookform/resolvers`)
-- **Misc**: next-themes, framer-motion, sonner (toasts), lucide-react, class-variance-authority,
-  clsx, tailwind-merge
-- **Data**: `data/cars.json` (~12 cars), validated at import time via a zod schema
+## Repository layout
 
-## Commands
+```
+docs/superpowers/specs/     the design
+ui/                         Data Product Studio — Next.js app
+  src/app/                  routes: /products, /products/new, /products/[domain]/[name],
+                            /products/[domain]/[name]/contracts/[port], /map, /api/*
+  src/components/app/       the Studio's own components
+  src/components/{base,application,foundations}/   vendored Untitled UI React (MIT) — keep upstream form
+  src/lib/
+    types.ts                domain model (ODPS/ODCS-shaped)
+    standards/              serialize to ODPS/ODCS, validate against the official JSON Schemas
+    backend/                the Backend interface and its mock implementation + seed data
+    policies.ts             policy evaluation (stand-in for OPA)
+    lifecycle.ts            lifecycle states, transitions and gates
+    breaking.ts             contract diff and semantic version bump
+  src/styles/theme.css      vendored Untitled UI theme; Studio overrides live in app/globals.css
+```
+
+## UI tech stack
+
+- Node 22, npm 10. Next.js 16 (App Router), React 19, TypeScript (strict), Tailwind CSS v4.
+- Untitled UI React components (built on React Aria). Its installer needs untitledui.com; when that
+  is unreachable, vendor files from `raw.githubusercontent.com/untitleduico/react/main/`.
+- `@xyflow/react` + dagre for the lineage canvas, CodeMirror for code panels, `yaml` and `ajv` for
+  the standards, `sonner` for toasts, `vitest` for tests.
+- This Next.js version differs from older ones: route `params` and `searchParams` are Promises.
+  Check `ui/node_modules/next/dist/docs/` before using an unfamiliar API.
+
+## Commands (run in `ui/`)
 
 ```bash
-npm install            # install deps
-npm run dev            # dev server → http://localhost:3000  (Turbopack)
-npm run build          # production build (must succeed with no type errors)
-npm start              # serve production build
-npm run lint           # eslint (flat config in eslint.config.mjs)
+npm install
+npm run dev        # http://localhost:3000
+npm run build      # must pass with no type errors
+npm run lint
+npm test           # vitest: standards validation, policies, lifecycle, breaking changes
 ```
 
-There is no separate typecheck script — `next build` runs `tsc` as part of its pipeline.
+## Rules for the UI
 
-## Directory Layout
+- **All data goes through `src/lib/backend`.** Server components call `backend.*`; client components
+  call `src/lib/api.ts`, which talks to the route handlers. Never import seed data into a screen.
+  The real backend (Git + OpenMetadata) will replace the mock behind the same functions.
+- **Anything simulated is labelled as such in the UI** (pipeline runs, quality results).
+- **Generated documents must validate.** `npm test` checks every seeded product and contract against
+  the official ODPS and ODCS JSON Schemas; keep that passing when changing `serialize.ts`.
+- **Vocabulary is defined in the catalog, mapped in the contract.** Business terms go in
+  `authoritativeDefinitions`, the confidentiality level in `classification`, everything else
+  (PII, tier, regulatory) in `tags`.
+- Platform-specific settings go in the standards' `customProperties`, never in side files.
+- Styling: Tailwind classes with the Untitled UI semantic tokens (`bg-primary`, `text-tertiary`,
+  `border-secondary`, `utility-<colour>-<step>`). Check a token exists in `theme.css` before using it.
+- Server components cannot pass component functions (such as icons) to client components; pass a
+  rendered element (`iconLeading={<Plus data-icon />}`) or make the caller a client component.
+- Never `any`. 2-space indent, double quotes, semicolons, trailing commas.
+- Every interactive element is keyboard-reachable with a visible focus ring; icon-only buttons have
+  an `aria-label`.
 
-```
-app/                      # App Router entries
-  layout.tsx              # root shell, fonts, ThemeProvider, Header/Footer, Toaster
-  page.tsx                # home
-  globals.css             # Tailwind v4 import + CSS custom properties (light + dark)
-  cars/
-    page.tsx              # listings (server component, reads searchParams)
-    [id]/page.tsx         # detail (uses generateStaticParams)
-components/
-  ui/                     # small, stateless primitives (button, card, input, dialog, ...)
-  site/                   # Header, Footer, ThemeProvider, ThemeToggle
-  home/                   # Hero, CategoryTiles, FeaturedCarousel, HowItWorks, CtaBanner
-  cars/                   # CarCard, CarGrid, CarFilters, CarGallery, SpecGrid,
-                          # SellerCard, SimilarCars, SortDropdown, SearchBar, InquiryDialog
-lib/
-  cars.ts                 # getCars / getCarById / getFeaturedCars / getSimilarCars / getMakes
-  filters.ts              # parseSearchParams, stateToSearchParams, applyFilters (pure)
-  schemas.ts              # zod schemas: carSchema, inquirySchema (+ derived TS types)
-  constants.ts            # BODY_TYPES, FUEL_TYPES, TRANSMISSIONS, SORT_OPTIONS, bounds
-  utils.ts                # cn(), formatPrice, formatMiles, formatRelative
-data/cars.json            # mock inventory (the only source of truth)
-public/                   # static assets
-```
+## Git workflow
 
-Path alias: `@/*` → repo root (see `tsconfig.json`).
-
-## Code Style
-
-- 2-space indent, double quotes in TS/TSX (Next default), trailing commas, semicolons on.
-- **Never `any`** — if types are unclear, introduce a `type`/`interface` in `lib/schemas.ts` or
-  next to the component that owns it.
-- Components: `PascalCase.tsx`. Utilities: `camelCase.ts`. Constants: `UPPER_SNAKE_CASE`.
-- Prefer **Server Components** by default; add `"use client"` only when the file uses hooks,
-  event handlers, Radix primitives, or browser APIs.
-- Data fetching: call `lib/cars.ts` helpers from server components. Never import `data/cars.json`
-  in a client component — always go through `lib/cars.ts`.
-- Styling: Tailwind classes only, using the CSS-variable tokens (`bg-background`, `text-foreground`,
-  `border-border`, etc.). No inline `style={{ ... }}` unless dynamic values require it.
-- Use `cn()` from `@/lib/utils` whenever joining conditional classes.
-- Icons: `lucide-react`; size via Tailwind (`className="h-4 w-4"`), not the `size` prop.
-- Forms: always `react-hook-form` + `zodResolver(<schema>)`. Schemas live in `lib/schemas.ts`.
-- Filters: the URL is the source of truth. Components read via `useSearchParams` and write via
-  `router.replace(pathname + "?" + qs, { scroll: false })`. Do not mirror filter state in React
-  state except for uncontrolled inputs that debounce into the URL.
-
-## Accessibility & UX
-
-- All interactive elements must be keyboard-reachable and show a visible focus ring
-  (`focus-visible:ring-2 focus-visible:ring-ring`).
-- Images: always include `alt` text (car make + model + trim).
-- Motion: wrap animations so they respect `prefers-reduced-motion` (framer-motion does this
-  automatically; keep it that way).
-- Color: don't hard-code hex — use the token classes so dark mode works.
-- Dialogs and Sheets come from Radix — don't roll custom modals.
-
-## Git Workflow
-
-- Active branch: `claude/modern-car-sales-ui-puab8`. Do not push to `main`.
+- Work on the branch the session assigns. Never push to the default branch.
 - Conventional commit subjects (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`).
-- Keep commits focused; small PRs over mega-PRs.
-- Push with `git push -u origin <branch>`. Retry on network errors with exponential backoff.
-- Only open a PR when the user explicitly asks.
+- Only open a pull request when asked.
+- No force-push, no `--no-verify`. Do not commit `.env*`, build output or `node_modules/`.
 
-## Things Claude Should NOT Do
+## Before saying a change is done
 
-- Don't force-push, `git reset --hard` shared branches, or `git clean -fd` without asking.
-- Don't `--no-verify` past a failing hook — fix the underlying issue.
-- Don't add a real backend, auth, payment flow, or database. Scope is buyer-side only.
-- Don't swap the tech stack (Next.js + Tailwind v4 + Radix is locked in).
-- Don't install a UI kit that overlaps with what's already here (no MUI, Chakra, Mantine, etc.).
-- Don't commit `.env*`, build artifacts, `node_modules/`, or editor-specific files.
-- Don't put mock data anywhere except `data/cars.json`; everything reads through `lib/cars.ts`.
-- Don't delete or rename files without checking imports first.
-
-## Verification Checklist (run before saying a change is done)
-
-1. `npm run build` completes with no type or lint errors.
-2. `npm run dev` → the touched pages render without console errors at 375 / 768 / 1440 px.
-3. Filters: toggling any filter updates the URL and grid; empty state appears when nothing matches.
-4. Detail page: gallery thumbnails swap the main image; inquiry dialog opens; empty submit shows
-   zod errors; valid submit shows a success toast.
-5. Theme toggle flips light/dark without a flash on reload.
-
-## Not In Scope
-
-Auth, payments, real backend, seller/dealer flows, saved favorites persistence, image uploads,
-reviews, messaging, i18n, analytics, SEO beyond basic metadata.
+1. `npm run build`, `npm run lint` and `npm test` pass in `ui/`.
+2. The touched screens render without console errors at 375 and 1440 px.
+3. The flows still work: create a product in the wizard; edit a contract and save; a breaking change
+   names its consumers; a draft shows what it lacks for Active; deprecate asks for a sunset date.

@@ -6,6 +6,17 @@ Status: awaiting approval
 Lines marked **[call]** are choices made by the author of this document, not
 decisions the project owner made. They are open to correction.
 
+## Build status
+
+- **Built:** the authoring UI (`ui/`), at the owner's request ahead of the rest, on a mock backend.
+  Pipeline runs and quality results are simulated and labelled as such in the UI; the generated
+  ODPS and ODCS documents, policy checks, lifecycle gates and breaking-change detection are real.
+  The mock sits behind one interface (`ui/src/lib/backend`) that the Git- and OpenMetadata-backed
+  implementation replaces. The "no faked steps" anti-goal applies to the demo, not to this stage.
+- **Not built:** the stack, templates, `dpctl`, workflows, publishing, OPA, the Governance section.
+- **Design not yet approved**, and the review findings, data quality and observability proposals
+  discussed after this document was written are not folded in yet.
+
 ## 1. Intent
 
 Demonstrate the value of a platform approach to data products by showing the

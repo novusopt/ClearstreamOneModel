@@ -1,0 +1,129 @@
+@import "tailwindcss";
+@import "../styles/theme.css";
+
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:where(.dark-mode, .dark-mode *));
+@custom-variant label (& [data-label]);
+@custom-variant focus-input-within (&:has(input:focus));
+
+@utility scrollbar-hide {
+  &::-webkit-scrollbar {
+    display: none;
+    -webkit-appearance: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@utility transition-inherit-all {
+  transition-property: inherit;
+  transition-duration: inherit;
+  transition-timing-function: inherit;
+}
+
+/* Studio identity on top of the Untitled UI theme: a petrol brand, an ink sidebar, and three typefaces. */
+@theme {
+  --font-body: "IBM Plex Sans", -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Bricolage Grotesque Variable", "IBM Plex Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-brand-25: rgb(244 251 249);
+  --color-brand-50: rgb(232 246 242);
+  --color-brand-100: rgb(205 236 228);
+  --color-brand-200: rgb(158 217 203);
+  --color-brand-300: rgb(104 191 173);
+  --color-brand-400: rgb(55 162 143);
+  --color-brand-500: rgb(26 136 119);
+  --color-brand-600: rgb(15 112 98);
+  --color-brand-700: rgb(13 90 80);
+  --color-brand-800: rgb(14 72 65);
+  --color-brand-900: rgb(13 59 54);
+  --color-brand-950: rgb(6 36 33);
+
+  --color-ink-950: rgb(8 20 19);
+  --color-ink-900: rgb(11 27 25);
+  --color-ink-800: rgb(17 38 35);
+  --color-ink-700: rgb(25 52 48);
+  --color-ink-600: rgb(38 72 66);
+  --color-ink-400: rgb(112 146 139);
+  --color-ink-300: rgb(150 178 172);
+  --color-ink-100: rgb(214 228 224);
+
+  --color-paper: rgb(247 247 244);
+  --color-accent-amber: rgb(214 138 28);
+
+  --animate-rise: rise 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+html,
+body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-kerning: normal;
+  background: var(--color-paper);
+}
+
+/* A dotted ground for canvases and empty areas. */
+@utility bg-dots {
+  background-image: radial-gradient(circle, rgb(11 27 25 / 0.13) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Lineage canvas */
+.react-flow__attribution {
+  display: none;
+}
+.react-flow__edge-path {
+  stroke-width: 1.5;
+}
+.react-flow__controls {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border-secondary);
+}
+.react-flow__controls-button {
+  border-bottom-color: var(--color-border-secondary);
+}
+
+/* Code panels */
+.cm-editor {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  background: transparent;
+}
+.cm-editor.cm-focused {
+  outline: none;
+}
+.cm-gutters {
+  background: transparent !important;
+  border-right: 0 !important;
+  color: rgb(11 27 25 / 0.32);
+}
+.cm-activeLine,
+.cm-activeLineGutter {
+  background: rgb(15 112 98 / 0.05) !important;
+}
