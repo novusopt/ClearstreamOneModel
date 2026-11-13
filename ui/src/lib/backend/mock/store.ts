@@ -1,3 +1,5 @@
+import { getCache } from "@vercel/functions";
+import { cache } from "react";
 import { diffContracts, nextVersion } from "@/lib/breaking";
 import { allowedTransitions, gatesFor } from "@/lib/lifecycle";
 import { pipelineSteps } from "@/lib/pipeline";
@@ -13,23 +15,46 @@ interface State {
 
 const fresh = (): State => ({ products: seedProducts(), contracts: seedContracts(), runs: seedRuns(), runSeq: 1010 });
 
-// Kept on globalThis so route handlers and server components share one store, and so it survives hot reloads.
+/*
+ * Where the state lives.
+ *
+ * Locally there is one Node process, so the state sits on globalThis, where route handlers and
+ * server components share it and it survives hot reloads.
+ *
+ * On Vercel every route can run in its own function instance with its own memory, so a product
+ * saved by an API route would be invisible to the page that renders next. There the state is kept
+ * in Vercel's runtime cache instead, which all instances of a deployment share. It is still a mock:
+ * the cache is not durable storage and the state can reset.
+ */
 const holder = globalThis as typeof globalThis & { __dataProductStore?: State };
-const state = (): State => (holder.__dataProductStore ??= fresh());
+const SHARED = Boolean(process.env.VERCEL);
+const KEY = "data-product-studio/state/v1";
+const TTL_SECONDS = 60 * 60 * 24 * 7;
+
+async function read(): Promise<State> {
+  if (!SHARED) return (holder.__dataProductStore ??= fresh());
+  return ((await getCache().get(KEY)) as State | null) ?? fresh();
+}
+
+/** One read per page render; outside a render (route handlers) every call reads afresh. */
+const load = cache(read);
+
+async function save(state: State): Promise<void> {
+  if (SHARED) await getCache().set(KEY, state, { ttl: TTL_SECONDS });
+}
 
 export class BackendError extends Error {}
 
 const clone = <T>(value: T): T => structuredClone(value);
 const now = () => new Date().toISOString();
 
-function requireProduct(id: string): DataProduct {
-  const product = state().products.find((candidate) => candidate.id === id);
+function requireProduct(s: State, id: string): DataProduct {
+  const product = s.products.find((candidate) => candidate.id === id);
   if (!product) throw new BackendError(`No product "${id}"`);
   return product;
 }
 
-function startRun(productId: string, kind: PipelineRun["kind"], title: string, template: string): PipelineRun {
-  const s = state();
+function startRun(s: State, productId: string, kind: PipelineRun["kind"], title: string, template: string): PipelineRun {
   const run: PipelineRun = { id: `run-${s.runSeq++}`, productId, kind, title, startedAt: now(), steps: pipelineSteps(kind, template) };
   s.runs.unshift(run);
   return run;
@@ -65,16 +90,16 @@ function qualityFor(contract: DataContract): QualityResult[] {
 
 export const mockBackend = {
   async listProducts(): Promise<DataProduct[]> {
-    return clone(state().products);
+    return clone((await load()).products);
   },
   async getProduct(domain: string, name: string): Promise<DataProduct | undefined> {
-    return clone(state().products.find((product) => product.domain === domain && product.name === name));
+    return clone((await load()).products.find((product) => product.domain === domain && product.name === name));
   },
   async listContracts(): Promise<DataContract[]> {
-    return clone(state().contracts);
+    return clone((await load()).contracts);
   },
   async getContract(id: string): Promise<DataContract | undefined> {
-    return clone(state().contracts.find((contract) => contract.id === id));
+    return clone((await load()).contracts.find((contract) => contract.id === id));
   },
   async getVocabulary() {
     return clone(VOCABULARY);
@@ -83,26 +108,25 @@ export const mockBackend = {
     return clone(TEMPLATES);
   },
   async listRuns(productId?: string): Promise<PipelineRun[]> {
-    return clone(state().runs.filter((run) => !productId || run.productId === productId));
+    return clone((await load()).runs.filter((run) => !productId || run.productId === productId));
   },
   async getRun(id: string): Promise<PipelineRun | undefined> {
-    return clone(state().runs.find((run) => run.id === id));
+    return clone((await load()).runs.find((run) => run.id === id));
   },
   async getQuality(productId: string): Promise<QualityResult[]> {
-    const product = requireProduct(productId);
+    const s = await load();
+    const product = requireProduct(s, productId);
     if (product.status === "proposed" || product.status === "retired") return [];
-    return state()
-      .contracts.filter((contract) => contract.productId === productId)
-      .flatMap(qualityFor);
+    return s.contracts.filter((contract) => contract.productId === productId).flatMap(qualityFor);
   },
   async consumersOf(productId: string): Promise<DataProduct[]> {
-    const s = state();
+    const s = await load();
     const contractIds = new Set(s.contracts.filter((contract) => contract.productId === productId).map((contract) => contract.id));
     return clone(s.products.filter((product) => product.inputPorts.some((port) => contractIds.has(port.contractId))));
   },
 
   async createProduct(input: NewProductInput): Promise<{ product: DataProduct; run?: PipelineRun }> {
-    const s = state();
+    const s = await read();
     const id = `${input.domain}.${input.name}`;
     if (!/^[a-z][a-z0-9]*(-[a-z0-9]+)*$/.test(input.name)) throw new BackendError("The name must be lower-case words separated by hyphens");
     const existing = s.products.find((product) => product.id === id);
@@ -136,7 +160,10 @@ export const mockBackend = {
       updatedAt: timestamp,
     };
     s.products.unshift(product);
-    if (proposed) return { product: clone(product) };
+    if (proposed) {
+      await save(s);
+      return { product: clone(product) };
+    }
 
     s.contracts.push({
       id: contractId,
@@ -154,15 +181,17 @@ export const mockBackend = {
       tags: [],
       updatedAt: timestamp,
     });
-    return { product: clone(product), run: clone(startRun(id, "create", `Create ${input.title}`, input.template)) };
+    const run = startRun(s, id, "create", `Create ${input.title}`, input.template);
+    await save(s);
+    return { product: clone(product), run: clone(run) };
   },
 
   async saveContract(id: string, draft: DataContract, message: string): Promise<{ contract: DataContract; run: PipelineRun }> {
-    const s = state();
+    const s = await read();
     const index = s.contracts.findIndex((contract) => contract.id === id);
     if (index < 0) throw new BackendError(`No contract "${id}"`);
     const published = s.contracts[index];
-    const product = requireProduct(published.productId);
+    const product = requireProduct(s, published.productId);
     if (product.status === "retired") throw new BackendError("A retired product's contract cannot be changed");
 
     const changes = diffContracts(published, draft);
@@ -179,12 +208,14 @@ export const mockBackend = {
     if (port) port.version = version;
     product.version = version;
     product.updatedAt = timestamp;
-    return { contract: clone(saved), run: clone(startRun(product.id, "contract-change", message || "Change the contract", product.template)) };
+    const run = startRun(s, product.id, "contract-change", message || "Change the contract", product.template);
+    await save(s);
+    return { contract: clone(saved), run: clone(run) };
   },
 
   async changeStatus(productId: string, target: LifecycleStatus, options: { sunsetDate?: string; successor?: string } = {}): Promise<{ product: DataProduct; run: PipelineRun }> {
-    const s = state();
-    const product = requireProduct(productId);
+    const s = await read();
+    const product = requireProduct(s, productId);
     if (!allowedTransitions(product.status).includes(target)) throw new BackendError(`A ${product.status} product cannot become ${target}`);
     const contracts = s.contracts.filter((contract) => contract.productId === productId);
     const gates = gatesFor(target, {
@@ -214,10 +245,13 @@ export const mockBackend = {
       port.version = contracts.find((contract) => contract.id === port.contractId)?.version ?? port.version;
     }
     const labels: Record<LifecycleStatus, string> = { proposed: "Propose", draft: "Start building", active: "Promote to Active", deprecated: "Deprecate", retired: "Retire" };
-    return { product: clone(product), run: clone(startRun(productId, "lifecycle", `${labels[target]}: ${product.title}`, product.template)) };
+    const run = startRun(s, productId, "lifecycle", `${labels[target]}: ${product.title}`, product.template);
+    await save(s);
+    return { product: clone(product), run: clone(run) };
   },
 
   async reset(): Promise<void> {
     holder.__dataProductStore = fresh();
+    if (SHARED) await getCache().delete(KEY);
   },
 };
