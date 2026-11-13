@@ -28,6 +28,9 @@ worth adopting **[call]**. What has to land with them:
   mapping is linked in OpenMetadata. (Owner's requirement.)
 - Lineage is captured in OpenMetadata automatically. (Owner's requirement.)
 - Every product moves through one standardized lifecycle. (Owner's requirement.)
+- Governance is computational: global and domain policies are code, evaluated
+  automatically, and authored from a Governance section in the UI. (Owner's
+  requirement.)
 - The contract is enforced, not just documented.
 
 Inspiration: Entropy Data (formerly Data Mesh Manager) — a data product
@@ -68,9 +71,17 @@ marketplace built on ODCS and ODPS with Git-connected products.
     Retired) stored in the spec, enforced by the pipeline, visible in the UI
     and in OpenMetadata.
 
+12. **Computationally enforced policies**, global and per domain, evaluated
+    on the data contracts and product specs at every enforcement point, from
+    the wizard to the query engine.
+13. **A Governance section in the UI** to browse, author and change policies,
+    with an impact preview before a policy is saved.
+
 ## 3. Non-goals (first version)
 
-- Login, SSO, roles or permissions in the UI.
+- Login, SSO, roles or permissions in the UI. Who may approve a policy or a
+  product change is enforced by GitHub code owners on the pull request, not by
+  the UI. Query-time users are simulated by Trino user name.
 - Access requests, data usage agreements, approvals workflow.
 - One repository per data product (the layout allows lifting a folder out later).
 - Production hardening: high availability, TLS, secrets management, backups.
@@ -169,6 +180,9 @@ products/<domain>/<product>/
   dbt/ or spark/           transformation code, per template
   README.md
   .copier-answers.yml      records template version, enables upgrades
+policies/
+  global/                  policies for every product (owned by governance)
+  domains/<domain>/        policies for one domain (owned by the domain)
 platform/
   cli/                     `dpctl` — Python CLI used by workflows, Airflow and humans
   airflow/                 DAG factory
@@ -249,6 +263,10 @@ same code. Commands:
 - `test <product> [--schema <override>]` — runs the contract against Trino
   with datacontract-cli; emits a machine-readable result.
 - `publish <product>` — runs every publish target (section 7.7).
+- `policy check <product>` — builds the product document and evaluates all
+  global policies and the product's domain policies (section 7.11).
+- `policy impact --base <ref>` — for a change to `policies/**`, lists which
+  existing products would newly fail or newly pass.
 - `lifecycle check <product> --base <ref>` — verifies that a status change is
   a legal transition and that the gates for the new state are met
   (section 7.10).
@@ -267,15 +285,21 @@ Data itself uses.
   PRs. Instead the UI, using its own token, opens the PR as soon as the branch
   appears **[call]**. The deterministic branch name is how the UI finds it.
 - **`validate`** (pull requests touching `products/**` or `templates/**`) — for
-  each changed product: `dpctl validate`; `dpctl lifecycle check`;
+  each changed product: `dpctl validate`; `dpctl policy check`;
+  `dpctl lifecycle check`;
   `dpctl breaking`; dbt build into an
   isolated schema `pr_<number>_<domain>_<product>`; `dpctl test` against that
   schema; a summary comment on the PR. The PR schema is dropped when the PR
   closes.
 - **`deploy`** (push to `main` touching `products/**`) — for each changed
-  product, according to its lifecycle state (section 7.10): build into the
-  product schema (dbt or Spark); `dpctl test`; `dpctl publish`; make the
+  product, according to its lifecycle state (section 7.10): `dpctl policy
+  check` again; build into the product schema (dbt or Spark); `dpctl test`;
+  `dpctl publish`; make the
   product visible to Airflow.
+
+- **`policies`** (pull requests and pushes touching `policies/**`) — runs the
+  policies' own tests and `dpctl policy impact`, commenting the impact on the
+  PR; on merge, refreshes the policy bundle served by OPA in the stack.
 
 Jobs that need the stack run on the self-hosted runner (label `dp-stack`).
 Whether pure file validation runs on GitHub-hosted runners is the builder's
@@ -301,6 +325,7 @@ One `docker compose` project, started with a single command:
 | Iceberg catalog + S3-compatible object store | table storage, shared with Spark later **[call]** |
 | Airflow 3 | orchestration; one DAG per product, generated |
 | OpenMetadata server + its database + search index | catalog |
+| Open Policy Agent (OPA) | policy decisions for the UI and for Trino |
 | GitHub Actions runner | executes workflows inside the stack's network |
 | UI | the management app |
 
@@ -427,7 +452,88 @@ In the UI the product page shows the lifecycle as a stepper with the gates
 for the next state as a checklist, and a button that opens the pull request
 for the next move.
 
-### 7.11 The UI (`ui/`)
+The gates in the table are implemented as global policies that apply to the
+move into a state (7.11), so a domain can add gates of its own.
+
+### 7.11 Policies
+
+Policies are code in Git, evaluated by one engine — Open Policy Agent (OPA)
+**[call]** — and enforced wherever a product can go wrong. OPA was chosen
+because it is the one open-source engine that covers both checking files in
+CI and deciding data access inside Trino (native plug-in with column masking
+and row filters).
+
+```
+policies/ in Git                         product document (built by dpctl)
+  global/            ── governance team    spec + contracts + derived facts:
+  domains/<domain>/  ── domain owners      lifecycle move, consumers, upstream
+        │                                  states, test results, what changed
+        └──────────────► OPA ◄─────────────────────┘
+                          │  violations: policy id, level, reason, fix hint
+     ┌──────────┬─────────┼───────────┬──────────────┐
+     ▼          ▼         ▼           ▼              ▼
+  UI wizard   PR check   Deploy    Airflow run    Trino queries
+  (pre-check) (blocks    (re-check)(run-time      (column masking
+              merge)               checks)        by classification)
+```
+
+**What policies read.** The data contracts are the main input and are read as
+they are; a contract-only policy can be run against a single ODCS file.
+Policies that need more (for example "input ports may only reference Active
+products") read the product document, which adds the ODPS spec and derived
+facts. A scratch test during design confirmed OPA evaluates ODCS YAML
+directly, with global and domain policies combined.
+
+**Global and domain.**
+
+| | Global | Domain |
+|---|---|---|
+| Location | `policies/global/` | `policies/domains/<domain>/` |
+| Approver (GitHub code owners) | governance team | the domain's owners |
+| Applies to | every product | products of that domain |
+| Example | PII columns must declare retention and are masked for non-privileged users | a column mapped to "Counterparty" must be classified confidential |
+
+- Policies only report violations, and the result is the union of global and
+  domain violations. A domain can therefore tighten but never relax a global
+  policy.
+- A global policy can take per-domain parameters (for example a maximum
+  retention), set in a data file in the domain's folder.
+- **Waivers** are explicit and time-boxed: policy, product, reason, expiry.
+  They live beside the policy they waive, so the policy's owner approves them.
+
+**Every policy carries** an id, title, rationale, owner, level, the products it
+applies to (lifecycle state or move, product type, classification), where it
+is enforced, and a fix hint.
+
+**Levels:** advisory, warn, enforce. A policy can carry an effective date:
+it warns until then and blocks afterwards.
+
+**Two forms of policy [call].**
+
+- *Guided* — a declarative rule built from a fixed set of patterns, stored as
+  YAML and evaluated by generic OPA rules. This is what the UI's rule builder
+  reads and writes, so people who do not write code can author policies.
+  Starting patterns: a field is required; a field must have one of a set of
+  values; if a condition holds then a requirement must hold (for example
+  "mapped to term X → classification is confidential"); a quality rule of a
+  given kind is required; names match a pattern; input ports only from
+  products in given states or domains.
+- *Code* — a Rego file, for anything the patterns cannot express. Edited as
+  code in the UI or in an editor.
+
+**Query-time enforcement [call].** One access policy ships: columns the
+contract classifies as PII are masked in Trino unless the querying user
+belongs to the owning team or to governance. Trino asks OPA on each query;
+OPA knows the classifications because the deployed contracts are part of its
+data. Users are simulated by Trino user name, since the demo has no login.
+
+**Results** appear as a PR comment, in the UI's compliance views, and on the
+product in OpenMetadata.
+
+**Compliance view** is computed live **[call]**: the UI asks OPA to evaluate
+the products on `main` against the current policies. Nothing is stored.
+
+### 7.12 The UI (`ui/`)
 
 Next.js 16 (App Router), React 19, Tailwind v4 — the stack already in the
 repository — with **Untitled UI React** components (React Aria based) replacing
@@ -484,11 +590,42 @@ Screens:
    including the business-term picker per column. Saving opens a pull
    request; the screen then shows the breaking-change verdict from CI.
 
+5. **Governance** — a section of its own:
+
+   ```
+   Governance ▸ Policies                              [ New policy ]
+   ┌────────┬──────────────────────────────────┬────────────┬─────────┬──────────┐
+   │ ID     │ Policy                           │ Scope      │ Level   │ Passing  │
+   ├────────┼──────────────────────────────────┼────────────┼─────────┼──────────┤
+   │ G-002  │ PII columns declare retention    │ Global     │ Enforce │ 2 of 3   │
+   │ G-003  │ Active columns described+mapped  │ Global     │ Enforce │ 3 of 3   │
+   │ D-SET-1│ Counterparty is confidential     │ settlement │ Warn    │ 2 of 3   │
+   └────────┴──────────────────────────────────┴────────────┴─────────┴──────────┘
+   ```
+
+   - **Policies** — the catalog above; filter by scope, level, enforcement
+     point.
+   - **Policy detail** — rationale, the rule, where it is enforced, the
+     products that pass and fail with the offending columns, waivers, and
+     change history (from Git).
+   - **New / edit policy** — scope (global or a domain), which products it
+     applies to, the rule (guided builder, or Rego editor for a code policy),
+     level and effective date, fix hint. An **impact preview** evaluates the
+     unsaved policy against all current products ("would fail 1 of 3:
+     settlement-fails-daily · counterparty_lei"). Saving opens a pull request
+     that the scope's code owners approve.
+   - **Compliance** — a products × policies grid.
+   - **Waivers** — list, request (opens a pull request), expiry.
+
+   The product detail page gains a Policies tab showing that product's
+   results, and the wizard and contract editor show violations inline before
+   a pull request exists.
+
 The wizard creates products through the `scaffold` workflow (so the template
 has exactly one implementation). Contract edits and lifecycle moves commit
 the changed file to a branch directly through the GitHub API.
 
-### 7.12 Example products **[call]**
+### 7.13 Example products **[call]**
 
 Synthetic securities post-trade data, guessed from the repository's name and
 trivially swappable:
@@ -524,20 +661,32 @@ GitHub, and the linked systems:
    test fails; `settlement-instructions` turns red in the UI and in
    OpenMetadata; the downstream DAGs do not run, so the bad data does not
    propagate. Reset restores the clean data.
-6. **Deprecate.** Presenter deprecates `settlement-fails-daily` with a sunset
+6. **Author a policy.** In Governance, presenter creates a `settlement`
+   domain policy with the guided builder: columns mapped to "Counterparty"
+   must be classified confidential. The impact preview names the product and
+   column that would fail. Saved as a pull request; after merge the product
+   shows the violation, and its next contract change is blocked until fixed.
+7. **Masking.** The same Trino query returns masked values for a PII column
+   when run as an analyst and clear values when run as the owning team.
+8. **Deprecate.** Presenter deprecates `settlement-fails-daily` with a sunset
    date; the PR lists its consumer; after merge the product is flagged in the
    UI and OpenMetadata and can no longer be picked as an input.
 
 ## 9. Phasing
 
 1. **Core loop** — stack; template catalog with the two dbt templates;
-   `dpctl`; the three workflows; publish targets (dbt, Airflow, OpenMetadata
-   including lineage); lifecycle states Draft and Active; UI products list,
-   detail and wizard. Demo steps 1–2.
-2. **Governance** — semantics (glossary, term mapping, picker); full
-   lifecycle with gates and the stepper; breaking-change check with consumer
-   impact; contract editor; bad-data path. Demo steps 3–6.
-3. **Breadth** — the `spark-iceberg` template with one example product; a
+   `dpctl`; the scaffold, validate and deploy workflows; publish targets (dbt,
+   Airflow, OpenMetadata including lineage); lifecycle states Draft and
+   Active; UI products list, detail and wizard. Demo steps 1–2.
+2. **Governance foundations** — semantics (glossary, term mapping, picker);
+   full lifecycle with the stepper; the policy engine with global and domain
+   policies enforced in the PR check and at deploy, lifecycle gates expressed
+   as policies; breaking-change check with consumer impact; contract editor;
+   bad-data path. Demo steps 3–5 and 8.
+3. **Governance in the UI** — the Governance section: catalog, detail,
+   guided builder and Rego editor, impact preview, compliance grid, waivers;
+   inline pre-checks in the wizard; PII masking in Trino. Demo steps 6–7.
+4. **Breadth** — the `spark-iceberg` template with one example product; a
    template-upgrade workflow that opens `copier update` PRs across all
    products.
 
@@ -555,6 +704,9 @@ Each phase leaves a working demo.
   is represented on the OpenMetadata Data Product (native field if the pinned
   version has one, otherwise a tag).
 - The template manifest format and how far the wizard adapts to it.
+- The exact shape of the product document, the YAML format of guided
+  policies and of waivers, how the OPA bundle is refreshed, and which
+  run-time checks Airflow takes from policies.
 - How ODPS owners/teams map to OpenMetadata users/teams.
 - Internal structure of `dpctl` and of the UI's server layer; test strategy.
 - Whether file-only validation runs on GitHub-hosted runners.
