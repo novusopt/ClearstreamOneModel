@@ -285,6 +285,27 @@ input[type="search"]::-webkit-search-cancel-button {
   [data-still] :is(.kindle-flame, .kindle-halo) { animation-play-state: paused; }
 }
 
+/*
+ * Home hero background waves (components/home/hero-waves.tsx): two ribbons of thin lines drift in opposite
+ * directions by exactly one tile (the SVG is two tiles wide), so the loop is seamless. Transform only, slow,
+ * paused off screen ([data-still]) and still under reduced motion. Faded out at the edges and top/bottom, and to a
+ * third behind the centre column so the headline stays the brightest thing.
+ */
+.hero-waves {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 16%, rgb(0 0 0 / 0.3) 40%, rgb(0 0 0 / 0.3) 60%, #000 84%, transparent), linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent, #000 16%, rgb(0 0 0 / 0.3) 40%, rgb(0 0 0 / 0.3) 60%, #000 84%, transparent), linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
+  mask-composite: intersect;
+}
+@keyframes wave-drift-left { to { transform: translate3d(-50%, 0, 0); } }
+@keyframes wave-drift-right { from { transform: translate3d(-50%, 0, 0); } to { transform: translate3d(0, 0, 0); } }
+.wave-drift-b { transform: translate3d(-25%, 0, 0); }
+@media (prefers-reduced-motion: no-preference) {
+  .wave-drift-a { animation: wave-drift-left 48s linear infinite; }
+  .wave-drift-b { animation: wave-drift-right 72s linear infinite; }
+  [data-still] :is(.wave-drift-a, .wave-drift-b) { animation-play-state: paused; }
+}
+
 /* Reader tips already dismissed on this device: hidden before hydration (see the inline script in app/layout.tsx). */
 html[data-seen-tips] .reader-tips {
   display: none;

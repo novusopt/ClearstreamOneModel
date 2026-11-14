@@ -236,7 +236,10 @@ ButtonGroup, Button and ProgressBar; clickable badges use `AriaButton` (`onPress
 - Empty data shows an Untitled UI `EmptyState` with one next step, not zeros and empty charts.
 - Home page motion is two moments of light; keep the rest still. (1) "The lamp is lit" (`.kindle-*` in `globals.css`,
   `hero.tsx`, `hero-niche.tsx`): once on load the flame kindles, light falls through the niche, An-Nur 24:35 brightens word by
-  word right to left, then the headline settles; afterwards only the flame breathes (9 s), paused off screen (`data-still`).
+  word right to left, then the headline settles; afterwards the flame breathes (9 s) and two ribbons of thin wave lines drift
+  behind the hero (`hero-waves.tsx`: one periodic path reused by `<use>`, the SVG two tiles wide and moved by one tile with a CSS
+  transform, 48 s / 72 s, faded at the edges and to a third behind the centre column), all paused off screen (`data-still`)
+  and still under reduced motion.
   (2) "Recite along" (`hero-showcase.tsx`): the reader itself (no drawn browser window, no scroll tilt), the gold ground moving
   at Al-Husary's real pace (word start to next word start), a progress spine, a real Play/Pause button, playing only on screen
   and not by itself under reduced motion. One scroll story only (the pinned Al-Fatihah story; the journey is step rows). No

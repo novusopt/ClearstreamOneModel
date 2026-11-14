@@ -6,6 +6,7 @@ import { Badge } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
 import Link from "next/link";
 import { HeroNiche } from "@/components/home/hero-niche";
+import { HeroWaves } from "@/components/home/hero-waves";
 import { HeroShowcase } from "@/components/home/hero-showcase";
 import { useUi } from "@/components/providers/ui-messages";
 import { fmt } from "@/lib/ui-format";
@@ -23,7 +24,7 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
   const lastRead = useLibrary((s) => s.lastRead);
   const resume = lastRead ? chapters[lastRead.surah - 1] : null;
   const ref = useRef<HTMLElement>(null);
-  // The flame's breathing loop pauses while the hero is off screen.
+  // The flame's breathing and the background waves pause while the hero is off screen.
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -34,13 +35,14 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
 
   return (
     <section ref={ref} className="relative isolate overflow-hidden pt-40 pb-16 md:pt-52 md:pb-24">
-      {/* Still backdrop: the niche and its lamp are the only light (no drifting blobs or flicker). */}
+      {/* Backdrop: a soft wash, the niche and its lamp, and two slow ribbons of light (HeroWaves). */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-brand-50/60 via-transparent to-transparent dark:from-brand-950/80" />
         {/* Fade into the page so the backdrop has no hard bottom edge. */}
         <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-bg-primary" />
       </div>
 
+      <HeroWaves />
       <HeroNiche />
 
       <div className="mx-auto w-full max-w-7xl px-4 text-center md:px-8">
