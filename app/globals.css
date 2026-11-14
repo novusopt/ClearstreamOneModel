@@ -310,3 +310,8 @@ input[type="search"]::-webkit-search-cancel-button {
 html[data-seen-tips] .reader-tips {
   display: none;
 }
+
+/* TEMP preview of the niche ornament options (removed once one is chosen). */
+.niche-orn-shamsa, .niche-orn-frame, .niche-orn-rays { display: none; }
+html[data-niche="shamsa"] .niche-orn-shamsa, html[data-niche="frame"] .niche-orn-frame, html[data-niche="rays"] .niche-orn-rays { display: inline; }
+html[data-niche]:not([data-niche="current"]) .niche-orn-current { display: none; }

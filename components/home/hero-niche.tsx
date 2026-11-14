@@ -29,6 +29,64 @@ const HALO = arch(292, 0);
 const PANEL = arch(268, 22);
 const APEX = 22;
 
+
+/* Ornament options under the lamp (preview: html[data-niche=shamsa|frame|rays|current]). ---------- */
+
+const LAMP_X = AXIS;
+const LAMP_Y = 92;
+const pt = (r: number, a: number, cx = LAMP_X, cy = LAMP_Y) => `${n(cx + r * Math.sin(a))} ${n(cy - r * Math.cos(a))}`;
+
+/** Two squares at 45° (the eight-point star of ۞), centred at (LAMP_X, cy). */
+function octagram(r: number, cy = LAMP_Y) {
+  const sq = (rot: number) => `M${[0, 1, 2, 3].map((i) => pt(r, rot + (Math.PI / 2) * i, LAMP_X, cy)).join(" L")} Z`;
+  return `${sq(0)} ${sq(Math.PI / 4)}`;
+}
+
+/** Shamsa: the sun medallion of illuminated Qur'an frontispieces, kept small around the lamp and clear of the verse. */
+function Shamsa() {
+  return (
+    <g fill="none" style={{ stroke: "var(--niche-hood)" }} strokeWidth="0.8" strokeLinejoin="round">
+      <circle cx={LAMP_X} cy={LAMP_Y} r="60" />
+      <circle cx={LAMP_X} cy={LAMP_Y} r="56.5" strokeDasharray="0 4.6" strokeLinecap="round" strokeWidth="1.5" />
+      <circle cx={LAMP_X} cy={LAMP_Y} r="53" />
+      {/* The rub el hizb (۞) form, the muṣḥaf's own ornament: two interlaced squares, doubled. */}
+      <path d={octagram(49)} />
+      <path d={octagram(44)} opacity="0.55" />
+      <circle cx={LAMP_X} cy={LAMP_Y} r="30" opacity="0.7" />
+    </g>
+  );
+}
+
+/** Mushaf frame: the niche edged like an illuminated page, double rule with a beaded band, star finial at the apex. */
+const FRAME_OUTER = arch(258, 32);
+const FRAME_MID = arch(254, 36);
+const FRAME_INNER = arch(250, 40);
+function MushafFrame() {
+  return (
+    <g fill="none" style={{ stroke: "var(--niche-hood)" }}>
+      <path d={FRAME_OUTER} strokeWidth="0.9" />
+      <path d={FRAME_MID} strokeWidth="1.8" strokeDasharray="0 6" strokeLinecap="round" />
+      <path d={FRAME_INNER} strokeWidth="0.9" />
+      {/* Finial: an eight-point star (two squares, as in ۞) above the apex, where the lamp's chain hangs. */}
+      <path d={octagram(8, 12)} strokeWidth="0.9" strokeLinejoin="round" />
+    </g>
+  );
+}
+
+/** Nūr: no ornament, only fine rays of light fanning from the lamp ("light upon light", 24:35). */
+function Rays() {
+  const rays = Array.from({ length: 72 }, (_, i) => {
+    const a = (2 * Math.PI * i) / 72;
+    const len = i % 2 ? 150 : i % 4 ? 230 : 330;
+    return `M${pt(48, a)} L${pt(len, a)}`;
+  }).join(" ");
+  return (
+    <g fill="none" style={{ stroke: "var(--niche-hood)" }} strokeWidth="0.7" strokeLinecap="round">
+      <path d={rays} />
+    </g>
+  );
+}
+
 export function HeroNiche() {
   return (
     <svg
@@ -65,6 +123,31 @@ export function HeroNiche() {
         </linearGradient>
         <mask id="niche-hood-mask">
           <rect width="600" height="720" fill="url(#niche-hood-fade)" />
+        </mask>
+        {/* Ornament fades: around the lamp, down the arch, and outward along the rays. */}
+        <radialGradient id="niche-orn-fade-g" cx={LAMP_X} cy={LAMP_Y} r="190" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="white" />
+          <stop offset="0.6" stopColor="white" stopOpacity="0.8" />
+          <stop offset="1" stopColor="white" stopOpacity="0" />
+        </radialGradient>
+        <mask id="niche-orn-fade">
+          <rect width="600" height="720" fill="url(#niche-orn-fade-g)" />
+        </mask>
+        <linearGradient id="niche-orn-fade-long-g" x1="0" y1="0" x2="0" y2="720" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="white" />
+          <stop offset="0.42" stopColor="white" stopOpacity="0.9" />
+          <stop offset="0.72" stopColor="white" stopOpacity="0" />
+        </linearGradient>
+        <mask id="niche-orn-fade-long">
+          <rect width="600" height="720" fill="url(#niche-orn-fade-long-g)" />
+        </mask>
+        <radialGradient id="niche-orn-rays-g" cx={LAMP_X} cy={LAMP_Y} r="320" gradientUnits="userSpaceOnUse">
+          <stop offset="0.12" stopColor="white" />
+          <stop offset="0.5" stopColor="white" stopOpacity="0.45" />
+          <stop offset="1" stopColor="white" stopOpacity="0" />
+        </radialGradient>
+        <mask id="niche-orn-rays-fade">
+          <rect width="600" height="720" fill="url(#niche-orn-rays-g)" />
         </mask>
         <clipPath id="niche-panel">
           <path d={PANEL} />
@@ -114,8 +197,17 @@ export function HeroNiche() {
         {/* The lit glass panel, its star hood and its single gilded edge. */}
         <path d={PANEL} fill="url(#niche-glass-fill)" />
         <path d={PANEL} fill="url(#niche-light)" className="kindle-wash dark:opacity-70" />
-        <g clipPath="url(#niche-panel)" mask="url(#niche-hood-mask)" opacity="0.35">
+        <g className="niche-orn-current" clipPath="url(#niche-panel)" mask="url(#niche-hood-mask)" opacity="0.35">
           <rect width="600" height="720" fill="url(#niche-khatam)" />
+        </g>
+        <g className="niche-orn-shamsa" clipPath="url(#niche-panel)" mask="url(#niche-orn-fade)" opacity="0.6">
+          <Shamsa />
+        </g>
+        <g className="niche-orn-frame" mask="url(#niche-orn-fade-long)" opacity="0.75">
+          <MushafFrame />
+        </g>
+        <g className="niche-orn-rays" clipPath="url(#niche-panel)" mask="url(#niche-orn-rays-fade)" opacity="0.55">
+          <Rays />
         </g>
         <path d={PANEL} fill="none" stroke="url(#niche-edge-stroke)" strokeWidth="1.25" />
       </g>
