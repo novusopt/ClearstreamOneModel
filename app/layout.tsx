@@ -105,7 +105,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           >
             Skip to content
           </a>
-          <Header chrome={chrome} />
+          <Header chrome={chrome} surahs={getChapters().map((c) => [c.nameSimple, c.versesCount] as [string, number])} />
           <main id="main" className="flex-1">
             {children}
           </main>

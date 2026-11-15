@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen01, Bookmark, ChevronDown, Command, Globe02, LayersThree01, Menu02, PlayCircle, SearchLg } from "@untitledui/icons";
+import { BookOpen01, Bookmark, ChevronDown, Command, Globe02, LayersThree01, Menu02, Play, PlayCircle, SearchLg } from "@untitledui/icons";
 import Link from "next/link";
 import { NavItemBase } from "@/components/application/app-navigation/base-components/nav-item";
 import { SlideoutMenu } from "@/components/application/slideout-menus/slideout-menu";
@@ -175,6 +175,8 @@ export interface HeaderCtx {
   lastRead: { surah: number; ayah: number } | null;
   readHref: string;
   readLabel: string;
+  /** Where the read button leads: the surah's name, the ayah reference and how much of the surah has been read. */
+  resume: { name: string; ref: string; pct: number };
   isCurrent: (href: string) => boolean;
 }
 
@@ -228,17 +230,62 @@ export function SearchTrigger({ ctx, wideFrom = "xl", className, iconClassName }
 }
 
 /** The primary action: Start reading / Continue (with the saved position on wide screens). */
-export function ReadButton({ ctx, className }: { ctx: HeaderCtx; className?: string }) {
+/** A ring showing how much of the surah has been read, around a small play glyph. Fills in once on mount. */
+function ProgressRing({ pct }: { pct: number }) {
+  const r = 9.5;
+  const c = 2 * Math.PI * r;
   return (
-    <Button size="sm" href={ctx.readHref} iconLeading={PlayCircle} className={cx("shadow-sm", className)}>
-      <span className="hidden sm:inline">{ctx.readLabel}</span>
+    <span aria-hidden="true" data-icon="leading" className="relative grid size-6 shrink-0 place-items-center text-white">
+      <svg viewBox="0 0 24 24" className="absolute inset-0 size-full -rotate-90">
+        <circle cx="12" cy="12" r={r} fill="none" stroke="currentColor" strokeOpacity="0.28" strokeWidth="2" />
+        <circle
+          cx="12"
+          cy="12"
+          r={r}
+          fill="none"
+          className="stroke-gold-300 transition-[stroke-dashoffset] duration-700 ease-out starting:[stroke-dashoffset:var(--c)]"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeDasharray={c}
+          strokeDashoffset={c * (1 - Math.min(1, Math.max(pct, pct > 0 ? 0.04 : 0)))}
+          style={{ "--c": c } as React.CSSProperties}
+        />
+      </svg>
+      <Play className="size-2.5 translate-x-px fill-current transition-transform duration-200 ease-out group-hover:scale-110" />
+    </span>
+  );
+}
+
+/**
+ * The header's read button: on large screens a two-line resume pill (progress ring, "Continue", the surah and
+ * ayah), the same width before and after the saved position loads so the header never shifts; a plain labelled
+ * button below that, icon-only on the narrowest phones. Presses down slightly, like a physical button.
+ */
+export function ReadButton({ ctx, className }: { ctx: HeaderCtx; className?: string }) {
+  const { resume } = ctx;
+  return (
+    <Button
+      size="sm"
+      href={ctx.readHref}
+      iconLeading={<ProgressRing pct={ctx.lastRead ? resume.pct : 0} />}
+      className={cx(
+        "group shadow-sm transition-transform duration-150 ease-out active:scale-[0.97]",
+        "lg:h-11 lg:w-[12.5rem] lg:justify-start lg:gap-2.5 lg:py-1 lg:pr-3.5 lg:pl-2",
+        className,
+      )}
+    >
+      {/* Large screens: two lines. */}
+      <span className="hidden min-w-0 flex-col items-start text-left align-middle leading-tight lg:inline-flex">
+        <span className="text-[11px] font-medium opacity-75">{ctx.readLabel}</span>
+        <span className="flex max-w-full items-baseline gap-1.5 text-sm font-semibold">
+          <span className="truncate">{resume.name}</span>
+          {resume.ref && <span className="shrink-0 font-medium tabular-nums opacity-75">{resume.ref}</span>}
+        </span>
+      </span>
+      <span className="hidden sm:inline lg:hidden">{ctx.readLabel}</span>
       {/* Icon-only on the narrowest phones; the name stays for screen readers. */}
       <span className="sm:hidden max-[379px]:sr-only">{ctx.h.read}</span>
-      {ctx.lastRead && (
-        <span className="hidden rounded-md bg-white/15 px-1.5 py-0.5 text-xs font-medium tabular-nums lg:inline">
-          {ctx.lastRead.surah}:{ctx.lastRead.ayah}
-        </span>
-      )}
+      {ctx.lastRead && <span className="sr-only lg:hidden">{` ${resume.name} ${resume.ref}`}</span>}
     </Button>
   );
 }

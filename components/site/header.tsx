@@ -25,7 +25,8 @@ import { cx } from "@/utils/cx";
  * Site header (Untitled UI header navigation): a full-width bar with a hairline, the current page
  * underlined. Fixed at the top; slides away while scrolling down and back on the way up.
  */
-export function Header({ chrome }: { chrome: Record<Lang, ChromeMessages> }) {
+/** `surahs`: [name, ayat] per surah, so the read button can name where the reader left off. */
+export function Header({ chrome, surahs }: { chrome: Record<Lang, ChromeMessages>; surahs: [string, number][] }) {
   const pathname = usePathname() ?? "/";
   const lang = langFromPath(pathname);
   const h = chrome[lang].header;
@@ -33,6 +34,7 @@ export function Header({ chrome }: { chrome: Record<Lang, ChromeMessages> }) {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const lastRead = useLibrary((s) => s.lastRead);
+  const readInSurah = useLibrary((s) => (s.lastRead ? (s.read[s.lastRead.surah]?.length ?? 0) : 0));
   const due = useLibrary((s) => dueReviews(s).length);
 
   useMotionValueEvent(scrollY, "change", (y) => {
@@ -54,6 +56,9 @@ export function Header({ chrome }: { chrome: Record<Lang, ChromeMessages> }) {
     lastRead,
     readHref: lastRead ? localizeHref(lang, `/surah/${lastRead.surah}#v-${lastRead.ayah}`) : lang === "en" ? "/surah/1" : `/surah/1?t=${lang}`,
     readLabel: lastRead ? h.continue : h.start,
+    resume: lastRead
+      ? { name: surahs[lastRead.surah - 1]?.[0] ?? "", ref: `${lastRead.surah}:${lastRead.ayah}`, pct: readInSurah / (surahs[lastRead.surah - 1]?.[1] ?? 1) }
+      : { name: surahs[0]?.[0] ?? "Al-Fatihah", ref: "", pct: 0 },
     isCurrent: (href) => !href.includes("#") && (pathname === href || pathname.startsWith(`${href}/`)),
   };
 

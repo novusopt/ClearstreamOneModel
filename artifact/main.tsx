@@ -204,7 +204,7 @@ function Shell({ children }: { children: ReactNode }) {
 createRoot(document.getElementById("mishkah-root")!).render(
   <Shell>
     <div className="flex min-h-dvh flex-col bg-primary text-primary">
-      <Header chrome={CHROME} />
+      <Header chrome={CHROME} surahs={chapters.map((c) => [c.nameSimple, c.versesCount] as [string, number])} />
       <main id="main" className="flex-1">
         <App />
       </main>
