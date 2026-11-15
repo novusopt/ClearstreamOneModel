@@ -1,0 +1,1 @@
+permission/duty conflicts: direct conflict relation vs defeater-copy transformation, 20000 random theories: differences = 0

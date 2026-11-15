@@ -1,0 +1,38 @@
+
+== legal/aiact_art6.lrml
+  [ok] Annex III system, no derogation: high-risk, provider must register (Art. 6(2), 49(1))
+  [ok] Annex III + derogation condition: not high-risk; document the assessment and register (Art. 6(3), 6(4))
+  [ok] Annex III + derogation condition + profiling: always high-risk (Art. 6(3) third subparagraph)
+  [ok] Annex III + derogation condition, but also an Annex I product with third-party assessment: high-risk via Art. 6(1)
+  [ok] Annex I product without third-party assessment, not in Annex III: nothing follows
+  [ok] Derogation condition without Annex III: the derogation has nothing to derogate from
+  [ok] Two systems, one provider: conclusions stay per system
+  (10 compiled rules incl. permission/duty defeater copies; 7 scenarios x 2 DRL styles)
+
+== legal/dora_ict.lrml
+  [ok] Bank identified for TLPT: full framework and TLPT (Art. 6(1), 26(1))
+  [ok] Small non-interconnected investment firm (Art. 16(1) entity): simplified framework, no full framework, no TLPT
+  [ok] Microenterprise identified for TLPT: full framework applies, TLPT does not (Art. 26(1))
+  [ok] Bank not identified for TLPT: no TLPT duty
+  [ok] Major incident: report it (Art. 19(1)); only for the entity that had it
+  (14 compiled rules incl. permission/duty defeater copies; 5 scenarios x 2 DRL styles)
+
+== fail-closed checks: constructs outside the supported subset must be rejected, not silently dropped
+  [ok] rejected: disjunction in a body (ruleml:Or)                (ruleml:Or)
+  [ok] rejected: negation as failure (ruleml:Naf)                 (ruleml:Naf)
+  [ok] rejected: rule without strength                            (rule without an explicit strength: LegalRuleML defines no default, so )
+  [ok] rejected: head variable not bound in the body              (statement r: head variable(s) ['Y'] not bound in the body)
+  [ok] rejected: deontic conclusion in a constitutive statement   (statement r: deontic conclusion in a constitutive statement)
+  [ok] rejected: Override naming an unknown statement             (Override refers to unknown statement(s) ['zz'])
+  [ok] rejected: recursive predicates                             (recursive predicates: the stratified scheme cannot order them)
+  [ok] rejected: permission inside a SuborderList                 (statement r: only obligations/prohibitions may appear in a SuborderLis)
+  [ok] rejected: function term (ruleml:Expr)                      (ruleml:Expr as an argument (only Var and Ind are supported))
+  [ok] rejected: lrml:Violation in a body                         (lrml:Violation)
+
+== SuborderList (synthetic example, NOT from a legal text): O pay, otherwise O payFine, otherwise O suspend
+  [ok] nothing violated
+  [ok] payment not made
+  [ok] payment and fine not made
+  [ok] fine unpaid but primary duty met
+
+RESULT: OK

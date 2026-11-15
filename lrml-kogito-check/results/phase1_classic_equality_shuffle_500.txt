@@ -1,0 +1,9 @@
+Drools differential test: N=500/set mode=classic equality=True shuffle=True seed_offset=3
+set                variant       n  errors  limit  D-diff  d-diff   tmsDel     sec
+A small/dense      ground      500       0      0       0       0        4    12.2
+A small/dense      strat       500       0      0       0       0        0    12.4
+B medium           ground      500       0      0       0       0       27    19.0
+B medium           strat       500       0      0       0       0        0    20.0
+E conflict sets    ground      500       0      0       0       0        1    16.7
+E conflict sets    strat       500       0      0       0       0        0    16.9
+RESULT: OK - zero differences

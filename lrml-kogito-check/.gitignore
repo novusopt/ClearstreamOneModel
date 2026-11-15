@@ -1,0 +1,4 @@
+harness/target/
+kogito-app/
+__pycache__/
+*.pyc

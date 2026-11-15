@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Illustrative encoding of Regulation (EU) 2024/1689 (AI Act), Article 6 and two linked provider duties.
+     Simplifications are listed in REPORT.md. Not legal advice. -->
+<lrml:LegalRuleML xmlns:lrml="http://docs.oasis-open.org/legalruleml/ns/v1.0/" xmlns:ruleml="http://ruleml.org/spec">
+  <lrml:Statements key="aiact">
+    <!-- Art. 6(1): safety component of / product under Annex I legislation AND third-party conformity assessment -->
+    <lrml:ConstitutiveStatement key="art6_1">
+      <ruleml:Rule><lrml:hasStrength><lrml:DefeasibleStrength/></lrml:hasStrength>
+        <ruleml:if><ruleml:And>
+          <ruleml:Atom><ruleml:Rel iri=":annexIProduct"/><ruleml:Var>S</ruleml:Var></ruleml:Atom>
+          <ruleml:Atom><ruleml:Rel iri=":thirdPartyAssessment"/><ruleml:Var>S</ruleml:Var></ruleml:Atom>
+        </ruleml:And></ruleml:if>
+        <ruleml:then><ruleml:Atom><ruleml:Rel iri=":highRisk"/><ruleml:Var>S</ruleml:Var></ruleml:Atom></ruleml:then>
+      </ruleml:Rule>
+    </lrml:ConstitutiveStatement>
+    <!-- Art. 6(2): Annex III systems are high-risk -->
+    <lrml:ConstitutiveStatement key="art6_2">
+      <ruleml:Rule><lrml:hasStrength><lrml:DefeasibleStrength/></lrml:hasStrength>
+        <ruleml:if><ruleml:Atom><ruleml:Rel iri=":annexIII"/><ruleml:Var>S</ruleml:Var></ruleml:Atom></ruleml:if>
+        <ruleml:then><ruleml:Atom><ruleml:Rel iri=":highRisk"/><ruleml:Var>S</ruleml:Var></ruleml:Atom></ruleml:then>
+      </ruleml:Rule>
+    </lrml:ConstitutiveStatement>
+    <!-- Art. 6(3) first subparagraph: derogation from paragraph 2 (conditions (a)-(d) abstracted into one predicate) -->
+    <lrml:ConstitutiveStatement key="art6_3">
+      <ruleml:Rule><lrml:hasStrength><lrml:DefeasibleStrength/></lrml:hasStrength>
+        <ruleml:if><ruleml:And>
+          <ruleml:Atom><ruleml:Rel iri=":annexIII"/><ruleml:Var>S</ruleml:Var></ruleml:Atom>
+          <ruleml:Atom><ruleml:Rel iri=":derogationCondition"/><ruleml:Var>S</ruleml:Var></ruleml:Atom>
+        </ruleml:And></ruleml:if>
+        <ruleml:then><ruleml:Neg><ruleml:Atom><ruleml:Rel iri=":highRisk"/><ruleml:Var>S</ruleml:Var></ruleml:Atom></ruleml:Neg></ruleml:then>
+      </ruleml:Rule>
+    </lrml:ConstitutiveStatement>
+    <!-- Art. 6(3) third subparagraph: profiling of natural persons is always high-risk -->
+    <lrml:ConstitutiveStatement key="art6_3_profiling">
+      <ruleml:Rule><lrml:hasStrength><lrml:DefeasibleStrength/></lrml:hasStrength>
+        <ruleml:if><ruleml:And>
+          <ruleml:Atom><ruleml:Rel iri=":annexIII"/><ruleml:Var>S</ruleml:Var></ruleml:Atom>
+          <ruleml:Atom><ruleml:Rel iri=":profiling"/><ruleml:Var>S</ruleml:Var></ruleml:Atom>
+        </ruleml:And></ruleml:if>
+        <ruleml:then><ruleml:Atom><ruleml:Rel iri=":highRisk"/><ruleml:Var>S</ruleml:Var></ruleml:Atom></ruleml:then>
+      </ruleml:Rule>
+    </lrml:ConstitutiveStatement>
+    <!-- Art. 49(1): provider registers a high-risk system -->
+    <lrml:PrescriptiveStatement key="art49_1">
+      <ruleml:Rule><lrml:hasStrength><lrml:DefeasibleStrength/></lrml:hasStrength>
+        <ruleml:if><ruleml:And>
+          <ruleml:Atom><ruleml:Rel iri=":provider"/><ruleml:Var>P</ruleml:Var><ruleml:Var>S</ruleml:Var></ruleml:Atom>
+          <ruleml:Atom><ruleml:Rel iri=":highRisk"/><ruleml:Var>S</ruleml:Var></ruleml:Atom>
+        </ruleml:And></ruleml:if>
+        <ruleml:then><lrml:Obligation><ruleml:Atom><ruleml:Rel iri=":register"/><ruleml:Var>P</ruleml:Var><ruleml:Var>S</ruleml:Var></ruleml:Atom></lrml:Obligation></ruleml:then>
+      </ruleml:Rule>
+    </lrml:PrescriptiveStatement>
+    <!-- Art. 6(4): provider relying on the derogation documents the assessment and registers (Art. 49(2)) -->
+    <lrml:PrescriptiveStatement key="art6_4_document">
+      <ruleml:Rule><lrml:hasStrength><lrml:DefeasibleStrength/></lrml:hasStrength>
+        <ruleml:if><ruleml:And>
+          <ruleml:Atom><ruleml:Rel iri=":provider"/><ruleml:Var>P</ruleml:Var><ruleml:Var>S</ruleml:Var></ruleml:Atom>
+          <ruleml:Atom><ruleml:Rel iri=":annexIII"/><ruleml:Var>S</ruleml:Var></ruleml:Atom>
+          <ruleml:Neg><ruleml:Atom><ruleml:Rel iri=":highRisk"/><ruleml:Var>S</ruleml:Var></ruleml:Atom></ruleml:Neg>
+        </ruleml:And></ruleml:if>
+        <ruleml:then><lrml:Obligation><ruleml:Atom><ruleml:Rel iri=":documentAssessment"/><ruleml:Var>P</ruleml:Var><ruleml:Var>S</ruleml:Var></ruleml:Atom></lrml:Obligation></ruleml:then>
+      </ruleml:Rule>
+    </lrml:PrescriptiveStatement>
+    <lrml:PrescriptiveStatement key="art6_4_register">
+      <ruleml:Rule><lrml:hasStrength><lrml:DefeasibleStrength/></lrml:hasStrength>
+        <ruleml:if><ruleml:And>
+          <ruleml:Atom><ruleml:Rel iri=":provider"/><ruleml:Var>P</ruleml:Var><ruleml:Var>S</ruleml:Var></ruleml:Atom>
+          <ruleml:Atom><ruleml:Rel iri=":annexIII"/><ruleml:Var>S</ruleml:Var></ruleml:Atom>
+          <ruleml:Neg><ruleml:Atom><ruleml:Rel iri=":highRisk"/><ruleml:Var>S</ruleml:Var></ruleml:Atom></ruleml:Neg>
+        </ruleml:And></ruleml:if>
+        <ruleml:then><lrml:Obligation><ruleml:Atom><ruleml:Rel iri=":register"/><ruleml:Var>P</ruleml:Var><ruleml:Var>S</ruleml:Var></ruleml:Atom></lrml:Obligation></ruleml:then>
+      </ruleml:Rule>
+    </lrml:PrescriptiveStatement>
+    <!-- 6(3) derogates from 6(2); profiling overrides the derogation; 6(1) is untouched by the derogation -->
+    <lrml:OverrideStatement><lrml:Override over="#art6_3" under="#art6_2"/></lrml:OverrideStatement>
+    <lrml:OverrideStatement><lrml:Override over="#art6_3_profiling" under="#art6_3"/></lrml:OverrideStatement>
+    <lrml:OverrideStatement><lrml:Override over="#art6_1" under="#art6_3"/></lrml:OverrideStatement>
+  </lrml:Statements>
+</lrml:LegalRuleML>

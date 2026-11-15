@@ -1,0 +1,4 @@
+Drools differential test: N=4000/set mode=classic equality=False shuffle=False seed_offset=1
+set                variant       n  errors  limit  D-diff  d-diff   tmsDel     sec
+C large/sparse     ground     4000       0      0       0       0     1343   382.4
+RESULT: OK - zero differences

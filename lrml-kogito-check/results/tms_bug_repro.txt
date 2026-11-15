@@ -1,0 +1,12 @@
+mode=classic equality=False rules=derive,chain               Def after: fire1=['a', 'b'] fire2=['b'] fire3=['b'] +unrelated fact,fire4=['unrelated']  -> STALE Def(b)
+mode=classic equality=False rules=chain,derive               Def after: fire1=['a', 'b'] fire2=['b'] fire3=['b'] +unrelated fact,fire4=['unrelated']  -> STALE Def(b)
+mode=classic equality=False rules=derive,chain(2 patterns)   Def after: fire1=['a', 'b'] fire2=[] fire3=[] +unrelated fact,fire4=['unrelated']  -> correct
+mode=classic equality=True  rules=derive,chain               Def after: fire1=['a', 'b'] fire2=['b'] fire3=['b'] +unrelated fact,fire4=['unrelated']  -> STALE Def(b)
+mode=classic equality=True  rules=chain,derive               Def after: fire1=['a', 'b'] fire2=['b'] fire3=['b'] +unrelated fact,fire4=['unrelated']  -> STALE Def(b)
+mode=classic equality=True  rules=derive,chain(2 patterns)   Def after: fire1=['a', 'b'] fire2=[] fire3=[] +unrelated fact,fire4=['unrelated']  -> correct
+mode=exec    equality=False rules=derive,chain               Def after: fire1=['a', 'b'] fire2=['b'] fire3=['b'] +unrelated fact,fire4=['unrelated']  -> STALE Def(b)
+mode=exec    equality=False rules=chain,derive               Def after: fire1=['a', 'b'] fire2=['b'] fire3=['b'] +unrelated fact,fire4=['unrelated']  -> STALE Def(b)
+mode=exec    equality=False rules=derive,chain(2 patterns)   Def after: fire1=['a', 'b'] fire2=[] fire3=[] +unrelated fact,fire4=['unrelated']  -> correct
+mode=exec    equality=True  rules=derive,chain               Def after: fire1=['a', 'b'] fire2=['b'] fire3=['b'] +unrelated fact,fire4=['unrelated']  -> STALE Def(b)
+mode=exec    equality=True  rules=chain,derive               Def after: fire1=['a', 'b'] fire2=['b'] fire3=['b'] +unrelated fact,fire4=['unrelated']  -> STALE Def(b)
+mode=exec    equality=True  rules=derive,chain(2 patterns)   Def after: fire1=['a', 'b'] fire2=[] fire3=[] +unrelated fact,fire4=['unrelated']  -> correct

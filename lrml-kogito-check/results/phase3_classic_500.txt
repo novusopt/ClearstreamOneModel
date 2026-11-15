@@ -1,0 +1,12 @@
+== first-order rules, mode=classic, N=500
+   predicate-acyclic theories: 500; avg ground rules 38
+   one-shot    style=meta   failures=   0 / 500   tmsDeletes=     8  23s
+   one-shot    style=pred   failures=   0 / 500   tmsDeletes=     0  29s
+   one-shot    style=strat  failures=   0 / 500   tmsDeletes=     0  36s
+   one-shot    style=antistrat failures=   0 / 500   tmsDeletes=   617  34s
+   incremental style=meta   wrong snapshots=   2 / 2250 (in 1 theories)
+   incremental style=pred   wrong snapshots=   0 / 2250 (in 0 theories)
+   recursive predicates whose grounding is still acyclic: 300 theories (from 23052 candidates)
+   one-shot    style=meta   recursive: failures=   0 / 300
+   one-shot    style=pred   recursive: failures=   0 / 300
+RESULT (pred + strat styles on predicate-acyclic theories): OK

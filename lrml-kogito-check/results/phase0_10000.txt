@@ -1,0 +1,11 @@
+== literature examples (expected values hand-derived from the published proof conditions)
+  18 examples x 3 evaluators, failures: 0
+
+== random acyclic theories, 10000 per set
+set                     n  fix!=rec  asp!=fix  naive!=fix  undecided  avg|+d|    sec
+A small/dense       10000         0         0        4880          0      3.6   11.2
+B medium            10000         0         0        7139          0      8.1   25.6
+C large/sparse      10000         0         0        9098          0     24.9   79.4
+D malformed >       10000         0         0        4863          0      5.0   17.2
+E conflict sets     10000         0         0        5654          0      4.9   17.5
+RESULT: OK

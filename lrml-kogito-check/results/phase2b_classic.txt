@@ -1,0 +1,41 @@
+== mode=classic
+
+-- sensitivity: deliberately wrong compilers, 600 theories each (a wrong compiler must be caught)
+   correct scheme (control)     theories with a wrong answer:    0 / 600
+   defeater_ignored             theories with a wrong answer:   50 / 600
+   no_strict_block              theories with a wrong answer:  162 / 600
+   defeater_can_beat            theories with a wrong answer:   13 / 600
+   beat_without_applicable      theories with a wrong answer:   22 / 600
+   no_team_defeat               theories with a wrong answer:   39 / 600
+   strict_not_defeasible        theories with a wrong answer:   13 / 600
+   no_superiority               theories with a wrong answer:   84 / 600
+   strict_from_defeasible       theories with a wrong answer:   36 / 600
+   attack_needs_no_app          theories with a wrong answer:  152 / 600
+   NAIVE                        theories with a wrong answer:  329 / 600
+   UNDETECTED MUTATIONS: none
+
+-- cyclic rule bases (the reference leaves looping literals undecided; what does Drools do?)
+   positive loop p<->q, no base                   -> same as reference
+   positive loop with a base fact                 -> same as reference
+   self-defeat: =>p, p=>-p                        -> NEVER TERMINATES (stopped at 20000 firings)
+   self-defeat with priority for the loop rule    -> NEVER TERMINATES (stopped at 20000 firings)
+   mutual defeat through bodies                   -> +d differs: ['p']
+   odd negative loop                              -> NEVER TERMINATES (stopped at 20000 firings)
+   strict positive loop                           -> same as reference
+   hand-written   ground   n=    7: never terminates=3  terminates with different conclusions=1  same as reference=3  errors=0
+   hand-written   interp   n=    7: never terminates=3  terminates with different conclusions=1  same as reference=3  errors=0
+   random cyclic  ground   n= 1500: never terminates=62  terminates with different conclusions=45  same as reference=1393  errors=0
+   random cyclic  interp   n= 1500: never terminates=61  terminates with different conclusions=46  same as reference=1393  errors=0
+   static cycle check rejects 1507 / 1507 of these before any DRL is emitted
+
+-- incremental sessions: facts inserted/retracted between fireAllRules calls (acyclic theories, 10 steps each)
+   ground   theories=600 snapshots=6600  wrong snapshots=0 (in 0 theories)  errors=0
+   interp   theories=600 snapshots=6600  wrong snapshots=15 (in 8 theories)  errors=0
+   generic  theories=600 snapshots=6600  wrong snapshots=4 (in 3 theories)  errors=0
+   strat    theories=600 snapshots=6600  wrong snapshots=0 (in 0 theories)  errors=0
+
+-- input facts inserted directly as stated Strict(..) objects instead of a separate Fact type
+   separate Fact type: delete Fact(p)                         final Strict=['a', 'p'] (expected ['a', 'p']) Def=['a', 'p', 'q'] (expected ['a', 'p', 'q']) -> ok
+   stated Strict: delete stated Strict(p), a remains          final Strict=['a'] (expected ['a', 'p']) Def=['a', 'p', 'q'] (expected ['a', 'p', 'q']) -> WRONG
+   stated Strict inserted AFTER p was derived, then deleted   final Strict=['a', 'p'] (expected ['a', 'p']) Def=['a', 'p', 'q'] (expected ['a', 'p', 'q']) -> ok
+   random incremental, stated Strict inputs: theories=400 snapshots=4400 wrong snapshots=383 (in 81 theories) errors=0

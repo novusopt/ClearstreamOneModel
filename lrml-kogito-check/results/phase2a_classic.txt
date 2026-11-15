@@ -1,0 +1,23 @@
+== mode=classic
+literature examples x ground, strat, generic, interp           cases=   72 failures=0
+  same, against hand-derived expectations                      cases=   72 failures=0
+-- schemes in which no rule can feed itself (candidates for a compiler); failures count
+order [ground]: fact insertion order shuffled                  cases= 1500 failures=0
+order [ground]: rule order in the DRL file shuffled            cases= 1500 failures=0
+order [ground]: fact order + rule order shuffled               cases= 1500 failures=0
+order [strat]: fact insertion order shuffled                   cases= 1500 failures=0
+order [strat]: rule order in the DRL file shuffled             cases= 1500 failures=0
+order [strat]: fact order + rule order shuffled                cases= 1500 failures=0
+order [ground]: rule order + random salience on every rule     cases= 1500 failures=0
+order [ground]: fact order + rule order + random salience      cases= 1500 failures=0
+-- schemes with rules shared by all literals (measured, not counted: they hit the engine defect)
+order [generic]: fact insertion order shuffled                 cases= 1500 failures=5
+      ('O41/generic/p0', "+d differs: ['a5', 'a9']")
+      ('O41/generic/p1', "+d differs: ['a5', 'a9']")
+      ('O41/generic/p2', "+d differs: ['a5', 'a9']")
+      ('O41/generic/p3', "+d differs: ['a5', 'a9']")
+      ('O41/generic/p4', "+d differs: ['a5', 'a9']")
+order [interp]: fact insertion order shuffled                  cases= 1500 failures=0
+order [generic]: rule order + random salience                  cases= 1500 failures=0
+structural edge cases x ground, strat, interp                  cases=   84 failures=0
+RESULT: OK for ground/strat (+ literature and edge cases); shared-rule schemes: 5 wrong answers

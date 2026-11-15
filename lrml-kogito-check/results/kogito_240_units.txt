@@ -1,0 +1,4 @@
+Kogito rule units: 240 (120 ground scheme, 120 stratified)
+  injected RuleUnit : errors=0  +d differences=0  +D differences=0
+  generated REST API: errors=0  +d differences=0
+  two-rule truth-maintenance reproduction as a rule unit: after fire1=['a', 'b'] after fire2=['b'] err=None  -> STALE Def(b)
