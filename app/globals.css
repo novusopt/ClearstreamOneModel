@@ -262,56 +262,41 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 
 /*
- * Home hero, "the lamp is lit" (An-Nur 24:35): once on load the flame kindles, its glow opens, light falls
- * through the niche and the verse brightens word by word, right to left; then the headline settles
- * (.enter-word-visible, delayed). Afterwards only the flame breathes, 9 s, paused while the hero is off
- * screen ([data-still]). Everything starts visible and reduced motion shows the end state.
+ * Home hero backdrop, "liquid light" (components/home/hero-liquid.tsx): a WebGL field in these tokens. The box
+ * shows the same colours as a static gradient until the canvas fades in (and for good without WebGL), fades into
+ * the page at the bottom, and carries a fine grain so the light reads as material, not as a screen.
  */
-@keyframes kindle-flame { from { transform: scale(0.35); opacity: 0.2; } 60% { transform: scale(1.08); } }
-@keyframes kindle-halo { from { transform: scale(0.45); opacity: 0; } }
-@keyframes kindle-wash { from { transform: translateY(-28%); opacity: 0; } }
-@keyframes kindle-word { from { opacity: 0.18; transform: translateY(6px); } }
-@keyframes breathe-flame { to { transform: scale(1.06, 1.1); } }
-@keyframes breathe-halo { to { transform: scale(1.06); opacity: 0.75; } }
-.kindle-flame, .kindle-halo, .kindle-wash { transform-box: fill-box; }
-.kindle-flame { transform-origin: 50% 90%; }
-.kindle-halo { transform-origin: 50% 50%; }
-.kindle-wash { transform-origin: 50% 0; }
-@media (prefers-reduced-motion: no-preference) {
-  .kindle-flame { animation: kindle-flame 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards, breathe-flame 9s cubic-bezier(0.65, 0, 0.35, 1) 1.2s infinite alternate; }
-  .kindle-halo { animation: kindle-halo 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards, breathe-halo 9s cubic-bezier(0.65, 0, 0.35, 1) 1.2s infinite alternate; }
-  .kindle-wash { animation: kindle-wash 1s cubic-bezier(0.22, 1, 0.36, 1) 0.15s backwards; }
-  .kindle-word { animation: kindle-word 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards; animation-delay: calc(0.35s + var(--i) * 0.11s); }
-  [data-still] :is(.kindle-flame, .kindle-halo) { animation-play-state: paused; }
+:root:not(.dark-mode) {
+  --liquid-base: var(--color-bg-primary);
+  --liquid-cool: var(--color-brand-200);
+  --liquid-warm: var(--color-gold-300);
+  --liquid-hi: var(--color-gold-100);
 }
-
-/*
- * Home hero background waves (components/home/hero-waves.tsx): two ribbons of thin lines drift in opposite
- * directions by exactly one tile (the SVG is two tiles wide), so the loop is seamless. Transform only, slow,
- * paused off screen ([data-still]) and still under reduced motion. Faded out at the edges and top/bottom, and to a
- * third behind the centre column so the headline stays the brightest thing.
- */
-.hero-waves {
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 16%, rgb(0 0 0 / 0.3) 40%, rgb(0 0 0 / 0.3) 60%, #000 84%, transparent), linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
-  -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(to right, transparent, #000 16%, rgb(0 0 0 / 0.3) 40%, rgb(0 0 0 / 0.3) 60%, #000 84%, transparent), linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
-  mask-composite: intersect;
+.dark-mode {
+  --liquid-base: var(--color-bg-primary);
+  --liquid-cool: var(--color-brand-700);
+  --liquid-warm: var(--color-gold-500);
+  --liquid-hi: var(--color-gold-300);
 }
-@keyframes wave-drift-left { to { transform: translate3d(-50%, 0, 0); } }
-@keyframes wave-drift-right { from { transform: translate3d(-50%, 0, 0); } to { transform: translate3d(0, 0, 0); } }
-.wave-drift-b { transform: translate3d(-25%, 0, 0); }
-@media (prefers-reduced-motion: no-preference) {
-  .wave-drift-a { animation: wave-drift-left 48s linear infinite; }
-  .wave-drift-b { animation: wave-drift-right 72s linear infinite; }
-  [data-still] :is(.wave-drift-a, .wave-drift-b) { animation-play-state: paused; }
+.hero-liquid {
+  background:
+    radial-gradient(45% 55% at 82% 18%, color-mix(in srgb, var(--liquid-warm) 55%, transparent), transparent),
+    radial-gradient(50% 60% at 12% 30%, color-mix(in srgb, var(--liquid-cool) 70%, transparent), transparent),
+    radial-gradient(40% 40% at 30% 85%, color-mix(in srgb, var(--liquid-warm) 35%, transparent), transparent),
+    var(--liquid-base);
+  -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent);
+  mask-image: linear-gradient(to bottom, #000 62%, transparent);
+}
+.hero-liquid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.12;
+  mix-blend-mode: soft-light;
 }
 
 /* Reader tips already dismissed on this device: hidden before hydration (see the inline script in app/layout.tsx). */
 html[data-seen-tips] .reader-tips {
   display: none;
 }
-
-/* TEMP preview of the niche ornament options (removed once one is chosen). */
-.niche-orn-shamsa, .niche-orn-frame, .niche-orn-rays { display: none; }
-html[data-niche="shamsa"] .niche-orn-shamsa, html[data-niche="frame"] .niche-orn-frame, html[data-niche="rays"] .niche-orn-rays { display: inline; }
-html[data-niche]:not([data-niche="current"]) .niche-orn-current { display: none; }

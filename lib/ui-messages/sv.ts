@@ -39,7 +39,6 @@ export const sv: Messages = {
     newBadge: "Nytt",
     newText: "Tafsir på 9 språk och repetition av memorering",
     headline: ["En", "lykta", "för", "Koranen."],
-    highlightFrom: 3,
     intro: "Läs den uthmaniska texten, lyssna när varje ord lyser upp under recitationen och förstå den ord för ord, på tio språk, med tajwid i färg.",
     openFatihah: "Öppna Al-Fatihah",
     continueAt: "Fortsätt {name} · {ref}",

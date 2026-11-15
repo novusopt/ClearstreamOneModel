@@ -39,7 +39,6 @@ export const tr: Messages = {
     newBadge: "Yeni",
     newText: "9 dilde tefsir ve ezber tekrarı",
     headline: ["Kur’an", "için", "bir", "kandil."],
-    highlightFrom: 2,
     intro: "Osmanlı hattıyla okuyun, tilavetle birlikte her kelimenin aydınlandığını dinleyin ve on dilde, renkli tecvidle kelime kelime anlayın.",
     openFatihah: "Fatiha’yı aç",
     continueAt: "{name} · {ref} ile devam et",

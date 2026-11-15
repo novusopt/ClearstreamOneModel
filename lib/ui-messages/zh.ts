@@ -38,7 +38,6 @@ export const zh: Messages = {
     newBadge: "新功能",
     newText: "9 种语言的经注与背诵复习",
     headline: ["《古兰经》的", "一盏明灯。"],
-    highlightFrom: 1,
     intro: "阅读奥斯曼体经文，聆听每个词随诵读逐一点亮，并以十种语言逐词理解，彩色标注诵读规则。",
     openFatihah: "打开开端章",
     continueAt: "继续 {name} · {ref}",

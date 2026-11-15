@@ -39,7 +39,6 @@ export const es: Messages = {
     newBadge: "Nuevo",
     newText: "Tafsir en 9 idiomas y repaso de memorización",
     headline: ["Una", "lámpara", "para", "el", "Corán."],
-    highlightFrom: 3,
     intro: "Lee el texto uzmaní, escucha cómo cada palabra se ilumina con la recitación y compréndelo palabra por palabra, en diez idiomas, con el tajwid en color.",
     openFatihah: "Abrir Al-Fatihah",
     continueAt: "Continuar {name} · {ref}",

@@ -1,12 +1,11 @@
 "use client";
 
 import { ArrowRight, BookOpen01, CheckCircle } from "@untitledui/icons";
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment } from "react";
 import { Badge } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
 import Link from "next/link";
-import { HeroNiche } from "@/components/home/hero-niche";
-import { HeroWaves } from "@/components/home/hero-waves";
+import { HeroLiquid } from "@/components/home/hero-liquid";
 import { HeroShowcase } from "@/components/home/hero-showcase";
 import { useUi } from "@/components/providers/ui-messages";
 import { fmt } from "@/lib/ui-format";
@@ -23,41 +22,16 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
   const wordGap = lang === "zh" ? "" : " ";
   const lastRead = useLibrary((s) => s.lastRead);
   const resume = lastRead ? chapters[lastRead.surah - 1] : null;
-  const ref = useRef<HTMLElement>(null);
-  // The flame's breathing and the background waves pause while the hero is off screen.
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => el.toggleAttribute("data-still", !e.isIntersecting));
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
 
   return (
-    <section ref={ref} className="relative isolate overflow-hidden pt-40 pb-16 md:pt-52 md:pb-24">
-      {/* Backdrop: a soft wash, the niche and its lamp, and two slow ribbons of light (HeroWaves). */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-brand-50/60 via-transparent to-transparent dark:from-brand-950/80" />
-        {/* Fade into the page so the backdrop has no hard bottom edge. */}
-        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-bg-primary" />
-      </div>
-
-      <HeroWaves />
-      <HeroNiche />
+    <section className="relative isolate overflow-hidden pt-40 pb-16 md:pt-52 md:pb-24">
+      {/* Backdrop: liquid light in indigo and lantern amber (HeroLiquid), fading into the page. */}
+      <HeroLiquid />
 
       <div className="mx-auto w-full max-w-7xl px-4 text-center md:px-8">
-        {/* An-Nur 24:35, brightening word by word in reading order as the lamp's light reaches it (`.kindle-word`). */}
-        <p lang="ar" dir="rtl" className="font-quran text-3xl leading-tight sm:text-4xl">
-          {NUR.split(" ").map((w, i) => (
-            <Fragment key={i}>
-              <span
-                style={{ "--i": i } as React.CSSProperties}
-                className="kindle-word inline-block bg-gradient-to-br from-brand-700 via-brand-500 to-gold-500 bg-clip-text text-transparent dark:from-gold-200 dark:via-gold-300 dark:to-brand-300"
-              >
-                {w}
-              </span>{" "}
-            </Fragment>
-          ))}
+        {/* An-Nur 24:35, the verse Mishkah is named after. */}
+        <p lang="ar" dir="rtl" className="enter-visible font-quran text-3xl leading-tight text-gold-700 sm:text-4xl dark:text-gold-300">
+          {NUR}
         </p>
         <p className="enter mt-2 text-sm text-tertiary italic" style={{ animationDelay: "0.9s" }}>
           {t.hero.verseGloss}
@@ -81,7 +55,7 @@ export function Hero({ chapters, fatihah }: { chapters: Chapter[]; fatihah?: Ver
             <Fragment key={word}>
               <span
                 style={{ animationDelay: `${0.8 + i * 0.06}s` }}
-                className={cx("enter-word-visible inline-block", lang !== "zh" && "mr-[0.15em]", i >= t.hero.highlightFrom && "bg-gradient-to-r from-gold-600 to-gold-400 bg-clip-text pr-1 text-transparent italic")}
+                className={cx("enter-word-visible inline-block", lang !== "zh" && "mr-[0.15em]")}
               >
                 {word}
               </span>

@@ -39,7 +39,6 @@ export const fr: Messages = {
     newBadge: "Nouveau",
     newText: "Tafsir en 9 langues et révision de la mémorisation",
     headline: ["Une", "lanterne", "pour", "le", "Coran."],
-    highlightFrom: 3,
     intro: "Lisez le texte uthmani, écoutez chaque mot s’illuminer au fil de la récitation et comprenez-le mot à mot, en dix langues, avec le tajwid en couleur.",
     openFatihah: "Ouvrir Al-Fatihah",
     continueAt: "Reprendre {name} · {ref}",

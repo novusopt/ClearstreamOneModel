@@ -44,9 +44,8 @@ export const en = {
     verseGloss: "“Allah is the Light of the heavens and the earth” — An-Nur 24:35",
     newBadge: "New",
     newText: "Tafsir in 9 languages and memorisation review",
-    /** Headline words; words from `highlightFrom` on are set in gold italics. */
+    /** Headline words (each settles in on load). */
     headline: ["A", "lantern", "for", "the", "Qurʾān."],
-    highlightFrom: 3,
     intro: "Read the Uthmani text, listen as every word lights up with the recitation, and understand it word by word, in ten languages, with tajweed in colour.",
     openFatihah: "Open Al-Fatihah",
     continueAt: "Continue {name} · {ref}",

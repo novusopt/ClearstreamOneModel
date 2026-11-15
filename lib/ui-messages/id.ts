@@ -39,7 +39,6 @@ export const id: Messages = {
     newBadge: "Baru",
     newText: "Tafsir dalam 9 bahasa dan muraja’ah hafalan",
     headline: ["Pelita", "bagi", "Al-Qur’an."],
-    highlightFrom: 2,
     intro: "Baca teks Utsmani, dengarkan setiap kata menyala mengikuti bacaan, dan pahami kata demi kata dalam sepuluh bahasa, dengan tajwid berwarna.",
     openFatihah: "Buka Al-Fatihah",
     continueAt: "Lanjutkan {name} · {ref}",
